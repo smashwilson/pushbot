@@ -1,1 +1,22 @@
-["redis-brain.coffee", "shipit.coffee"]
+[
+  "redis-brain.coffee",
+  "shipit.coffee",
+  "cowsay.coffee",
+  "decide.coffee",
+  "flip.coffee",
+  "hashing.coffee",
+  "hubotagainsthumanity.coffee",
+  "karma.coffee",
+  "pomodoro.coffee",
+  "sosearch.coffee",
+  "sudo.coffee",
+  "talkative.coffee",
+  "uptime.coffee",
+  "youtube-info.coffee",
+  "imgur-info.coffee",
+  "status.coffee",
+  "reload.coffee",
+  "update.coffee",
+  "dice.coffee",
+  "f-ing-weather.coffee"
+]
