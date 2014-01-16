@@ -1,1 +1,1 @@
-web: bin/hubot -a campfire -n Hubot
+pushbot: bin/hubot -a irc -n PushBot
