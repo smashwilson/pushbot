@@ -28,6 +28,7 @@
     "hubot-scripts": ">= 2.5.0 < 3.0.0",
     "hubot-irc": "~0.1.20",
     "hubot-markov": "smashwilson/hubot-markov",
+    "hubot-greetings": "smashwilson/hubot-greetings",
     "flip": "~0.1.0",
     "jsdom": "0.2.15",
     "underscore": "1.5.1",
