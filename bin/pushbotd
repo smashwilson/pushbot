@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# Launch PushBot with all the right environment variables and stuff, as a
+# forever daemon.
+
+set -e
+
+DIR=`dirname $0`/..
+cd ${DIR}
+
+source .botrc
+npm install
+
+forever start -c coffee node_modules/.bin/hubot -a irc --name pushbot
