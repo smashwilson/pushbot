@@ -11,4 +11,4 @@ cd ${DIR}
 source .botrc
 npm install
 
-forever start -c coffee node_modules/.bin/hubot -a irc --name pushbot
+exec node_modules/.bin/hubot -a irc --name pushbot
