@@ -1,7 +1,6 @@
 #!/bin/bash
 #
-# Launch PushBot with all the right environment variables and stuff, as a
-# forever daemon.
+# Launch PushBot with all the right environment variables and stuff.
 
 set -e
 
