@@ -8,6 +8,5 @@ DIR=`dirname $0`/..
 cd ${DIR}
 
 source .botrc
-npm install
 
 exec node_modules/.bin/hubot -a irc --name pushbot
