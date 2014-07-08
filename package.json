@@ -1,44 +1,40 @@
 {
   "name": "hosted-hubot",
   "version": "2.7.1",
-
   "author": "GitHub Inc.",
-
   "keywords": [
     "github",
     "hubot",
     "campfire",
     "bot"
   ],
-
   "description": "A simple helpful robot for your Company",
-
-  "licenses": [{
-    "type": "MIT",
-    "url": "https://github.com/github/hubot/raw/master/LICENSE"
-  }],
-
-  "repository" : {
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/github/hubot/raw/master/LICENSE"
+    }
+  ],
+  "repository": {
     "type": "git",
     "url": "https://github.com/github/hubot.git"
   },
-
   "dependencies": {
-    "hubot":         ">= 2.6.0 < 3.0.0",
-    "hubot-scripts": ">= 2.5.0 < 3.0.0",
-    "hubot-irc": "~0.1.20",
-    "hubot-gtalk": "~2.0.1",
-    "hubot-markov": "smashwilson/hubot-markov",
-    "hubot-greetings": "smashwilson/hubot-greetings",
     "flip": "~0.1.0",
+    "hubot": ">= 2.6.0 < 3.0.0",
+    "hubot-greetings": "smashwilson/hubot-greetings",
+    "hubot-gtalk": "~2.0.1",
+    "hubot-irc": "~0.1.20",
+    "hubot-markov": "smashwilson/hubot-markov",
+    "hubot-scripts": ">= 2.5.0 < 3.0.0",
+    "hubot-slack": "^2.1.0",
     "jsdom": "0.2.15",
-    "underscore": "1.5.1",
+    "request": "~2.27.0",
     "twit": "1.1.8",
-    "request": "~2.27.0"
+    "underscore": "1.5.1"
   },
-
   "engines": {
     "node": ">= 0.8.x",
-    "npm":  ">= 1.1.x"
+    "npm": ">= 1.1.x"
   }
 }
