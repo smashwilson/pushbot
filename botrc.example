@@ -27,3 +27,7 @@ export HUBOT_MARKOV_GENERATE_MAX=100
 # hubot-greetings
 
 export HUBOT_GREETINGS_FFA=1
+
+# hubot-quotefile
+
+export HUBOT_QUOTEFILE_PATH=
