@@ -5,6 +5,7 @@
 #   hug <user> - express mechanical affection toward a target
 #   hi5 <user> - enthusiastically express congratulationss
 #   magic8 <question> - gaze into your future
+#   judge <something> - render a verdict upon... something
 
 _ = require 'underscore'
 
@@ -61,3 +62,7 @@ module.exports = (robot) ->
     all.push neutral...
 
     msg.reply atRandom(all)
+
+  robot.respond /judge/i, (msg) ->
+    chance = _.random 100
+    msg.reply(if chance < 80 then "HARSH" else "Lenient.")
