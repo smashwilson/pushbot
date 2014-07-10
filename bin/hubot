@@ -2,4 +2,5 @@
 
 export PATH="node_modules/.bin:node_modules/hubot/node_modules/.bin:$PATH"
 
+source .botrc
 exec node_modules/.bin/hubot "$@"
