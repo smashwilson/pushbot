@@ -16,4 +16,4 @@ module.exports = (robot) ->
 
   robot.hear /hug(?: (.*))?/i, (msg) ->
     target = targetFrom msg
-    msg.emote "compresses #{target} in a cold, metallic embrace"
+    msg.send "/me compresses #{target} in a cold, metallic embrace"
