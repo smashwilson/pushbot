@@ -6,6 +6,7 @@
 #   hubot hi5 <user> - enthusiastically express congratulationss
 #   hubot magic8 <question> - gaze into your future
 #   hubot judge <something> - render a verdict upon... something
+#   hubot barf - BAAAAAARRRRRRRFFFFF
 
 _ = require 'underscore'
 
@@ -66,6 +67,10 @@ module.exports = (robot) ->
   robot.respond /judge/i, (msg) ->
     chance = _.random 100
     msg.reply(if chance < 80 then "HARSH" else "Lenient.")
+
+  robot.respond /barf/i, (msg) ->
+    lines = ("BAAAAAAAARRRRRRRRFFFFF" for n in [1..5])
+    msg.send lines.join("\n")
 
   robot.hear /none/i, (msg) ->
     msg.send "more like \"#{msg.message.text.replace /none/ig, 'NAAN'}\"!"
