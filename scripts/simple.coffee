@@ -7,8 +7,15 @@
 #   hubot magic8 <question> - gaze into your future
 #   hubot judge <something> - render a verdict upon... something
 #   hubot barf - BAAAAAARRRRRRRFFFFF
+#   hubot betray <someone> - Curse your sudden but inevitable betrayal!
+#
+# Configuration:
+#
+#   HUBOT_BETRAY_IMMUNE - comma-separated list of users who are immune to betrayal.
 
 _ = require 'underscore'
+
+betrayImmune = _.map (process.env.HUBOT_BETRAY_IMMUNE or '').split(/,/), (line) -> line.trim()
 
 targetFrom = (msg, matchNo = 1) ->
   if msg.match[matchNo] then msg.match[matchNo] else msg.message.user.name
@@ -90,3 +97,27 @@ module.exports = (robot) ->
 
   robot.hear /non-/i, (msg) ->
     msg.send "more like \"#{msg.message.text.replace /non-/ig, "NAAN-"}\"!"
+
+  robot.respond /betray(?: (\S+))?/i, (msg) ->
+    if msg.message.user.id in betrayImmune
+      backfire = false
+    else
+      backfire = _.random(100) < 10
+
+    if backfire
+      target = msg.message.user.name
+    else if msg.match[1]
+      target = targetFrom msg
+    else
+      target = atRandom(u.name for u in robot.brain.users)
+
+    target = if backfire then msg.message.user.name else targetFrom(msg)
+
+    msg.emote atRandom [
+      "stabs #{target} in the back!"
+      "stabs #{target} in the front!"
+      "stabs #{target} in the spleen!"
+      "stabs #{target} in the face!"
+      "knocks out #{target} and hides the body in an air vent"
+      "http://31.media.tumblr.com/14b87d0a25ee3f2e9b9caac550752e0f/tumblr_n0huzr2xVO1si4awpo3_250.gif"
+    ]
