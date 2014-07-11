@@ -2,10 +2,10 @@
 #   Simple "pick one of these random responses"-style commands.
 #
 # Commands:
-#   hug <user> - express mechanical affection toward a target
-#   hi5 <user> - enthusiastically express congratulationss
-#   magic8 <question> - gaze into your future
-#   judge <something> - render a verdict upon... something
+#   hubot hug <user> - express mechanical affection toward a target
+#   hubot hi5 <user> - enthusiastically express congratulationss
+#   hubot magic8 <question> - gaze into your future
+#   hubot judge <something> - render a verdict upon... something
 
 _ = require 'underscore'
 
@@ -16,11 +16,11 @@ atRandom = (list) -> list[_.random list.length - 1]
 
 module.exports = (robot) ->
 
-  robot.hear /hug(?: (.*))?/i, (msg) ->
+  robot.respond /hug(?: (.*))?/i, (msg) ->
     target = targetFrom msg
     msg.emote "compresses #{target} in a cold, metallic embrace"
 
-  robot.hear /hi5(?: (.*)?)/i, (msg) ->
+  robot.respond /hi5(?: (.*)?)/i, (msg) ->
     target = targetFrom msg
     msg.emote atRandom [
       "high-fives #{target} with cold, unfeeling metal"
