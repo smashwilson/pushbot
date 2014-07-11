@@ -36,4 +36,4 @@ module.exports = (robot) ->
       msg.reply "I have no idea when you're leaving!"
       return
 
-    msg.reply "You are scheduled to GT the FO #{time.fromNow()}."
+    msg.reply "You are scheduled to GT the FO in #{moment.preciseDiff moment(), time}."
