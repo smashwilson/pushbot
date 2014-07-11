@@ -104,18 +104,20 @@ module.exports = (robot) ->
     else
       backfire = _.random(100) < 10
 
-    tu = robot.brain.userForName target
-    backfire = true if tu and tu.id in betrayImmune
-
     if backfire
       target = msg.message.user.name
     else if msg.match[1]
       target = targetFrom msg
+      tname = target.replace /^@/, ''
+      tu = robot.brain.userForName tname
+      target = msg.message.user.name if tu? and tu.id.toString() in betrayImmune
     else
-      potential = u.name for u in robot.brain.users if u.id not in betrayImmune
-      target = atRandom potential
-
-    target = if backfire then msg.message.user.name else targetFrom(msg)
+      potential = (u.name for u in robot.brain.users when u.id.toString() not in betrayImmune)
+      if potential.length > 0
+        target = atRandom potential
+      else
+        msg.reply "There's nobody left to betray!"
+        return
 
     msg.emote atRandom [
       "stabs #{target} in the back!"
