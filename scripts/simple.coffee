@@ -66,3 +66,6 @@ module.exports = (robot) ->
   robot.respond /judge/i, (msg) ->
     chance = _.random 100
     msg.reply(if chance < 80 then "HARSH" else "Lenient.")
+
+  robot.hear /none/i, (msg) ->
+    msg.send "more like \"#{msg.message.text.replace /none/ig, 'NAAN'}\"!"
