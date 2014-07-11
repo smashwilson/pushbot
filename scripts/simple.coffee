@@ -68,8 +68,21 @@ module.exports = (robot) ->
     chance = _.random 100
     msg.reply(if chance < 80 then "HARSH" else "Lenient.")
 
-  robot.respond /barf/i, (msg) ->
-    lines = ("BAAAAAAAARRRRRRRRFFFFF" for n in [1..5])
+  robot.respond /barf *(.*)/i, (msg) ->
+    if not msg.match[1]
+      text = "barf"
+    else
+      text = msg.match[1]
+    text = text.toUpperCase()
+
+    barfify = (letter) ->
+      if letter in ["A", "E", "F", "H", "I",
+          "J", "L", "M", "N", "O", "R",
+          "S", "U", "V", "W", "Y", "Z"]
+        return (letter for n in [1..5])
+      return [letter]
+    line = ((barfify char).join("") for char in text).join("")
+    lines = (line for n in [1..5])
     msg.send lines.join("\n")
 
   robot.hear /none/i, (msg) ->
