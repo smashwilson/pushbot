@@ -104,6 +104,9 @@ module.exports = (robot) ->
     else
       backfire = _.random(100) < 10
 
+    tu = robot.brain.userForName target
+    backfire = true if tu and tu.id in betrayImmune
+
     if backfire
       target = msg.message.user.name
     else if msg.match[1]
