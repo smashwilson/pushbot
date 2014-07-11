@@ -69,3 +69,6 @@ module.exports = (robot) ->
 
   robot.hear /none/i, (msg) ->
     msg.send "more like \"#{msg.message.text.replace /none/ig, 'NAAN'}\"!"
+
+  robot.hear /non-/i, (msg) ->
+    msg.send "more like \"#{msg.message.text.replace /non-/ig, "NAAN-"}\"!"
