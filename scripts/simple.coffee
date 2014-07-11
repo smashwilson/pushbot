@@ -112,7 +112,8 @@ module.exports = (robot) ->
     else if msg.match[1]
       target = targetFrom msg
     else
-      target = atRandom(u.name for u in robot.brain.users)
+      potential = u.name for u in robot.brain.users if u.id not in betrayImmune
+      target = atRandom potential
 
     target = if backfire then msg.message.user.name else targetFrom(msg)
 
