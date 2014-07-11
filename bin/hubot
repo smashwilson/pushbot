@@ -3,5 +3,7 @@
 export PATH="node_modules/.bin:node_modules/hubot/node_modules/.bin:$PATH"
 export HUBOT_DEBUG=1
 
-source .botrc
+DIR=`dirname $0`/..
+
+source ${DIR}/.botrc
 exec node_modules/.bin/hubot "$@"
