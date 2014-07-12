@@ -47,4 +47,5 @@ module.exports = (robot) ->
 
   robot.respond /clear_users/i, (msg) ->
     robot.brain.data.users = {}
+    robot.brain.data.greetings = {}
     msg.reply "all clear"
