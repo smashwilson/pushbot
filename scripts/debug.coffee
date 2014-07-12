@@ -18,3 +18,6 @@ module.exports = (robot) ->
 
     resp = ("#{key}: #{value}" for own key, value of u).join("\n")
     msg.reply resp
+
+  robot.respond /debug_echo/i, (msg) ->
+    msg.reply msg.message.text
