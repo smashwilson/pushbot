@@ -44,8 +44,3 @@ module.exports = (robot) ->
 
   robot.respond /debug_message/i, (msg) ->
     msg.reply dump(msg.message, 'msg.message')
-
-  robot.respond /clear_users/i, (msg) ->
-    robot.brain.data.users = {}
-    robot.brain.data.greetings = {}
-    msg.reply "all clear"
