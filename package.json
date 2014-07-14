@@ -27,7 +27,7 @@
     "hubot-hammersport": "git+https://github.com/smashwilson/hubot-hammersport.git",
     "hubot-irc": "~0.1.20",
     "hubot-markov": "smashwilson/hubot-markov",
-    "hubot-quotefile": "^1.0.0",
+    "hubot-quotefile": "git+https://github.com/smashwilson/hubot-quotefile.git",
     "hubot-scripts": ">= 2.5.0 < 3.0.0",
     "hubot-slack": "^2.1.0",
     "jsdom": "0.2.15",
