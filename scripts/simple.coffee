@@ -38,6 +38,7 @@ module.exports = (robot) ->
       "high-fives #{target}... with dire consequences"
       "http://gifsec.com/wp-content/uploads/GIF/2014/04/GIF-Baby-high-five-cat.gif"
       "http://www.survivingcollege.com/wp-content/uploads/2014/04/stephen-colbert-high-five-gif.gif"
+      "http://imgur.com/Wd9NiaB"
     ]
 
   robot.respond /magic8/i, (msg) ->
