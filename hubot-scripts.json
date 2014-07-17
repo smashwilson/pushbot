@@ -10,7 +10,6 @@
   "sudo.coffee",
   "uptime.coffee",
   "imgur-info.coffee",
-  "status.coffee",
   "reload.coffee",
   "update.coffee",
   "dice.coffee",
