@@ -130,7 +130,7 @@ module.exports = (robot) ->
       "http://31.media.tumblr.com/14b87d0a25ee3f2e9b9caac550752e0f/tumblr_n0huzr2xVO1si4awpo3_250.gif"
     ]
 
-  robot.respond /\w+hose(?: (\w+))?/i, (msg) ->
+  robot.respond /\w+hose(?: (@?\w+))?/i, (msg) ->
     msg.send "_doof_ _doof_ _doof_"
 
     prefix = "#{msg.match[1]}: " if msg.match[1]?
