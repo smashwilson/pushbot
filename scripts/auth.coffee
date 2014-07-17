@@ -9,10 +9,10 @@
 #   HUBOT_AUTH_ADMIN - A comma separate list of user IDs
 #
 # Commands:
-#   hubot <user> has <role> role - Assigns a role to a user
-#   hubot <user> doesn't have <role> role - Removes a role from a user
-#   hubot what role does <user> have - Find out what roles are assigned to a specific user
-#   hubot who has admin role - Find out who's an admin and can assign roles
+#   hubot grant <user> the <role> role - Assigns a role to a user
+#   hubot revoke <role> from <user> - Removes a role from a user
+#   hubot what roles does <user> have - Find out what roles are assigned to a specific user
+#   hubot who's an admin - Find out who's an admin and can assign roles
 #
 # Notes:
 #   * Call the method: robot.auth.hasRole(msg.envelope.user,'<role>')
@@ -56,9 +56,9 @@ module.exports = (robot) ->
 
   robot.auth = new Auth
 
-  robot.respond /@?(.+) (has) (["'\w: -_]+) (role)/i, (msg) ->
+  robot.respond /grant @?(\w+) the (["'\w: -_]+) role/i, (msg) ->
     name    = msg.match[1].trim()
-    newRole = msg.match[3].trim().toLowerCase()
+    newRole = msg.match[2].trim().toLowerCase()
 
     unless name.toLowerCase() in ['', 'who', 'what', 'where', 'when', 'why']
       user = robot.brain.userForName(name)
@@ -76,9 +76,9 @@ module.exports = (robot) ->
             user.roles.push(newRole)
             msg.reply "Ok, #{name} has the '#{newRole}' role."
 
-  robot.respond /@?(.+) (doesn't have|does not have) (["'\w: -_]+) (role)/i, (msg) ->
-    name    = msg.match[1].trim()
-    newRole = msg.match[3].trim().toLowerCase()
+  robot.respond /revoke (["'\w: -_]+) from @?(w+)/i, (msg) ->
+    name    = msg.match[2].trim()
+    newRole = msg.match[1].trim().toLowerCase()
 
     unless name.toLowerCase() in ['', 'who', 'what', 'where', 'when', 'why']
       user = robot.brain.userForName(name)
@@ -93,8 +93,8 @@ module.exports = (robot) ->
           user.roles = (role for role in user.roles when role isnt newRole)
           msg.reply "Ok, #{name} doesn't have the '#{newRole}' role."
 
-  robot.respond /(what role does|what roles does) @?(.+) (have)\?*$/i, (msg) ->
-    name = msg.match[2].trim()
+  robot.respond /what roles? does @?(\w+) have\?*$/i, (msg) ->
+    name = msg.match[1].trim()
     user = robot.brain.userForName(name)
     return msg.reply "#{name} does not exist" unless user?
     user.roles or= []
@@ -108,7 +108,7 @@ module.exports = (robot) ->
     else
       msg.reply "#{name} has the following roles: #{displayRoles.join(', ')}."
 
-  robot.respond /who has admin role\?*$/i, (msg) ->
+  robot.respond /(?:who's|who is) an admin\?*$/i, (msg) ->
     adminNames = []
     for admin in admins
       user = robot.brain.userForId(admin)
