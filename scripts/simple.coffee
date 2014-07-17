@@ -8,6 +8,7 @@
 #   hubot judge <something> - render a verdict upon... something
 #   hubot barf - BAAAAAARRRRRRRFFFFF
 #   hubot betray <someone> - Curse your sudden but inevitable betrayal!
+#   hubot burritohose <someone> - Doof. Doof. Doof. Splat. Splat. Splat.
 #
 # Configuration:
 #
@@ -128,3 +129,12 @@ module.exports = (robot) ->
       "knocks out #{target} and hides the body in an air vent"
       "http://31.media.tumblr.com/14b87d0a25ee3f2e9b9caac550752e0f/tumblr_n0huzr2xVO1si4awpo3_250.gif"
     ]
+
+  robot.respond /\w+hose(?: (\w+))?/i, (msg) ->
+    msg.send "_doof_ _doof_ _doof_"
+
+    prefix = "#{msg.match[1]}: " if msg.match[1]?
+    prefix ?= ''
+
+    fn = -> msg.send "#{prefix}_splat_ _splat_ _splat_"
+    setTimeout fn, _.random(3000, 5000)
