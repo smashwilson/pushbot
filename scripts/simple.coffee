@@ -101,7 +101,7 @@ module.exports = (robot) ->
     if lines.length > 10
       msg.send "Ain't nobody got time for that!"
       return
-    
+
     sendThenWait = (portion, rest) ->
       text = if rest.length > 0
         "#{portion}."
