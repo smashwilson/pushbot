@@ -95,6 +95,25 @@ module.exports = (robot) ->
     lines = (line for n in [1..5])
     msg.send lines.join("\n")
 
+  robot.respond /sde *(.*)/i, (msg) ->
+    text = if msg.match[1] then msg.match[1] else "shut down everything"
+    lines = text.split " "
+    if lines.length > 10
+      msg.send "Ain't nobody got time for that!"
+      return
+    
+    sendThenWait = (portion, rest) ->
+      text = if rest.length > 0
+        "#{portion}."
+      else
+        "#{portion.toUpperCase()}!"
+      msg.send text
+      if rest.length > 0
+        setTimeout =>
+          sendThenWait rest.shift(), rest
+        , 1000
+    sendThenWait lines.shift(), lines
+
   robot.hear /none/i, (msg) ->
     msg.send "more like \"#{msg.message.text.replace /none/ig, 'NAAN'}\"!"
 
