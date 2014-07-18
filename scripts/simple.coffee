@@ -23,6 +23,11 @@ targetFrom = (msg, matchNo = 1) ->
 
 atRandom = (list) -> list[_.random list.length - 1]
 
+allUsers = ->
+  userMap = robot.brain.users
+  ids = Object.keys(userMap)
+  userMap[id] for id in ids
+
 module.exports = (robot) ->
 
   robot.respond /hug(?: (.*))?/i, (msg) ->
@@ -134,7 +139,7 @@ module.exports = (robot) ->
       tu = robot.brain.userForName tname
       target = msg.message.user.name if tu? and tu.id.toString() in betrayImmune
     else
-      potential = (u.name for u in robot.brain.users() when u.id.toString() not in betrayImmune)
+      potential = (u.name for u in allUsers() when u.id.toString() not in betrayImmune)
       if potential.length > 0
         target = atRandom potential
       else
