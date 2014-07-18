@@ -23,7 +23,38 @@ targetFrom = (msg, matchNo = 1) ->
 
 atRandom = (list) -> list[_.random list.length - 1]
 
+
 module.exports = (robot) ->
+
+  betray = (betrayer, betrayee, msg) ->
+    if betrayer.id in betrayImmune
+      backfire = false
+    else
+      backfire = _.random(100) < 10
+
+    if backfire
+      target = betrayer.name
+    else if betrayee
+      target = targetfrom msg
+      tuname = target.replace /^@/, ''
+      tu = robot.brain.userForName tname
+      target = msg.message.user.name if tu? and tu.id.toString() in betrayImmune
+    else
+      potential = (u.name for u in robot.brain.users when u.id.toString not in betrayImmune)
+      if potential.length > 0
+        target = atRandom potential
+      else
+        msg.reply "There's nobody left to betray!"
+        return
+
+    msg.emote atRandom [
+      "stabs #{target} in the back!"
+      "stabs #{target} in the front!"
+      "stabs #{target} in the spleen!"
+      "stabs #{target} in the face!"
+      "knocks out #{target} and hides the body in an air vent"
+      "http://31.media.tumblr.com/14b87d0a25ee3f2e9b9caac550752e0f/tumblr_n0huzr2xVO1si4awpo3_250.gif"
+    ]
 
   robot.respond /hug(?: (.*))?/i, (msg) ->
     target = targetFrom msg
@@ -102,34 +133,14 @@ module.exports = (robot) ->
     msg.send "more like \"#{msg.message.text.replace /non-/ig, "NAAN-"}\"!"
 
   robot.respond /betray(?: (\S+))?/i, (msg) ->
-    if msg.message.user.id in betrayImmune
-      backfire = false
-    else
-      backfire = _.random(100) < 10
+    betrayer = msg.message.user
+    betrayee = msg.match[1]
+    betray betrayer, betrayee, msg
 
-    if backfire
-      target = msg.message.user.name
-    else if msg.match[1]
-      target = targetFrom msg
-      tname = target.replace /^@/, ''
-      tu = robot.brain.userForName tname
-      target = msg.message.user.name if tu? and tu.id.toString() in betrayImmune
-    else
-      potential = (u.name for u in robot.brain.users when u.id.toString() not in betrayImmune)
-      if potential.length > 0
-        target = atRandom potential
-      else
-        msg.reply "There's nobody left to betray!"
-        return
-
-    msg.emote atRandom [
-      "stabs #{target} in the back!"
-      "stabs #{target} in the front!"
-      "stabs #{target} in the spleen!"
-      "stabs #{target} in the face!"
-      "knocks out #{target} and hides the body in an air vent"
-      "http://31.media.tumblr.com/14b87d0a25ee3f2e9b9caac550752e0f/tumblr_n0huzr2xVO1si4awpo3_250.gif"
-    ]
+  robot.respond /harm(?: (\S+))?/i, (msg) ->
+    betrayer = msg.message.user
+    betrayee = msg.match[1]
+    betray betrayer, betrayee, msg
 
   robot.respond /\w+hose(?: (@?\w+))?/i, (msg) ->
     msg.send "_doof_ _doof_ _doof_"
