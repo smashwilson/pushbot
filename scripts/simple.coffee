@@ -23,12 +23,12 @@ targetFrom = (msg, matchNo = 1) ->
 
 atRandom = (list) -> list[_.random list.length - 1]
 
-allUsers = ->
-  userMap = robot.brain.users
-  ids = Object.keys(userMap)
-  userMap[id] for id in ids
-
 module.exports = (robot) ->
+
+  allUsers = ->
+    userMap = robot.brain.users
+    ids = Object.keys(userMap)
+    userMap[id] for id in ids
 
   robot.respond /hug(?: (.*))?/i, (msg) ->
     target = targetFrom msg
