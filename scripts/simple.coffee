@@ -26,7 +26,7 @@ atRandom = (list) -> list[_.random list.length - 1]
 module.exports = (robot) ->
 
   allUsers = ->
-    userMap = robot.brain.users
+    userMap = robot.brain.users()
     ids = Object.keys(userMap)
     userMap[id] for id in ids
 
