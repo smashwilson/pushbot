@@ -147,11 +147,11 @@ module.exports = (robot) ->
         return
 
     msg.emote atRandom [
-      "stabs #{target} in the back!"
-      "stabs #{target} in the front!"
-      "stabs #{target} in the spleen!"
-      "stabs #{target} in the face!"
-      "knocks out #{target} and hides the body in an air vent"
+      "stabs @#{target} in the back!"
+      "stabs @#{target} in the front!"
+      "stabs @#{target} in the spleen!"
+      "stabs @#{target} in the face!"
+      "knocks out @#{target} and hides the body in an air vent"
       "http://31.media.tumblr.com/14b87d0a25ee3f2e9b9caac550752e0f/tumblr_n0huzr2xVO1si4awpo3_250.gif"
     ]
 
