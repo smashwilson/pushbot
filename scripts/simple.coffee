@@ -35,13 +35,12 @@ module.exports = (robot) ->
     if backfire
       target = betrayer.name
     else if betrayee
-      target = targetFrom msg
+      target = targetfrom msg
       tuname = target.replace /^@/, ''
       tu = robot.brain.userForName tname
       target = msg.message.user.name if tu? and tu.id.toString() in betrayImmune
     else
       potential = (u.name for u in robot.brain.users when u.id.toString not in betrayImmune)
-      msg.reply "Potentials are #{potential}"
       if potential.length > 0
         target = atRandom potential
       else
