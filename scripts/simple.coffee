@@ -65,6 +65,7 @@ module.exports = (robot) ->
       "I slept with your spouse."
       "Curl up and die."
       "The stars say... MAYBE."
+      "http://i.imgur.com/rl2o77j.jpg"
     ]
 
     all = positive
