@@ -120,7 +120,7 @@ module.exports = (robot) ->
   robot.hear /non-/i, (msg) ->
     msg.send "more like \"#{msg.message.text.replace /non-/ig, "NAAN-"}\"!"
 
-  robot.respond /betray(?: (\S+))?/i, (msg) ->
+  robot.respond /(?:harm|betray)(?: (\S+))?/i, (msg) ->
     if msg.message.user.id in betrayImmune
       backfire = false
     else
