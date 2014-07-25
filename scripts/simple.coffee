@@ -3,7 +3,8 @@
 #
 # Commands:
 #   hubot hug <user> - express mechanical affection toward a target
-#   hubot hi5 <user> - enthusiastically express congratulationss
+#   hubot hi5 <user> - enthusiastically express congratulations
+#   hubot zing - someone made a terrible joke
 #   hubot magic8 <question> - gaze into your future
 #   hubot judge <something> - render a verdict upon... something
 #   hubot barf - BAAAAAARRRRRRRFFFFF
@@ -44,8 +45,10 @@ module.exports = (robot) ->
       "high-fives #{target}... with dire consequences"
       "http://gifsec.com/wp-content/uploads/GIF/2014/04/GIF-Baby-high-five-cat.gif"
       "http://www.survivingcollege.com/wp-content/uploads/2014/04/stephen-colbert-high-five-gif.gif"
-      "http://imgur.com/Wd9NiaB"
     ]
+
+  robot.respond /zing/i, (msg) ->
+    msg.send "http://i.imgur.com/Wd9NiaB.jpg"
 
   robot.respond /magic8/i, (msg) ->
     positive = [
