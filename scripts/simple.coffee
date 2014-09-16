@@ -45,7 +45,7 @@ module.exports = (robot) ->
       "high-fives #{target}... with dire consequences"
       "http://gifsec.com/wp-content/uploads/GIF/2014/04/GIF-Baby-high-five-cat.gif"
       "http://www.survivingcollege.com/wp-content/uploads/2014/04/stephen-colbert-high-five-gif.gif"
-      "http://giphy.com/gifs/just-hooray-PCBJRuJbMYzLi"
+      "http://giphy.com/gifs/just-hooray-PCBJRuJbMYzLi#.gif"
     ]
 
   robot.respond /zing/i, (msg) ->
