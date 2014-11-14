@@ -24,6 +24,8 @@ module.exports = (robot) ->
     if timeStr
       if timeStr.match /\d\d:\d\d/
         time = moment(timeStr, 'HH:mm')
+      else if timeStr.match /\d{4}/
+        time = moment(timeStr, 'HHmm')
       else if timeStr.match /\d?\d:\d\d[aApP]/
         time = moment(timeStr, 'hh:mma')
       else
