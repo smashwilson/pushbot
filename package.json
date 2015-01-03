@@ -27,6 +27,7 @@
     "hubot-markov": "smashwilson/hubot-markov",
     "hubot-quotefile": "git+https://github.com/smashwilson/hubot-quotefile.git",
     "hubot-scripts": ">= 2.5.0 < 3.0.0",
+    "hubot-slack": "^3.2.1",
     "jsdom": "0.2.15",
     "moment": "^2.7.0",
     "request": "~2.27.0",
