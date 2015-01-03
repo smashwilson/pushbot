@@ -10,6 +10,7 @@
 #   hubot barf - BAAAAAARRRRRRRFFFFF
 #   hubot betray <someone> - Curse your sudden but inevitable betrayal!
 #   hubot burritohose <someone> - Doof. Doof. Doof. Splat. Splat. Splat.
+#   hubot welcome <someone> - Welcome a newcomer to the channel.
 #
 # Configuration:
 #
@@ -170,3 +171,10 @@ module.exports = (robot) ->
 
     fn = -> msg.send "#{prefix}_splat_ _splat_ _splat_"
     setTimeout fn, _.random(3000, 5000)
+
+  robot.respond /welcome(?: +(@?\w+))?/i, (msg) ->
+    target = if msg.match[1] then ", #{msg.match[1]}" else ""
+    msg.send """
+      Welcome to #~s#{target}! Here's a quick intro to Slack and me:
+      https://gist.github.com/smashwilson/325d444e7a080906f8b9
+      """
