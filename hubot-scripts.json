@@ -5,13 +5,7 @@
   "decide.coffee",
   "flip.coffee",
   "hashing.coffee",
-  "hubotagainsthumanity.coffee",
-  "sosearch.coffee",
-  "sudo.coffee",
   "uptime.coffee",
-  "imgur-info.coffee",
-  "reload.coffee",
   "update.coffee",
-  "dice.coffee",
-  "f-ing-weather.coffee"
+  "dice.coffee"
 ]
