@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "flip": "~0.1.0",
-    "hubot": ">= 2.6.0 < 3.0.0",
+    "hubot": "^2.11.0",
     "hubot-greetings": "smashwilson/hubot-greetings",
     "hubot-hammersport": "git+https://github.com/smashwilson/hubot-hammersport.git",
     "hubot-markov": "smashwilson/hubot-markov",
