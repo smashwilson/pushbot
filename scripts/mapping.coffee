@@ -25,7 +25,7 @@ class Mapping
   isLoaded: -> @data?
 
   loaded: (callback) ->
-    if @isLoaded then callback(null) else reloadThen(callback)
+    if @isLoaded() then callback(null) else @reloadThen(callback)
 
   createThen: (callback) ->
     @data = {}
