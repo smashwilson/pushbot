@@ -31,3 +31,7 @@ export HUBOT_GREETINGS_FFA=1
 # hubot-quotefile
 
 export HUBOT_QUOTEFILE_PATH=
+
+# mapping
+
+export HUBOT_MAPPING_DATAROOT=botdata/
