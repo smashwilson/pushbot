@@ -106,7 +106,7 @@ module.exports = (robot) ->
 
     createMapping(mapping) for mapping in ms
 
-  robot.respond /setupmapping\s+(\w+)\s+"([^"])"/, (msg) ->
+  robot.respond /setupmapping\s+(\w+)\s+"([^"]+)"/i, (msg) ->
     return unless checkAuth(msg)
 
     mapping = new Mapping(msg.match[1], msg.match[2])
