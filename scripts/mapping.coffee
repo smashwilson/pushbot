@@ -79,7 +79,7 @@ module.exports = (robot) ->
     unless robot.auth.hasRole(msg.message.user, ADMIN_ROLE)
       msg.reply [
         "You can't do that! You're not a *#{ADMIN_ROLE}*."
-        "Ask an admin to run `#{robot.name} grant #{msg.message.user.name} the #{ADMIN_ROLE}`."
+        "Ask an admin to run `#{robot.name} grant #{msg.message.user.name} the #{ADMIN_ROLE} role`."
       ].join("\n")
       return false
     true
