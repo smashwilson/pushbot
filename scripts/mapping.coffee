@@ -49,7 +49,7 @@ class Mapping
         callback(err)
         return
 
-      callback(null, @data[username] or @missingText)
+      callback(null, @data[username.toLowerCase()] or @missingText)
 
   set: (username, value, callback) ->
     @loaded (err) =>
@@ -57,7 +57,7 @@ class Mapping
         callback(err)
         return
 
-      @data[username] = value
+      @data[username.toLowerCase()] = value
 
       @saveThen callback
 
