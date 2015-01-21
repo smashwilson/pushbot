@@ -85,19 +85,20 @@ module.exports = (robot) ->
     true
 
   createMapping = (mapping) ->
-    robot.respond /#{mapping.name}(?:\s+@?(\S+))?/, (msg) ->
+    robot.respond new RegExp("#{mapping.name}(?:\\s+@?(\\S+))?", 'i'), (msg) ->
       username = msg.match[1] or msg.message.user.name
 
       mapping.get username, (err, value) ->
-        msg.reply "#{username}: #{value}"
+        msg.send "#{username}: #{value}"
 
-    robot.respond /set#{mapping.name}\s+@?(\S+)\s+(.+)/, (msg) ->
+    robot.respond new RegExp("set#{mapping.name}\\s+@?(\\S+)\\s+(.+)", 'i'), (msg) ->
       return unless checkAuth(msg)
 
       username = msg.match[1]
       value = msg.match[2]
 
       mapping.set username, value, (err) ->
+        msg.send "#{username}'s #{mapping.name} has been set to '#{value}'."
 
   # Initial load.
   Mapping.all (err, ms) ->
