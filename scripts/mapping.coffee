@@ -115,3 +115,4 @@ module.exports = (robot) ->
         msg.reply "Couldn't create the mapping: #{err}"
       else
         createMapping(mapping)
+        msg.reply "Mapping created: #{mapping.name}"
