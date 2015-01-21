@@ -69,8 +69,9 @@ class Mapping
 
       ms = []
       for fileName in files
-        if fileName.indexOf('.json', file.length - 5) != -1
+        if fileName.indexOf('.json', fileName.length - 5) isnt -1
           ms.push new Mapping(fileName.substring(0, fileName.length - 5))
+      callback(null, ms)
 
 module.exports = (robot) ->
 
