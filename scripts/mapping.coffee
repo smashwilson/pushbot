@@ -32,7 +32,7 @@ class Mapping
     fs.writeFile @dataPath, JSON.stringify(@data), encoding: 'utf-8', flag: 'wx', callback
 
   reloadThen: (callback) ->
-    fs.readFile @dataPath, encoding: 'utf-8', (err, data) ->
+    fs.readFile @dataPath, encoding: 'utf-8', (err, data) =>
       if err?
         callback(err)
         return
