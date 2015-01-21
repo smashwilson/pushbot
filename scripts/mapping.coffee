@@ -85,12 +85,15 @@ module.exports = (robot) ->
     true
 
   createMapping = (mapping) ->
+
+    robot.commands.push "#{mapping.name} <username> - Look up <username>'s currently assigned #{mapping.name}."
     robot.respond new RegExp("#{mapping.name}(?:\\s+@?(\\S+))?", 'i'), (msg) ->
       username = msg.match[1] or msg.message.user.name
 
       mapping.get username, (err, value) ->
         msg.send "#{username}: #{value}"
 
+    robot.commands.push "set#{mapping.name} <username> multi-word value - Set <username>'s #{mapping.name} to 'multi-word value'."
     robot.respond new RegExp("set#{mapping.name}\\s+@?(\\S+)\\s+(.+)", 'i'), (msg) ->
       return unless checkAuth(msg)
 
