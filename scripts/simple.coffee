@@ -53,6 +53,7 @@ module.exports = (robot) ->
     msg.send atRandom [
       "http://i.imgur.com/Wd9NiaB.jpg"
       "https://slack-files.com/files-tmb/T02D23B7G-F02ECEZEG-3fd432/img_201407206_133131_360.png"
+      "http://media.giphy.com/media/xs6FqhzEdWMZW/giphy.gif#.png"
     ]
 
   robot.respond /magic8/i, (msg) ->
