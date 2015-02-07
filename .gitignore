@@ -3,4 +3,5 @@ node_modules
 .env
 .botrc
 .hubot_history
+.idea
 botdata
