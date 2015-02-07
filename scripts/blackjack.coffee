@@ -92,14 +92,14 @@ class Hand
 class Blackjack
   constructor: (oldgame = {}) ->
     @status = oldgame.status or 'playing'
-    @deck = classifyCards(oldgame.deck) or random_deck()
+    @deck = classifyCards(oldgame.deck) or randomDeck()
     @dealer = classifyHand(oldgame.dealer) or new Hand()
     @player = classifyHand(oldgame.player) or new Hand()
 
   deal: (to, who="", msg=null, amount=1, hide=false) ->
     for i in [1..amount]
       if @deck.length == 0
-        @deck = random_deck()
+        @deck = randomDeck()
         msg?.send "Dealer shuffles a new deck"
       card = @deck.pop()
       card.visible = not hide
@@ -160,14 +160,14 @@ classifyCards = (cards) ->
 
 classifyHand = (hand) ->
   if hand and not hand.isObject
-    return new Hand.fromObject(hand)
+    return Hand.fromObject(hand)
   return hand
 
-full_deck = () ->
+fullDeck = () ->
   _.flatten((new Card(i, suit) for i in [1..13]) for suit in SUITS)
 
-random_deck = () ->
-  _.shuffle(full_deck())
+randomDeck = () ->
+  _.shuffle(fullDeck())
 
 module.exports = (robot) ->
 
@@ -200,7 +200,7 @@ module.exports = (robot) ->
       data.decks[deck_name] = []
     if data.decks[deck_name].length == 0 and repopulate
       mutated = true
-      data.decks[deck_name] = _.shuffle(full_deck())
+      data.decks[deck_name] = _.shuffle(fullDeck())
     # 'mutated' is just to let the calling function know that we
     # created or shuffled an entirely new deck, so it can report
     # back to the user.  That's why even though we might be
@@ -210,7 +210,7 @@ module.exports = (robot) ->
 
   shuffle = (deck_name = "common") ->
     ensureDeck(deck_name)
-    robot.brain.data.decks[deck_name] = _.shuffle(full_deck())
+    robot.brain.data.decks[deck_name] = _.shuffle(fullDeck())
 
   robot.respond /shuffle/i, (msg) ->
     shuffle()
