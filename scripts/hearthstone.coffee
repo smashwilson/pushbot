@@ -2,8 +2,8 @@
 #   Look up information on hearthstone cards
 #
 # Commands:
-#   hspopulate <url> - (re)populate the brain with hearthstone data
-#   hearth <card> - look up card information
+#   hubot hspopulate <url> - (re)populate the brain with hearthstone data
+#   hubot hearth <card> - look up card information
 #
 # Configuration:
 #
