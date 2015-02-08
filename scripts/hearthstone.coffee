@@ -11,11 +11,11 @@
 
 module.exports = (robot) ->
 
-  robot.respond /hspopulate *(.+)/i, (msg) ->
-    url = msg.match[1]
+  robot.respond /hspopulate(?: (.*))?/i, (msg) ->
+    url = msg.match[1] or "http://hearthstonejson.com/json/AllSets.json"
     msg.http(url).get() (err, res, body) ->
       errmsg = "Couldn't download/parse/whatever that"
-      msg.send err
+      msg.send err if err
       try
         json = JSON.parse(body)
         robot.brain.data.hearthstone = {}
