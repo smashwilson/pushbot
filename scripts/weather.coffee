@@ -7,30 +7,8 @@
 #
 # Configuration:
 #
-# HUBOT_WEATHER_LOOKUP - URL to look up the weather
-# HUBOT_LATLON_LOOKUP - URL to look up the lat/long of locations
-
+# HUBOT_WEATHER_APIKEY = forecast.io api key
 module.exports = (robot) ->
-
-  robot.respond /hspopulate(?: (.*))?/i, (msg) ->
-    url = msg.match[1] or "http://hearthstonejson.com/json/AllSets.json"
-    msg.http(url).get() (err, res, body) ->
-      errmsg = "Couldn't download/parse/whatever that"
-      msg.send err if err
-      try
-        json = JSON.parse(body)
-        robot.brain.data.hearthstone = {}
-        for set of json
-          for card in json[set]
-            # Debug cards have IDs that start with XXX
-            # Not the much anticipated pornographic expansion, alas
-            if card.id[0..3] != "XXX_"
-              robot.brain.data.hearthstone[card.name.toLowerCase()] = card
-        msg.send "Hearthstone population complete"
-      catch error
-        msg.send errmsg
-        msg.send error
-        return
 
   robot.respond /weather *(.+)/i, (msg) ->
     location = msg.match[1]
