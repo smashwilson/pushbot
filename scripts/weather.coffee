@@ -43,7 +43,6 @@ module.exports = (robot) ->
         json = JSON.parse(body)
         lat = json.results[0].geometry.location.lat
         lng = json.results[0].geometry.location.lng
-        msg.send "#{lat} #{lng}"
       catch error
         msg.send "Error parsing location"
         msg.send error
@@ -54,8 +53,6 @@ module.exports = (robot) ->
       msg.http(forecasturl).get() (err, res, body) ->
         msg.send err if err
         json = JSON.parse(body)
-        msg.send "#{json.currently.time}"
-        for r in json
-          msg.send "#{r}"
+        msg.send "#{json.currently.summary}, #{json.currently.temperature}°F, feels like #{json.currently.apparentTemperature}°F"
       
       
