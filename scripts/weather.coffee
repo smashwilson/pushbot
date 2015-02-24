@@ -28,7 +28,6 @@ module.exports = (robot) ->
         lng = 0
       apikey = process.env.HUBOT_WEATHER_APIKEY
       forecasturl = "https://api.forecast.io/forecast/#{apikey}/#{lat},#{lng}"
-      msg.send "#{forecasturl}"
       msg.http(forecasturl).get() (err, res, body) ->
         msg.send err if err
         json = JSON.parse(body)
