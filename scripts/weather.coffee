@@ -12,10 +12,8 @@ module.exports = (robot) ->
 
   robot.respond /weather *(.+)/i, (msg) ->
     location = msg.match[1]
-    q = address: '#{location}'
     url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{location}"
     msg.http(url).get() (err, res, body) ->
-      errmsg = "Couldn't download/parse/whatever that"
       msg.send err if err
       try
         json = JSON.parse(body)
