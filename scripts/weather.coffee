@@ -35,8 +35,8 @@ module.exports = (robot) ->
   robot.respond /weather *(.+)/i, (msg) ->
     location = msg.match[1]
     q = address: '#{location}'
-    url = "https://maps.googleapis.com/maps/api/geocode/json?address="
-    msg.http(url).query(q).get() (err, res, body) ->
+    url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{location}"
+    msg.http(url).get() (err, res, body) ->
       errmsg = "Couldn't download/parse/whatever that"
       msg.send err if err
       try
@@ -50,6 +50,7 @@ module.exports = (robot) ->
         lng = 0
       apikey = process.env.HUBOT_WEATHER_APIKEY
       forecasturl = "https://api.forecast.io/forecast/#{apikey}/#{lat},#{lng}"
+      msg.send "#{forecasturl}"
       msg.http(forecasturl).get() (err, res, body) ->
         msg.send err if err
         json = JSON.parse(body)
