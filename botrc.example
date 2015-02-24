@@ -35,3 +35,7 @@ export HUBOT_QUOTEFILE_PATH=
 # mapping
 
 export HUBOT_MAPPING_DATAROOT=botdata/
+
+# weather
+
+export HUBOT_WEATHER_APIKEY=
