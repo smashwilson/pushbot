@@ -1,10 +1,13 @@
-# Hubot
+# PushBot
 
-This is a version of GitHub's Campfire bot, hubot. He's pretty cool.
+This is a version of GitHub's chat bot, [Hubot](https://hubot.github.com/). We use to do silly things in our Slack chat.
 
-This version is designed to be deployed on [Heroku][heroku]. This README was generated for you by hubot to help get you started. Definitely update and improve to talk about your own instance, how to use and deploy, what functionality he has, etc!
+### Getting started
 
-[heroku]: http://www.heroku.com
+If you want to run PushBot, you'll need a few things on your system:
+
+ * [node.js](http://nodejs.org/) and `npm`, the server-side JavaScript runtime. You can grab the tarballs from there or follow [Joyent's other installation instructions](https://www.joyent.com/blog/installing-node-and-npm). Personally, I use [nvm](https://github.com/creationix/nvm), which is installed by my [dotfiles](https://github.com/smashwilson/dotfiles/blob/master/script/ansible/reusable/nvm.yml).
+ * [Redis](http://redis.io/), a key-value store that's used for persistent storage. You should have a package for this for your operating system.
 
 ### Testing Hubot Locally
 
@@ -29,6 +32,9 @@ Then you can interact with hubot by typing `hubot help`.
     help - Displays all of the help commands that Hubot knows about.
     ...
 
+### References
+
+---
 
 ### Scripting
 
@@ -139,7 +145,7 @@ UI.
     % heroku config:add HUBOT_CAMPFIRE_TOKEN="..."
 
 Get the numeric IDs of the rooms you want the bot to join, comma delimited. If
-you want the bot to connect to `https://mysubdomain.campfirenow.com/room/42` 
+you want the bot to connect to `https://mysubdomain.campfirenow.com/room/42`
 and `https://mysubdomain.campfirenow.com/room/1024` then you'd add it like this:
 
     % heroku config:add HUBOT_CAMPFIRE_ROOMS="42,1024"
