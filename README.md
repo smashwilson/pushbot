@@ -1,6 +1,6 @@
 # PushBot
 
-This is a version of GitHub's chat bot, [Hubot](https://hubot.github.com/). We use to do silly things in our Slack chat.
+This is a version of GitHub's chat bot, [Hubot](https://hubot.github.com/). We use it to do silly things in our Slack chat.
 
 ### Getting started
 
