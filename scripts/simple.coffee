@@ -47,6 +47,12 @@ module.exports = (robot) ->
       "http://gifsec.com/wp-content/uploads/GIF/2014/04/GIF-Baby-high-five-cat.gif"
       "http://www.survivingcollege.com/wp-content/uploads/2014/04/stephen-colbert-high-five-gif.gif"
       "http://giphy.com/gifs/just-hooray-PCBJRuJbMYzLi#.gif"
+      "http://media.giphy.com/media/dLuI7v4QXx5SM/giphy.gif"
+      "http://giphy.com/gifs/cheezburger-high-five-tutle-2FazevvcDdyrf1E7C#.gif"
+      "http://media3.giphy.com/media/HzSK6zrsNl3UY/giphy.gif"
+      "http://media.giphy.com/media/ujGfBmVppmgEg/giphy.gif"
+      "http://media2.giphy.com/media/fm4WhPMzu9hRK/giphy.gif"
+      "http://media.giphy.com/media/VuwYcvElLOnuw/giphy.gif"
     ]
 
   robot.respond /zing/i, (msg) ->
