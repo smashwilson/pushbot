@@ -168,12 +168,12 @@ module.exports = (robot) ->
     ]
 
   robot.respond /\w+hose(?: (@?\w+))?/i, (msg) ->
-    msg.send "_doof_ _doof_ _doof_"
+    msg.send "_doof doof doof_"
 
     prefix = "#{msg.match[1]}: " if msg.match[1]?
     prefix ?= ''
 
-    fn = -> msg.send "#{prefix}_splat_ _splat_ _splat_"
+    fn = -> msg.send "#{prefix}_splat splat splat_"
     setTimeout fn, _.random(3000, 5000)
 
   robot.respond /welcome(?: +(@?\w+))?/i, (msg) ->
