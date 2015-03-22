@@ -5,5 +5,7 @@ pushbot:
   build: .
   links:
   - redis
+  volumes:
+  - "botdata/:/usr/src/app/botdata/"
   environment:
     REDIS_URL: redis://redis/
