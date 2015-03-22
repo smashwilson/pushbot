@@ -1,0 +1,9 @@
+---
+redis:
+  image: redis
+pushbot:
+  build: .
+  links:
+  - redis
+  environment:
+    REDIS_URL: redis://redis/
