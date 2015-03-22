@@ -8,4 +8,4 @@ pushbot:
   volumes:
   - "botdata/:/usr/src/app/botdata/"
   environment:
-    REDIS_URL: redis://redis/
+    REDISTOGO_URL: redis://redis/
