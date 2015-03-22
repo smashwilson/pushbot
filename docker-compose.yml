@@ -1,0 +1,11 @@
+---
+redis:
+  image: redis
+pushbot:
+  build: .
+  links:
+  - redis
+  volumes:
+  - "botdata/:/usr/src/app/botdata/"
+  environment:
+    REDISTOGO_URL: redis://redis/
