@@ -98,6 +98,9 @@ module.exports = (robot) ->
     chance = _.random 100
     msg.reply(if chance < 80 then "HARSH" else "Lenient.")
 
+  robot.respond /win/i, (msg) ->
+    msg.reply "You win!"
+
   robot.respond /barf *(.*)/i, (msg) ->
     if not msg.match[1]
       text = "barf"
