@@ -28,6 +28,8 @@
 # Author:
 #   alexwilliamsca, tombell
 
+_ = require 'underscore'
+
 module.exports = (robot) ->
 
   unless process.env.HUBOT_AUTH_ADMIN?
@@ -102,6 +104,8 @@ module.exports = (robot) ->
 
     if user.id.toString() in admins
       displayRoles.push('admin')
+
+    user.roles = displayRoles = _.uniq(displayRoles)
 
     if displayRoles.length == 0
       msg.reply "#{name} has no roles."
