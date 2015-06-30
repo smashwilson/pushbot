@@ -53,6 +53,7 @@ module.exports = (robot) ->
       "http://media.giphy.com/media/ujGfBmVppmgEg/giphy.gif"
       "http://media2.giphy.com/media/fm4WhPMzu9hRK/giphy.gif"
       "http://media.giphy.com/media/VuwYcvElLOnuw/giphy.gif"
+      "http://i.imgur.com/KZEsyv0.gif"
     ]
 
   robot.respond /zing/i, (msg) ->
