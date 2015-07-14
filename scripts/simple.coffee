@@ -138,9 +138,6 @@ module.exports = (robot) ->
         , 1000
     sendThenWait lines.shift(), lines
 
-  robot.hear /none|non-/i, (msg) ->
-    msg.send "more like \"#{msg.message.text.replace(/none/ig, 'NAAN').replace(/non-/ig, 'NAAN-')}\"!"
-
   robot.respond /(?:harm|betray)(?: (\S+))?/i, (msg) ->
     if msg.message.user.id in betrayImmune
       backfire = false
