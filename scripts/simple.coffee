@@ -11,6 +11,7 @@
 #   hubot betray <someone> - Curse your sudden but inevitable betrayal!
 #   hubot burritohose <someone> - Doof. Doof. Doof. Splat. Splat. Splat.
 #   hubot welcome <someone> - Welcome a newcomer to the channel.
+#   hubot poker - A very involved game of skill and chance.
 #
 # Configuration:
 #
@@ -183,3 +184,7 @@ module.exports = (robot) ->
       Welcome to #~s#{target}! Here's a quick intro to Slack and me:
       https://gist.github.com/smashwilson/325d444e7a080906f8b9
       """
+
+  robot.respond /poker.*/i, (msg) ->
+    msg.send "I barely know her!"
+
