@@ -9,6 +9,7 @@
   "hubot-rules",
   "hubot-shipit",
   "hubot-auth",
+  "hubot-dice",
   "hubot-markov",
   "hubot-quotefile",
   "hubot-hammersport"
