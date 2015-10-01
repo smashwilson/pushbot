@@ -6,6 +6,7 @@
   "description": "Here to protect you from the terrible secret of space",
   "dependencies": {
     "hubot": "^2.16.0",
+    "hubot-auth": "^1.2.0",
     "hubot-diagnostics": "0.0.1",
     "hubot-google-images": "^0.2.2",
     "hubot-google-translate": "^0.2.0",

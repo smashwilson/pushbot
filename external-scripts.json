@@ -8,6 +8,7 @@
   "hubot-redis-brain",
   "hubot-rules",
   "hubot-shipit",
+  "hubot-auth",
   "hubot-markov",
   "hubot-quotefile",
   "hubot-hammersport"
