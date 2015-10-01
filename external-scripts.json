@@ -10,6 +10,7 @@
   "hubot-shipit",
   "hubot-auth",
   "hubot-dice",
+  "hubot-table-flip",
   "hubot-markov",
   "hubot-quotefile",
   "hubot-hammersport"
