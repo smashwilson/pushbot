@@ -1,4 +1,4 @@
-FROM node:0.12.0-slim
+FROM node:4.1.1-slim
 MAINTAINER Ash Wilson <smashwilson@gmail.com>
 
 RUN apt-get update && apt-get install -y git
