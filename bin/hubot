@@ -6,4 +6,4 @@ export HUBOT_DEBUG=1
 DIR=`dirname $0`/..
 
 source ${DIR}/.botrc
-exec node_modules/.bin/hubot "$@"
+exec node_modules/.bin/hubot --name pushbot "$@"

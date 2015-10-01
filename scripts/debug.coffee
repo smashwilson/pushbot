@@ -1,5 +1,5 @@
 # Description:
-#   Simple "pick one of these random responses"-style commands.
+#   Diagnostic commands.
 #
 # Commands:
 #   hubot debug_user <username> - dump everything from someone's user object.

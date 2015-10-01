@@ -1,17 +1,5 @@
 # Rename this to .botrc and fill in missing values to get started.
 
-# IRC adapter
-
-export HUBOT_IRC_SERVER=irc.dalnet.com
-export HUBOT_IRC_ROOMS="#~s"
-export HUBOT_IRC_NICK=PushBot
-export HUBOT_IRC_UNFLOOD=1
-
-# GTalk adapter
-
-export HUBOT_GTALK_USERNAME=heretoprotectus@gmail.com
-export HUBOT_GTALK_PASSWORD=
-
 # Slack adapter
 
 export HUBOT_SLACK_TOKEN=
@@ -24,13 +12,9 @@ export HUBOT_SLACK_LINK_NAMES=1
 export HUBOT_MARKOV_LEARN_MIN=2
 export HUBOT_MARKOV_GENERATE_MAX=100
 
-# hubot-greetings
-
-export HUBOT_GREETINGS_FFA=1
-
 # hubot-quotefile
 
-export HUBOT_QUOTEFILE_PATH=
+export HUBOT_QUOTEFILE_PATH=botdata/quotes.txt
 
 # mapping
 
@@ -39,3 +23,7 @@ export HUBOT_MAPPING_DATAROOT=botdata/
 # weather
 
 export HUBOT_WEATHER_APIKEY=
+
+# lims
+
+export HUBOT_LISTS_ROOT=botdata/

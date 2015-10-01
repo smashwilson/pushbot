@@ -6,6 +6,6 @@ pushbot:
   links:
   - redis
   volumes:
-  - "botdata/:/usr/src/app/botdata/"
+  - ".:/usr/src/app/"
   environment:
     REDISTOGO_URL: redis://redis/
