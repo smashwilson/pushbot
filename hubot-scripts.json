@@ -1,11 +1,1 @@
-[
-  "redis-brain.coffee",
-  "shipit.coffee",
-  "cowsay.coffee",
-  "decide.coffee",
-  "flip.coffee",
-  "hashing.coffee",
-  "uptime.coffee",
-  "update.coffee",
-  "dice.coffee"
-]
+[]

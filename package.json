@@ -1,40 +1,30 @@
 {
-  "name": "hosted-hubot",
-  "version": "2.7.1",
-  "author": "GitHub Inc.",
-  "keywords": [
-    "github",
-    "hubot",
-    "campfire",
-    "bot"
-  ],
-  "description": "A simple helpful robot for your Company",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/github/hubot/raw/master/LICENSE"
-    }
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/github/hubot.git"
-  },
+  "name": "pushbot",
+  "version": "0.0.0",
+  "private": true,
+  "author": "Ash Wilson <smashwilson@gmail.com>",
+  "description": "Here to protect you from the terrible secret of space",
   "dependencies": {
-    "flip": "~0.1.0",
-    "hubot": "^2.11.0",
-    "hubot-hammersport": "git+https://github.com/smashwilson/hubot-hammersport.git",
-    "hubot-markov": "smashwilson/hubot-markov",
-    "hubot-quotefile": "git+https://github.com/smashwilson/hubot-quotefile.git",
-    "hubot-scripts": ">= 2.5.0 < 3.0.0",
-    "hubot-slack": "^3.2.1",
-    "jsdom": "0.2.15",
-    "moment": "^2.7.0",
-    "request": "~2.27.0",
-    "twit": "1.1.8",
-    "underscore": "1.5.1"
+    "hubot": "^2.16.0",
+    "hubot-diagnostics": "0.0.1",
+    "hubot-google-images": "^0.2.2",
+    "hubot-google-translate": "^0.2.0",
+    "hubot-help": "^0.1.1",
+    "hubot-heroku-keepalive": "^1.0.0",
+    "hubot-maps": "0.0.2",
+    "hubot-pugme": "^0.1.0",
+    "hubot-redis-brain": "0.0.3",
+    "hubot-rules": "^0.1.1",
+    "hubot-scripts": "^2.16.2",
+    "hubot-shipit": "^0.2.0",
+    "hubot-slack": "^3.3.0",
+    "jsdom": "^6.5.1",
+    "moment": "^2.10.6",
+    "request": "^2.64.0",
+    "twit": "^2.1.0",
+    "underscore": "^1.8.3"
   },
   "engines": {
-    "node": ">= 0.8.x",
-    "npm": ">= 1.1.x"
+    "node": "0.10.x"
   }
 }
