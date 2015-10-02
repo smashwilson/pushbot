@@ -4,6 +4,8 @@
 # Commands:
 #   hubot decide "<option 1>" "<option 2>" "<option 3>" - Use complex algorithms and advanced AI to give sage advice
 
+_ = require 'underscore'
+
 parseOptions = (str) ->
   results = []
 
@@ -42,7 +44,7 @@ parseOptions = (str) ->
   # Complete the final option.
   results.push currentOption
 
-  results
+  _.without results, ""
 
 module.exports = (robot) ->
 
