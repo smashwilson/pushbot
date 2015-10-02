@@ -50,4 +50,16 @@ module.exports = (robot) ->
 
   robot.respond /(?:decide|choose)(.*)/, (msg) ->
     options = parseOptions(msg.match[1])
-    msg.reply "options = [#{options.join '|'}]"
+    choice = msg.random options
+
+    msg.reply msg.random [
+      "Definitely #{choice}."
+      "Absolutely #{choice}."
+      "No question: #{choice}."
+      "#{choice}, no doubt about it."
+      "#{choice}, I guess."
+      "#{choice} all the way."
+      "Those are all terrible, but if you _have_ to pick one, go with #{choice}."
+      "All good options, but if you must... go with #{choice}."
+      "#{choice}! Now! Faster! THERE'S NO TIME!"
+    ]
