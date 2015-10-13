@@ -38,7 +38,9 @@ module.exports = (robot) ->
 
             if changes
               msg.send ":hocho: :skull:"
-              process.exit(0)
+              setTimeout ->
+                process.exit(0)
+              , 1000
             else
               msg.send "Everything's already up to date. :sparkles:"
         catch err
