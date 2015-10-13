@@ -72,6 +72,11 @@ module.exports = (robot) ->
       "SO IT HAS BEEN FORETOLD"
       "Yes, sure. Why not."
       "The stars say... YES."
+      "Just this once."
+      "Confirm."
+      "100%"
+      "It is established fact."
+      "We're doing this, we're making this happen!"
     ]
 
     negative = [
@@ -81,11 +86,22 @@ module.exports = (robot) ->
       "http://media.giphy.com/media/d0QLPgh4VGiA0/giphy.gif"
       "http://media.giphy.com/media/DGiZfWmc0HWms/giphy.gif"
       "The stars say... NO."
+      "Curl up and die."
+      "I slept with your mother!"
+      "When pigs fly!"
+      "0%"
+      "I will explode in your face."
     ]
 
     neutral = [
-      "I slept with your spouse."
-      "Curl up and die."
+      "Maybe"
+      "Perhaps"
+      "It could happen"
+      "Can't really say"
+      "My own 8-ball is broken"
+      "50%"
+      "That's what SHE asked!"
+      "As sure as my name is.... wait, who am I?"
       "The stars say... MAYBE."
       "http://i.imgur.com/rl2o77j.jpg"
     ]
