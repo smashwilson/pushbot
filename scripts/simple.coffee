@@ -12,6 +12,7 @@
 #   hubot burritohose <someone> - Doof. Doof. Doof. Splat. Splat. Splat.
 #   hubot welcome <someone> - Welcome a newcomer to the channel.
 #   hubot poker - A very involved game of skill and chance.
+#   hubot sin - return a sin, courtesy of Jack Chick
 #
 # Configuration:
 #
@@ -188,3 +189,30 @@ module.exports = (robot) ->
   robot.respond /poker.*/i, (msg) ->
     msg.send "I barely know her!"
 
+  robot.respond /sin/i, (msg) ->
+    msg.send atRandom [
+      "Murder"
+      "Having an affair"
+      "Witchcraft"
+      "Pride"
+      "Hate"
+      "Homosexuality"
+      "Wanting something that belongs to someone else!"
+      "Envy"
+      "Stubbornness"
+      "Cheating"
+      "Unbelief"
+      "Filthy talk"
+      "Incest"
+      "Shacking"
+      "Swearing"
+      "Stealing"
+      "Worshipping false gods"
+      "Drunkenness"
+      "Playing with the occult"
+      "Hating parents"
+      "Lying"
+      "Lust"
+      "Ignoring God"
+      "Selfishness"
+    ]
