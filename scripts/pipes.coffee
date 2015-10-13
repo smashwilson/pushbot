@@ -17,6 +17,7 @@ module.exports = (robot) ->
       "Matter-of-factly"
       "Annoyed"
       "Badassfully"
+      "Euphemistically"
     ]
 
     output = []
