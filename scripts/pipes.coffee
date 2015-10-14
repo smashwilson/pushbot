@@ -10,12 +10,15 @@ module.exports = (robot) ->
   EMOTIONS = [
     "Aghast"
     "Airing of grievance"
+    "Angry"
+    "Annoyed"
     "Antagonistic"
     "Apathetically"
     "Argumentitavely"
     "Badassfully"
     "Badgering"
     "Barely suppressed rage"
+    "Contritely"
     "Coy aside"
     "Deep regret"
     "Diplomatically"
@@ -24,7 +27,8 @@ module.exports = (robot) ->
     "Disinterest"
     "Embarassment"
     "Ennui"
-    "Enthusiasm"
+    "Enthusiastically"
+    "Euphemistically"
     "Existential Angst"
     "Exploding with bees"
     "Feigned interest"
@@ -38,6 +42,7 @@ module.exports = (robot) ->
     "Instant sexual attraction"
     "Irritated"
     "Lustfully"
+    "Matter-of-factly"
     "Non sequitur"
     "Obvious insincerity"
     "Overly interested"
@@ -48,7 +53,7 @@ module.exports = (robot) ->
     "Rehearsed speech"
     "Revolted"
     "Rhetorically"
-    "Sarcasm"
+    "Sarcastically"
     "Sign language"
     "Sincerely"
     "Understatement"
@@ -57,17 +62,7 @@ module.exports = (robot) ->
   ]
 
   robot.respond /elcor\s*([^]*)/i, (msg) ->
-    adjectives = [
-      "Enthusiastically"
-      "Sarcastically"
-      "Insincerely"
-      "Contritely"
-      "Angry"
-      "Matter-of-factly"
-      "Annoyed"
-      "Badassfully"
-      "Euphemistically"
-    ]
+    adjectives = EMOTIONS
 
     output = []
     for line in msg.match[1].split(/\n/)
@@ -88,6 +83,8 @@ module.exports = (robot) ->
       "Expletive"
       "Judgement"
     ]
+    
+    adjectives.push EMOTIONS...
 
     output = []
     for line in msg.match[1].split(/\n/)
