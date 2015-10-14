@@ -6,19 +6,63 @@
 #   hubot hk47 - Query: why don't you try it and find out, meatbag?
 
 module.exports = (robot) ->
+  
+  EMOTIONS = [
+    "Aghast"
+    "Airing of grievance"
+    "Angry"
+    "Annoyed"
+    "Antagonistic"
+    "Apathetically"
+    "Argumentitavely"
+    "Badassfully"
+    "Badgering"
+    "Barely suppressed rage"
+    "Contritely"
+    "Coy aside"
+    "Deep regret"
+    "Diplomatically"
+    "Derisively"
+    "Disgust"
+    "Disinterest"
+    "Embarassment"
+    "Ennui"
+    "Enthusiastically"
+    "Euphemistically"
+    "Existential Angst"
+    "Exploding with bees"
+    "Feigned interest"
+    "Grudging respect"
+    "Guiltily"
+    "Hastily"
+    "Hungrily"
+    "Inebriated"
+    "Innuendo"
+    "Insincerely"
+    "Instant sexual attraction"
+    "Irritated"
+    "Lustfully"
+    "Matter-of-factly"
+    "Non sequitur"
+    "Obvious insincerity"
+    "Overly interested"
+    "Overstatement"
+    "Poorly concealed lie"
+    "Poorly thought out"
+    "Puzzled"
+    "Rehearsed speech"
+    "Revolted"
+    "Rhetorically"
+    "Sarcastically"
+    "Sign language"
+    "Sincerely"
+    "Understatement"
+    "Underwhelmed"
+    "Utter sincerity"
+  ]
 
   robot.respond /elcor\s*([^]*)/i, (msg) ->
-    adjectives = [
-      "Enthusiastically"
-      "Sarcastically"
-      "Insincerely"
-      "Contritely"
-      "Angry"
-      "Matter-of-factly"
-      "Annoyed"
-      "Badassfully"
-      "Euphemistically"
-    ]
+    adjectives = EMOTIONS
 
     output = []
     for line in msg.match[1].split(/\n/)
@@ -39,6 +83,8 @@ module.exports = (robot) ->
       "Expletive"
       "Judgement"
     ]
+    
+    adjectives.push EMOTIONS...
 
     output = []
     for line in msg.match[1].split(/\n/)
