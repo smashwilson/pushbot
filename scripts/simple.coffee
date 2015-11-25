@@ -92,6 +92,7 @@ module.exports = (robot) ->
       "When pigs fly!"
       "0%"
       "I will explode in your face."
+      "The frustration with this stool is enormous. Terrible, just terrible."
     ]
 
     neutral = [
