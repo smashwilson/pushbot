@@ -19,7 +19,7 @@
     "hubot-pipe": "0.0.4",
     "hubot-pipe-scripts": "0.0.1",
     "hubot-pugme": "^0.1.0",
-    "hubot-quotefile": "^1.0.0",
+    "hubot-quotefile": "git://github.com/smashwilson/hubot-quotefile.git",
     "hubot-redis-brain": "0.0.3",
     "hubot-rules": "^0.1.1",
     "hubot-scripts": "^2.16.2",
