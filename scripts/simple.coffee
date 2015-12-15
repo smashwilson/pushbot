@@ -13,6 +13,7 @@
 #   hubot welcome <someone> - Welcome a newcomer to the channel.
 #   hubot poker - A very involved game of skill and chance.
 #   hubot sin - return a sin, courtesy of Jack Chick
+#   hubot pokemonsay <string> - Translate string into Pokemon Unown Slack emojis.
 #
 # Configuration:
 #
@@ -233,3 +234,17 @@ module.exports = (robot) ->
       "Ignoring God"
       "Selfishness"
     ]
+
+  robot.respond /pokemonsay (.*)/, (msg) ->
+    unownify = (c) ->
+      if c in "abcdefghijklmnopqrstuvwxyz"
+        ":unown-#{c}:"
+      else if c in "!"
+        ":unown-ex:"
+      else if c in "?"
+        ":unown-qu:"
+      else
+        c
+    lower_string = msg.match[1].toLowerCase()
+    unown_string = lower_string.split('').map(unownify).join('')
+    msg.send unown_string
