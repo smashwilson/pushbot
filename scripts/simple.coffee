@@ -235,7 +235,7 @@ module.exports = (robot) ->
       "Selfishness"
     ]
 
-  robot.respond /pokemonsay (.*)/, (msg) ->
+  robot.respond /pokemonsay ([^]*)/i, (msg) ->
     unownify = (c) ->
       if c in "abcdefghijklmnopqrstuvwxyz"
         ":unown-#{c}:"
