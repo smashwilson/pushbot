@@ -6,6 +6,7 @@
 #   hubot define <word> - Look up a word on Merriam-Webster's online dictionary.
 
 cheerio = require 'cheerio'
+request = require 'request'
 
 scrub = (txt) ->
   txt = txt.replace /^[ \t\n]+/, ''
@@ -14,10 +15,10 @@ scrub = (txt) ->
 
 module.exports = (robot) ->
 
-  robot.respond /define +(\w+)/i, (res) ->
+  robot.respond /define +([^]+)/i, (res) ->
     term = encodeURIComponent(res.match[1])
 
-    robot.http("http://www.merriam-webster.com/dictionary/" + term).get() (err, resp, body) ->
+    request "http://www.merriam-webster.com/dictionary/" + term, (err, resp, body) ->
       if err
         res.send "THE INTERNET IS BROKEN file a ticket #{err}"
         return
@@ -33,10 +34,13 @@ module.exports = (robot) ->
           txt = scrub $(element).text()
           res.send "> #{txt}"
 
-  robot.respond /urbandefine +(\w+)/i, (res) ->
-    term = encodeURIComponent(res.match[1])
+  robot.respond /urbandefine +([^]+)/i, (res) ->
+    opts =
+      url: "http://www.urbandictionary.com/define.php"
+      qs:
+        term: res.match[1]
 
-    robot.http("http://www.urbandictionary.com/define.php?term=" + term).get() (err, resp, body) ->
+    request opts, (err, resp, body) ->
       if err
         res.send "THE INTERNET IS BROKEN file a ticket #{err}"
         return
