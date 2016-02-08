@@ -15,5 +15,6 @@
   "hubot-quotefile",
   "hubot-hammersport",
   "hubot-pipe",
-  "hubot-pipe-scripts"
+  "hubot-pipe-scripts",
+  "hubot-plusplus"
 ]

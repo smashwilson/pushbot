@@ -19,6 +19,7 @@
     "hubot-markov": "^1.4.0",
     "hubot-pipe": "0.0.4",
     "hubot-pipe-scripts": "0.0.1",
+    "hubot-plusplus": "^1.2.3",
     "hubot-pugme": "^0.1.0",
     "hubot-quotefile": "^2.0.0",
     "hubot-redis-brain": "0.0.3",
