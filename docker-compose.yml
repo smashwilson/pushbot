@@ -1,11 +1,22 @@
----
-redis:
-  image: redis
-pushbot:
-  build: .
-  links:
-  - redis
-  volumes:
-  - ".:/usr/src/app/"
-  environment:
-    REDISTOGO_URL: redis://redis/
+version: '2'
+services:
+  redis:
+    image: redis
+  pushbot:
+    build: .
+    volumes:
+    - ".:/usr/src/app/"
+    environment:
+      REDISTOGO_URL: redis://redis/
+      HUBOT_SLACK_TOKEN:
+      HUBOT_SLACK_TEAM:
+      HUBOT_SLACK_BOTNAME:
+      HUBOT_SLACK_LINK_NAMES:
+      HUBOT_MARKOV_LEARN_MIN:
+      HUBOT_MARKOV_GENERATE_MAX:
+      HUBOT_QUOTEFILE_PATH:
+      HUBOT_MAPPING_DATAROOT:
+      HUBOT_WEATHER_APIKEY:
+      HUBOT_LISTS_ROOT:
+    depends_on:
+    - redis
