@@ -1,11 +1,12 @@
----
-redis:
-  image: redis
-pushbot:
-  build: .
-  links:
-  - redis
-  volumes:
-  - ".:/usr/src/app/"
-  environment:
-    REDISTOGO_URL: redis://redis/
+version: '2'
+services:
+  redis:
+    image: redis
+  pushbot:
+    build: .
+    volumes:
+    - ".:/usr/src/app/"
+    environment:
+      REDISTOGO_URL: redis://redis/
+    depends_on:
+    - redis
