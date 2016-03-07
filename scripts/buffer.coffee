@@ -221,8 +221,34 @@ module.exports = (robot) ->
     Cache.forRoom(msg.message.room).append(msg)
 
   robot.respond /buffer\s+help/i, (msg) ->
-    msg.reply "The \"buffer\" commands allow you to stage and manipulate lines of text taken from
-    the history of a channel before using them with a different command."
+    if msg.message.rawMessage?.getChannelType() isnt "DM"
+      msg.reply "It's a lot of text. Ask me in a DM!"
+      return
+
+    msg.send "The \"buffer\" commands allow you to stage and manipulate lines of text, often taken
+      from the history of a channel, to prepare them for use as input to a different command.
+      Everyone has their own buffer.\n
+      \n
+      To add content to your buffer, specify one or more _patterns_ or _ranges of patterns_:\n
+      \n
+      `buffer add \"foo\"` adds the most recently uttered line of text in the current room
+      that contains the exact string \"foo\".\n
+      `buffer add /hooray/` adds the most recently uttered line of text in the current room
+      that matches the regular expression /hooray/.\n
+      `buffer add /start/ ... /finish/` adds all of the lines of text between the ones that match
+      the patterns /start/ and /finish/, inclusively.\n
+      `buffer add #codecodecode \"foo\" ... \"bar\"` adds all lines between the ones that contain
+      \"foo\" and \"bar\" in the room #codecodecode, wherever it's run.\n
+      `buffer add \"aaa\" \"bbb\" \"ccc\" ... \"ddd\"` adds the line that contains \"aaa\", the line
+      that contains \"bbb\", and all of the lines between the ones that contain \"ccc\" and \"ddd\".\n
+      `buffer addraw [9:33 PM 6 Mar 2016] smashwilson: eh I guess this'll do` will manually add a
+      line of text to the buffer as-is, skipping the cache.\n
+      \n
+      Once you have lines within your buffer, you can use other buffer commands to `add` more lines,
+      `remove` or `replace` any existing lines by index, or `clear` it entirely and start over from
+      scratch. `buffer show` will always tell you what your current buffer state is, including the
+      index of each line.
+      "
 
   robot.respond /buffer\s+add (#\S+)?([^]*)/i, (msg) ->
     room = msg.match[1] or msg.message.room
