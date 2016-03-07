@@ -200,6 +200,10 @@ module.exports = (robot) ->
     else
       "`#{robot.name} buffer help`"
 
+  showIfDirect = (msg, buffer) ->
+    if msg.message.rawMessage?.getChannelType() is "DM"
+      msg.send buffer.show()
+
   plural = (name, array) ->
     s = if array.length isnt 1 then "s" else ""
     "#{array.length} #{name}#{s}"
@@ -244,6 +248,7 @@ module.exports = (robot) ->
 
       buffer.append lines
       msg.reply "Added #{plural 'line', lines} to your buffer."
+      showIfDirect msg, buffer
     catch e
       console.error e.stack
       msg.reply ":no_entry_sign: #{e.message}\n
@@ -256,6 +261,7 @@ module.exports = (robot) ->
     UserBuffer.forUser(msg.message.user.name).append(lines)
 
     msg.reply "Added #{plural 'line', lines} to your buffer."
+    showIfDirect msg, buffer
 
   robot.respond /buffer\s+remove\s*([\d\s\r\n]+)/i, (msg) ->
     buffer = UserBuffer.forUser(msg.message.user.name)
@@ -269,6 +275,7 @@ module.exports = (robot) ->
     buffer.remove(i) for i in indices
 
     msg.reply "Removed #{indices.length} buffer entr#{if indices.length is 1 then "y" else "ies"}."
+    showIfDirect msg, buffer
 
   robot.respond /buffer\s+replace\s*(\d+)\s*([^]+)/i, (msg) ->
     buffer = UserBuffer.forUser(msg.message.user.name)
@@ -283,6 +290,7 @@ module.exports = (robot) ->
 
     buffer.replace(index, lines)
     msg.reply "Replaced buffer entry #{index} with #{plural 'line', lines}."
+    showIfDirect msg, buffer
 
   robot.respond /buffer\s+show/i, (msg) ->
     msg.send UserBuffer.forUser(msg.message.user.name).show()
