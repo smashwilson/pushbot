@@ -29,7 +29,7 @@ class Cache
     @lines.unshift ls...
     @lines = @lines.slice(0, MAX_CACHE_SIZE)
 
-  mostRecentMatch: (pattern) -> @lines.find (line) -> pattern.match(line)
+  mostRecentMatch: (pattern) -> @lines.find (line) -> pattern.matches(line)
 
   between: (startPattern, endPattern) ->
     results = []
@@ -37,17 +37,20 @@ class Cache
     for line in @lines
       if inMatch
         results.push line
-        if endPattern.matches(line)
+        if startPattern.matches(line)
           inMatch = false
           break
         continue
 
-      if startPattern.matches(line)
+      if endPattern.matches(line)
         results.push line
         inMatch = true
         continue
 
+    results.reverse()
     results
+
+  earliest: -> @lines.slice(-1)[0]
 
 class Line
   constructor: (@timestamp, @speaker, @text) ->
@@ -61,7 +64,7 @@ class ExactPattern
 
   matches: (line) -> line.text.indexOf(@source) isnt -1
 
-  matchesIn: (cache) -> cache.mostRecentMatch(this)
+  matchesIn: (cache) -> [cache.mostRecentMatch(this)]
 
   canBeEndpoint: -> true
 
@@ -75,7 +78,7 @@ class RegexpPattern
 
   matches: (line) -> @rx.test line.text
 
-  matchesIn: (cache) -> cache.mostRecentMatch(this)
+  matchesIn: (cache) -> [cache.mostRecentMatch(this)]
 
   canBeEndpoint: -> true
 
