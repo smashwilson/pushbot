@@ -183,6 +183,10 @@ module.exports = (robot) ->
     else
       "`#{robot.name} buffer help`"
 
+  plural = (name, array) ->
+    s = if array.length isnt 1 then "s" else ""
+    "#{array.length} #{name}#{s}"
+
   # Accumulate Lines into the history buffer for each room.
   robot.catchAll (msg) ->
     return unless msg.message.text
@@ -190,9 +194,8 @@ module.exports = (robot) ->
     Cache.forRoom(msg.message.room).append(msg)
 
   robot.respond /buffer\s+help/i, (msg) ->
-    msg.reply """The "buffer" commands allow you to stage and manipulate lines of text taken from
-the history of a channel before using them with a different command.
-    """
+    msg.reply "The \"buffer\" commands allow you to stage and manipulate lines of text taken from
+    the history of a channel before using them with a different command."
 
   robot.respond /buffer\s+add (#\S+)?([^]*)/i, (msg) ->
     room = msg.match[1] or msg.message.room
@@ -200,9 +203,27 @@ the history of a channel before using them with a different command.
       patterns = readPatterns msg.match[2]
       p.validate() for p in patterns
 
-      msg.reply "room = `#{room}`"
-      msg.reply "patterns = `#{patterns}`"
+      buffer = UserBuffer.forUser msg.message.user.name
+
+      for p in patterns
+        cache = Cache.forRoom room
+        lines = p.matchesIn cache
+
+        unless lines?
+          earliest = cache.earliest()
+          m = if earliest? then "The earliest line I have is \"#{earliest}\"." else "I haven't cached any lines yet."
+
+          msg.reply "No lines matched.\n#{m}"
+          return
+
+        buffer.append lines
+
+        msg.reply "Added #{plural 'line', lines} to your buffer."
     catch e
+      console.error e.stack
       msg.reply ":no_entry_sign: #{e.message}\n
         Consult #{helpCommand msg} for a pattern syntax reference."
       return
+
+  robot.respond /buffer\s+show/i, (msg) ->
+    msg.send UserBuffer.forUser(msg.message.user.name).show()
