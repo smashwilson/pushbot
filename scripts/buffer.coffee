@@ -47,6 +47,8 @@ class Cache
         inMatch = true
         continue
 
+    return undefined if inMatch or results.length is 0
+
     results.reverse()
     results
 
@@ -64,7 +66,9 @@ class ExactPattern
 
   matches: (line) -> line.text.indexOf(@source) isnt -1
 
-  matchesIn: (cache) -> [cache.mostRecentMatch(this)]
+  matchesIn: (cache) ->
+    m = cache.mostRecentMatch(this)
+    [m] if m?
 
   canBeEndpoint: -> true
 
@@ -78,7 +82,9 @@ class RegexpPattern
 
   matches: (line) -> @rx.test line.text
 
-  matchesIn: (cache) -> [cache.mostRecentMatch(this)]
+  matchesIn: (cache) ->
+    m = cache.mostRecentMatch(this)
+    [m] if m?
 
   canBeEndpoint: -> true
 
