@@ -149,6 +149,12 @@ readPatterns = (source) ->
 
 module.exports = (robot) ->
 
+  helpCommand = (msg) ->
+    if msg.message.rawMessage?.getChannelType() is "DM"
+      "`buffer help`"
+    else
+      "`#{robot.name} buffer help`"
+
   # Accumulate Lines into the history buffer for each room.
   robot.catchAll (msg) ->
     return unless msg.message.text
@@ -162,7 +168,12 @@ the history of a channel before using them with a different command.
 
   robot.respond /buffer\s+add (#\S+)?([^]*)/i, (msg) ->
     room = msg.match[1] or msg.message.room
-    patterns = readPatterns msg.match[2]
+    try
+      patterns = readPatterns msg.match[2]
 
-    msg.reply "room = `#{room}`"
-    msg.reply "patterns = `#{patterns}`"
+      msg.reply "room = `#{room}`"
+      msg.reply "patterns = `#{patterns}`"
+    catch e
+      msg.reply ":no_entry_sign: #{e.message}\n
+        Consult #{helpCommand msg} for a pattern syntax reference."
+      return
