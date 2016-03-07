@@ -13,6 +13,7 @@
 MAX_CACHE_SIZE = 200
 
 cache = {}
+buffers = {}
 
 class Cache
   constructor: (@room) ->
@@ -50,6 +51,8 @@ class Cache
 
 class Line
   constructor: (@timestamp, @speaker, @text) ->
+
+  toString: -> "#{@speaker}: #{@text}"
 
 class ExactPattern
   constructor: (@source) ->
@@ -100,6 +103,20 @@ class BetweenPattern
     throw new Error("Range without an end pattern") unless @endPattern?
 
   toString: -> "Between[#{@startPattern}...#{@endPattern}]"
+
+class UserBuffer
+  constructor: (@owner) ->
+    @contents = []
+
+  @forUser: (userName) -> buffers[userName] ?= new UserBuffer(userName)
+
+  append: (lines) ->
+    @contents = @contents.concat(lines)
+
+  show: ->
+    if @contents.length is 0
+      return "Your buffer is currently empty."
+    ("_(#{i})_ #{@contents[i]}" for i in [0...@contents.length]).join "\n"
 
 readPatterns = (source) ->
   source = source.replace /^\s*/, ""
