@@ -263,7 +263,7 @@ module.exports = (robot) ->
     msg.reply "Added #{plural 'line', lines} to your buffer."
     showIfDirect msg, buffer
 
-  robot.respond /buffer\s+remove\s*([\d\s\r\n]+)/i, (msg) ->
+  robot.respond /buffer\s+remove\s*([\d\s\r\n,]+)/i, (msg) ->
     buffer = UserBuffer.forUser(msg.message.user.name)
 
     indices = numbersFrom msg.match[1]
