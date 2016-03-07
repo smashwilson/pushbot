@@ -268,6 +268,8 @@ module.exports = (robot) ->
 
     buffer.remove(i) for i in indices
 
+    msg.reply "Removed #{indices.length} buffer entr#{if indices.length is 1 then "y" else "ies"}."
+
   robot.respond /buffer\s+replace\s*(\d+)\s*([^]+)/i, (msg) ->
     buffer = UserBuffer.forUser(msg.message.user.name)
 
