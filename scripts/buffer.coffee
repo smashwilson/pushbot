@@ -214,6 +214,10 @@ module.exports = (robot) ->
       results.push Number(m)
     results
 
+  robot.cacheForRoomName = (roomName) -> Cache.forRoom roomName
+
+  robot.bufferForUserName = (userName) -> UserBuffer.forUser userName
+
   # Accumulate Lines into the history buffer for each room.
   robot.catchAll (msg) ->
     return unless msg.message.text
