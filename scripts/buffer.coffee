@@ -206,7 +206,7 @@ module.exports = (robot) ->
 
   numbersFrom = (text) ->
     results = []
-    text.replace /\d+/g, m ->
+    text.replace /\d+/g, (m) ->
       results.push Number(m)
     results
 
