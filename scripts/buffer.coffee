@@ -138,6 +138,11 @@ class UserBuffer
       return "Your buffer is currently empty."
     ("_(#{i})_ #{@contents[i]}" for i in [0...@contents.length]).join "\n"
 
+  commit: ->
+    prior = @contents
+    @contents = []
+    prior
+
 readPatterns = (source) ->
   source = source.replace /^\s*/, ""
 
