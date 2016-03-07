@@ -58,7 +58,9 @@ class Cache
 class Line
   constructor: (@timestamp, @speaker, @text) ->
 
-  toString: -> "#{@speaker}: #{@text}"
+  isRaw: -> !@speaker?
+
+  toString: -> if @isRaw() then @text else "#{@speaker}: #{@text}"
 
 class ExactPattern
   constructor: (@source) ->
