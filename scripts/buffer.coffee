@@ -209,22 +209,24 @@ module.exports = (robot) ->
       patterns = readPatterns msg.match[2]
       p.validate() for p in patterns
 
+      cache = Cache.forRoom room
       buffer = UserBuffer.forUser msg.message.user.name
 
+      lines = []
       for p in patterns
-        cache = Cache.forRoom room
-        lines = p.matchesIn cache
+        matches = p.matchesIn cache
 
-        unless lines?
+        unless matches?
           earliest = cache.earliest()
           m = if earliest? then "The earliest line I have is \"#{earliest}\"." else "I haven't cached any lines yet."
 
-          msg.reply "No lines matched.\n#{m}"
+          msg.reply "No lines matched by the pattern #{p}.\n#{m}"
           return
 
-        buffer.append lines
+        lines = lines.concat(matches)
 
-        msg.reply "Added #{plural 'line', lines} to your buffer."
+      buffer.append lines
+      msg.reply "Added #{plural 'line', lines} to your buffer."
     catch e
       console.error e.stack
       msg.reply ":no_entry_sign: #{e.message}\n
