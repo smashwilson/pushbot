@@ -138,6 +138,11 @@ class UserBuffer
       return "Your buffer is currently empty."
     ("_(#{i})_ #{@contents[i]}" for i in [0...@contents.length]).join "\n"
 
+  commit: ->
+    prior = @contents
+    @contents = []
+    prior
+
 readPatterns = (source) ->
   source = source.replace /^\s*/, ""
 
@@ -213,6 +218,10 @@ module.exports = (robot) ->
     text.replace /\d+/g, (m) ->
       results.push Number(m)
     results
+
+  robot.cacheForRoomName = (roomName) -> Cache.forRoom roomName
+
+  robot.bufferForUserName = (userName) -> UserBuffer.forUser userName
 
   # Accumulate Lines into the history buffer for each room.
   robot.catchAll (msg) ->
