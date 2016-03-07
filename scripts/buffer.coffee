@@ -20,7 +20,9 @@ class Cache
   constructor: (@room) ->
     @lines = []
 
-  @forRoom: (roomName) -> caches[roomName] ?= new Cache(roomName)
+  @forRoom: (roomName) ->
+    roomName = roomName.replace /^#/, ""
+    caches[roomName] ?= new Cache(roomName)
 
   append: (msg) ->
     now = new Date()
