@@ -122,7 +122,7 @@ class UserBuffer
 
   @forUser: (userName) -> buffers[userName] ?= new UserBuffer(userName)
 
-  isValidIndex: (index) -> index >= 0 and index < @content.length
+  isValidIndex: (index) -> index >= 0 and index < @contents.length
 
   append: (lines) ->
     @contents = @contents.concat(lines)
