@@ -272,6 +272,9 @@ module.exports = (robot) ->
         msg.reply ":no_entry_sign: #{i} is not a valid buffer index."
         return
 
+    indices.sort()
+    indices.reverse()
+
     buffer.remove(i) for i in indices
 
     msg.reply "Removed #{indices.length} buffer entr#{if indices.length is 1 then "y" else "ies"}."
