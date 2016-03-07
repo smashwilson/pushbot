@@ -260,7 +260,7 @@ module.exports = (robot) ->
   robot.respond /buffer\s+remove\s*([\d\s\r\n]+)/i, (msg) ->
     buffer = UserBuffer.forUser(msg.message.user.name)
 
-    indices = numbersFrom msg
+    indices = numbersFrom msg.match[1]
     for i in indices
       unless buffer.isValidIndex i
         msg.reply ":no_entry_sign: #{i} is not a valid buffer index."
