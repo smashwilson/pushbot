@@ -62,6 +62,8 @@ class ExactPattern
 
   canBeEndpoint: -> true
 
+  validate: ->
+
   toString: -> "Exact[#{@source}]"
 
 class RegexpPattern
@@ -73,6 +75,8 @@ class RegexpPattern
   matchesIn: (cache) -> cache.mostRecentMatch(this)
 
   canBeEndpoint: -> true
+
+  validate: ->
 
   toString: -> "Regexp[#{@rx}]"
 
@@ -90,6 +94,10 @@ class BetweenPattern
   matchesIn: (cache) -> cache.between(@startPattern, @endPattern)
 
   canBeEndpoint: -> false
+
+  validate: ->
+    throw new Error("Range without a start pattern") unless @startPattern?
+    throw new Error("Range without an end pattern") unless @endPattern?
 
   toString: -> "Between[#{@startPattern}...#{@endPattern}]"
 
@@ -170,6 +178,7 @@ the history of a channel before using them with a different command.
     room = msg.match[1] or msg.message.room
     try
       patterns = readPatterns msg.match[2]
+      p.validate() for p in patterns
 
       msg.reply "room = `#{room}`"
       msg.reply "patterns = `#{patterns}`"
