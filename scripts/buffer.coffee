@@ -12,14 +12,14 @@
 
 MAX_CACHE_SIZE = 200
 
-cache = {}
+caches = {}
 buffers = {}
 
 class Cache
   constructor: (@room) ->
     @lines = []
 
-  @forRoom: (room) -> cache[room] ?= new Cache(room)
+  @forRoom: (roomName) -> caches[roomName] ?= new Cache(roomName)
 
   append: (msg) ->
     now = new Date()
