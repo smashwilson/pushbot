@@ -122,8 +122,16 @@ class UserBuffer
 
   @forUser: (userName) -> buffers[userName] ?= new UserBuffer(userName)
 
+  isValidIndex: (index) -> index >= 0 and index < @content.length
+
   append: (lines) ->
     @contents = @contents.concat(lines)
+
+  remove: (index) -> @contents.splice(index, 1)
+
+  replace: (index, newLines) -> @contents.splice(index, 1, newLines...)
+
+  clear: -> @contents = []
 
   show: ->
     if @contents.length is 0
@@ -196,6 +204,12 @@ module.exports = (robot) ->
     s = if array.length isnt 1 then "s" else ""
     "#{array.length} #{name}#{s}"
 
+  numbersFrom = (text) ->
+    results = []
+    text.replace /\d+/g, m ->
+      results.push Number(m)
+    results
+
   # Accumulate Lines into the history buffer for each room.
   robot.catchAll (msg) ->
     return unless msg.message.text
@@ -236,5 +250,41 @@ module.exports = (robot) ->
         Consult #{helpCommand msg} for a pattern syntax reference."
       return
 
+  robot.respond /buffer\s+addraw\s*([^]+)/i, (msg) ->
+    now = new Date();
+    lines = (new Line(now, null, each) for each in msg.message.text.split /\n/)
+    UserBuffer.forUser(msg.message.user.name).append(lines)
+
+    msg.reply "Added #{plural 'line', lines} to your buffer."
+
+  robot.respond /buffer\s+remove\s*([\d\s\r\n]+)/i, (msg) ->
+    buffer = UserBuffer.forUser(msg.message.user.name)
+
+    indices = numbersFrom msg
+    for i in indices
+      unless buffer.isValidIndex i
+        msg.reply ":no_entry_sign: #{i} is not a valid buffer index."
+        return
+
+    buffer.remove(i) for i in indices
+
+  robot.respond /buffer\s+replace\s*(\d+)\s*([^]+)/i, (msg) ->
+    buffer = UserBuffer.forUser(msg.message.user.name)
+
+    index = Number(msg.match[1])
+    unless buffer.isValidIndex index
+      msg.reply ":no_entry_sign: #{index} is not a valid buffer index."
+      return
+
+    now = new Date();
+    lines = (new Line(now, null, each) for each in msg.match[2].split /\n/)
+
+    buffer.replace(index, lines)
+    msg.reply "Replaced buffer entry #{index} with #{plural 'line', lines}."
+
   robot.respond /buffer\s+show/i, (msg) ->
     msg.send UserBuffer.forUser(msg.message.user.name).show()
+
+  robot.respond /buffer\s+clear/i, (msg) ->
+    UserBuffer.forUser(msg.message.user.name).clear()
+    msg.reply "Buffer forgotten."
