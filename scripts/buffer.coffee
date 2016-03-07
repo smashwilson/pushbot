@@ -4,7 +4,8 @@
 #
 # Commands:
 #   hubot buffer help - Show detailed help for buffer manipulation subcommands.
-#   hubot buffer add [#channel] [pattern]... - Introduce new lines to the buffer.
+#   hubot buffer add [#channel] [pattern]... - Introduce new lines to the buffer from the history cache.
+#   hubot buffer addraw [text] - Add raw text directly to the buffer.
 #   hubot buffer remove [numbers] - Remove one or more lines from the buffer by index.
 #   hubot buffer replace [number] [text] - Replace a line from your buffer with new contents.
 #   hubot buffer show - Show the current contents of your buffer, annotated with indices.
