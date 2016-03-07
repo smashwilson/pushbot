@@ -17,7 +17,7 @@
     "hubot-heroku-keepalive": "^1.0.0",
     "hubot-maps": "0.0.2",
     "hubot-markov": "^1.4.0",
-    "hubot-pipe": "0.0.4",
+    "hubot-pipe": "0.0.5",
     "hubot-pipe-scripts": "0.0.1",
     "hubot-plusplus": "^1.2.3",
     "hubot-pugme": "^0.1.0",
