@@ -74,7 +74,7 @@ class ExactPattern
 
   validate: ->
 
-  toString: -> "Exact[#{@source}]"
+  toString: -> "\"#{@source}\""
 
 class RegexpPattern
   constructor: (source) ->
@@ -90,7 +90,7 @@ class RegexpPattern
 
   validate: ->
 
-  toString: -> "Regexp[#{@rx}]"
+  toString: -> @rx.toString()
 
 class BetweenPattern
   constructor: ->
@@ -111,7 +111,7 @@ class BetweenPattern
     throw new Error("Range without a start pattern") unless @startPattern?
     throw new Error("Range without an end pattern") unless @endPattern?
 
-  toString: -> "Between[#{@startPattern}...#{@endPattern}]"
+  toString: -> "#{@startPattern} ... #{@endPattern}"
 
 class UserBuffer
   constructor: (@owner) ->
