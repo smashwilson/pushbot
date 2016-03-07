@@ -252,7 +252,7 @@ module.exports = (robot) ->
 
   robot.respond /buffer\s+addraw\s*([^]+)/i, (msg) ->
     now = new Date();
-    lines = (new Line(now, null, each) for each in msg.message.text.split /\n/)
+    lines = (new Line(now, null, each) for each in msg.match[1].split /\n/)
     UserBuffer.forUser(msg.message.user.name).append(lines)
 
     msg.reply "Added #{plural 'line', lines} to your buffer."
