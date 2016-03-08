@@ -3,8 +3,10 @@
 #
 # Commands:
 #   hubot decide "<option 1>" "<option 2>" "<option 3>" - Use complex algorithms and advanced AI to give sage advice
+#   hubot shawin "<option 1>" "<option 2>" "<option 3>" - Use actual complex algorithms to give sage advice
 
 _ = require 'underscore'
+crypto = require 'crypto'
 
 parseOptions = (str) ->
   results = []
@@ -46,6 +48,14 @@ parseOptions = (str) ->
 
   _.without results, ""
 
+
+shaify = (str) ->
+  hash = crypto.createHmac('sha512', 'supersecretzomg')
+  hash.update(str)
+  hex_digest = hash.digest('hex')
+  # There is probably a less dumb way of doing this but OH WELL
+  parseInt(hex_digest, 16)
+
 module.exports = (robot) ->
 
   robot.respond /(?:decide|choose)(.*)/, (msg) ->
@@ -63,3 +73,13 @@ module.exports = (robot) ->
       "All good options, but if you must... go with #{choice}."
       "#{choice}! Now! Faster! THERE'S NO TIME!"
     ]
+
+  robot.respond  /shawin(.*)/, (msg) ->
+    options = parseOptions(msg.match[1])
+    concat = options.join("")
+    concat_sha = shaify(concat)
+    options_sha = (shaify(opt) for opt in options)
+    diffs = (Math.abs(sha - concat_sha) for sha in options_sha)
+    # Courtesy http://stackoverflow.com/a/11301464
+    choice_index = diffs.indexOf(Math.min.apply(Math, diffs))
+    msg.send "The winner is #{options[choice_index]}"
