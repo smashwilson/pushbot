@@ -12,7 +12,7 @@
     "hubot-dice": "git://github.com/bouzuya/hubot-dice.git",
     "hubot-google-images": "^0.2.2",
     "hubot-google-translate": "^0.2.0",
-    "hubot-hammersport": "git://github.com/smashwilson/hubot-hammersport.git",
+    "hubot-hammersport": "^0.0.1",
     "hubot-help": "^0.1.1",
     "hubot-heroku-keepalive": "^1.0.0",
     "hubot-maps": "0.0.2",
