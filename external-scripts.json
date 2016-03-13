@@ -9,7 +9,6 @@
   "hubot-rules",
   "hubot-shipit",
   "hubot-auth",
-  "hubot-dice",
   "hubot-table-flip",
   "hubot-markov",
   "hubot-quotefile",
@@ -17,5 +16,6 @@
   "hubot-pipe",
   "hubot-pipe-scripts",
   "hubot-plusplus",
-  "hubot-swanson"
+  "hubot-swanson",
+  "hubot-roller"
 ]
