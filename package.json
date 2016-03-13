@@ -9,7 +9,6 @@
     "hubot": "^2.16.0",
     "hubot-auth": "^1.2.0",
     "hubot-diagnostics": "0.0.1",
-    "hubot-dice": "git://github.com/bouzuya/hubot-dice.git",
     "hubot-google-images": "^0.2.2",
     "hubot-google-translate": "^0.2.0",
     "hubot-hammersport": "^0.0.1",
