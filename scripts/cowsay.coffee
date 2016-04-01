@@ -4,9 +4,15 @@
 #   hubot cowsay <text> - Makes a cow say <text>
 
 module.exports = (robot) ->
-  robot.respond /cowsay( me)? ([^]*)/i, (msg) ->
+  robot.respond /cowsay( me)?\s*([^]*)/i, (msg) ->
+    message = ''
+    if msg.match[2].trim().length > 0
+      message = msg.match[2]
+    else
+      message = robot.mostRecent(msg)
+
     msg
       .http("http://cowsay.morecode.org/say")
-      .query(format: 'text', message: msg.match[2])
+      .query(format: 'text', message: message)
       .get() (err, res, body) ->
         msg.send "```#{body}\n```"
