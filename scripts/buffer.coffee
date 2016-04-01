@@ -32,7 +32,7 @@ class Cache
     @lines.unshift ls...
     @lines = @lines.slice(0, MAX_CACHE_SIZE)
 
-  mostRecent: -> @lines[@lines.length - 1]?.text
+  mostRecent: -> @lines[0]?.text
 
   mostRecentMatch: (pattern) -> @lines.find (line) -> pattern.matches(line)
 
