@@ -32,6 +32,8 @@ class Cache
     @lines.unshift ls...
     @lines = @lines.slice(0, MAX_CACHE_SIZE)
 
+  mostRecent: -> @lines[@lines.length - 1]?.text
+
   mostRecentMatch: (pattern) -> @lines.find (line) -> pattern.matches(line)
 
   between: (startPattern, endPattern) ->
@@ -222,6 +224,8 @@ module.exports = (robot) ->
     results
 
   robot.cacheForRoomName = (roomName) -> Cache.forRoom roomName
+
+  robot.mostRecent = (msg) -> Cache.forRoom(msg.message.room).mostRecent()
 
   robot.bufferForUserName = (userName) -> UserBuffer.forUser userName
 
