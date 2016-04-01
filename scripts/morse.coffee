@@ -9,8 +9,12 @@ morse = require 'morse'
 
 module.exports = (robot) ->
 
-  robot.respond /morse\s*([^]+)/i, (msg) ->
-    msg.send morse.encode msg.match[1]
+  robot.respond /morse\s*([^]*)/i, (msg) ->
+    message = if msg.match[1].trim().length > 0 then msg.match[1] else robot.mostRecent(msg)
 
-  robot.respond /demorse\s*([^]+)/i, (msg) ->
-    msg.send morse.decode msg.match[1]
+    msg.send morse.encode message
+
+  robot.respond /demorse\s*([^]*)/i, (msg) ->
+    message = if msg.match[1].trim().length > 0 then msg.match[1] else robot.mostRecent(msg)
+
+    msg.send morse.decode message
