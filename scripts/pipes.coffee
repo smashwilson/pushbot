@@ -6,7 +6,7 @@
 #   hubot hk47 - Query: why don't you try it and find out, meatbag?
 
 module.exports = (robot) ->
-  
+
   EMOTIONS = [
     "Aghast"
     "Airing of grievance"
@@ -62,15 +62,19 @@ module.exports = (robot) ->
   ]
 
   robot.respond /elcor\s*([^]*)/i, (msg) ->
+    message = if msg.match[1].trim().length > 0 then msg.match[1] else robot.mostRecent(msg)
+
     adjectives = EMOTIONS
 
     output = []
-    for line in msg.match[1].split(/\n/)
+    for line in message.split(/\n/)
       if line.match /\S/
         output.push "#{msg.random adjectives}: #{line}"
     msg.send output.join("\n")
 
   robot.respond /hk47\s*([^]*)/i, (msg) ->
+    message = if msg.match[1].trim().length > 0 then msg.match[1] else robot.mostRecent(msg)
+
     adjectives = [
       "Translation"
       "Definition"
@@ -83,11 +87,11 @@ module.exports = (robot) ->
       "Expletive"
       "Judgement"
     ]
-    
+
     adjectives.push EMOTIONS...
 
     output = []
-    for line in msg.match[1].split(/\n/)
+    for line in message.split(/\n/)
       if line.match /\S/
         output.push "#{msg.random adjectives}: #{line.replace /[.!?,]$/, ""}, meatbag"
     msg.send output.join("\n")
