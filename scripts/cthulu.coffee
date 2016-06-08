@@ -1,7 +1,7 @@
 # Description:
 #   Summon a Great Old One
 # Commands:
-#   Ia! Ia! Cthulhu f'htagn! - Awaken the Great Old One
+#   Ia! Ia! Cthulhu fhtagn! - Awaken the Great Old One
 
 module.exports = (robot) ->
 
