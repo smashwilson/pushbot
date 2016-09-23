@@ -9,4 +9,4 @@ cd ${DIR}
 
 source .botrc
 
-exec node_modules/.bin/hubot -a slack
+exec node_modules/.bin/hubot --alias '!' -a slack
