@@ -49,7 +49,7 @@ module.exports = (robot) ->
     u = msg.message.user
 
     msg.reply [
-      "user.roles = `#{dump user.roles}`"
+      "user.roles = `#{dump u.roles}`"
       "robot.auth.userRoles = `#{robot.auth.userRoles u}`"
       "robot.auth.isAdmin = `#{robot.auth.isAdmin u}`"
       "robot.auth.hasRole 'quote pontiff' = `#{robot.auth.hasRole u, 'quote pontiff'}`"
