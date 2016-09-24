@@ -7,7 +7,7 @@ module.exports = (robot) ->
 
   robot.receiveMiddleware (context, next, done) ->
     messageUser = context.response.message.user
-    storedUser = robot.brain.data.users[u.id]
+    storedUser = robot.brain.data.users[messageUser.id]
     _.defaults(messageUser, storedUser) if storedUser?
 
     next(done)
