@@ -30,12 +30,18 @@ module.exports = (robot) ->
         msg.send err if err
         try
           json = JSON.parse(body)
-          msg.send "Currently: #{json.currently.summary}, #{json.currently.temperature} °F, feels like #{json.currently.apparentTemperature} °F"
-          msg.send "Next hour: #{json.minutely.summary}"
-          msg.send "Today: #{json.daily.data[0].summary} H: #{json.daily.data[0].temperatureMax} °F L: #{json.daily.data[0].temperatureMin} °F"
-          msg.send "Tomorrow: #{json.daily.data[1].summary} H: #{json.daily.data[1].temperatureMax} °F L: #{json.daily.data[1].temperatureMin} °F"
-          if json.alerts
-            for alert in json.alerts
-              msg.send "#{alert.title} - #{alert.uri}"
+          lines = [
+            "Currently: #{json.currently.summary}, #{json.currently.temperature} °F, feels like #{json.currently.apparentTemperature} °F"
+            "Next hour: #{json.minutely.summary}"
+            "Today: #{json.daily.data[0].summary} H: #{json.daily.data[0].temperatureMax} °F L: #{json.daily.data[0].temperatureMin} °F"
+            "Tomorrow: #{json.daily.data[1].summary} H: #{json.daily.data[1].temperatureMax} °F L: #{json.daily.data[1].temperatureMin} °F"
+          ]
+
+          for alert in json.alerts
+              lines.push "Alert: <#{alert.uri}|#{alert.title}>"
+
+          lines.push "_Powered by <Dary Sky|https://darksky.net/poweredby/>_"
+
+          msg.send lines.join("\n")
         catch error
           msg.send "Failed to retrieve forecast."
