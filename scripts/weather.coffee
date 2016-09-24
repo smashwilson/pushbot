@@ -8,6 +8,7 @@
 # Configuration:
 #
 # HUBOT_WEATHER_APIKEY = forecast.io api key
+#
 module.exports = (robot) ->
 
   robot.respond /weather *(.+)/i, (msg) ->
@@ -19,10 +20,9 @@ module.exports = (robot) ->
         json = JSON.parse(body)
         lat = json.results[0].geometry.location.lat
         lng = json.results[0].geometry.location.lng
-        msg.send "Forecast for #{json.results[0].formatted_address}:"
+        address = json.results[0].formatted_address
       catch error
-        msg.send "Error parsing location"
-        msg.send error
+        msg.send "Error parsing location: `#{error}`"
         return
       apikey = process.env.HUBOT_WEATHER_APIKEY
       forecasturl = "https://api.darksky.net/forecast/#{apikey}/#{lat},#{lng}"
@@ -30,18 +30,29 @@ module.exports = (robot) ->
         msg.send err if err
         try
           json = JSON.parse(body)
-          lines = [
-            "Currently: #{json.currently.summary}, #{json.currently.temperature} °F, feels like #{json.currently.apparentTemperature} °F"
-            "Next hour: #{json.minutely.summary}"
-            "Today: #{json.daily.data[0].summary} H: #{json.daily.data[0].temperatureMax} °F L: #{json.daily.data[0].temperatureMin} °F"
-            "Tomorrow: #{json.daily.data[1].summary} H: #{json.daily.data[1].temperatureMax} °F L: #{json.daily.data[1].temperatureMin} °F"
-          ]
 
-          for alert in json.alerts
-              lines.push "Alert: <#{alert.uri}|#{alert.title}>"
+          attachment =
+            fallback: "Dark Sky weather forecast"
+            color: "#4e7ef9"
+            title: "Forecast for #{address}"
+            title_url: "https://darksky.net/#{lat},#{lng}"
+            fields: [
+              { title: "Currently", value: "#{json.currently.summary}, #{json.currently.temperature} °F, feels like #{json.currently.apparentTemperature} °F" }
+              { title: "Next hour", value: "#{json.minutely.summary}" }
+              { title: "Today", value: "#{json.daily.data[0].summary} _High:_ #{json.daily.data[0].temperatureMax} °F _Low:_ #{json.daily.data[0].temperatureMin} °F" }
+              { title: "Tomorrow", value: " #{json.daily.data[1].summary} _High:_ #{json.daily.data[1].temperatureMax} °F _Low:_ #{json.daily.data[1].temperatureMin} °F"}
+            ]
+            footer: "Powered by Dark Sky | https://darksky.net/poweredby/"
 
-          lines.push "_Powered by <Dary Sky|https://darksky.net/poweredby/>_"
+          for alert in (json.alerts or [])
+              attachment.fields.push
+                title: "#{alert.title}"
+                value: "<#{alert.uri}|details>"
 
-          msg.send lines.join("\n")
+          payload =
+            attachments: [attachment]
+
+          console.log require('util').inspect(payload)
+          msg.send(payload)
         catch error
-          msg.send "Failed to retrieve forecast."
+          msg.send "Failed to retrieve forecast.\n#{error}"
