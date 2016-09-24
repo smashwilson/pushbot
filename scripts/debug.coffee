@@ -44,3 +44,14 @@ module.exports = (robot) ->
 
   robot.respond /debug_message/i, (msg) ->
     msg.reply "```\n" + dump(msg.message, 'msg.message') + "\n```\n"
+
+  robot.respond /debug_role/i, (msg) ->
+    u = msg.message.user
+
+    msg.reply [
+      "user.roles = `#{dump user.roles}`"
+      "robot.auth.userRoles = `#{robot.auth.userRoles u}`"
+      "robot.auth.isAdmin = `#{robot.auth.isAdmin u}`"
+      "robot.auth.hasRole 'quote pontiff' = `#{robot.auth.hasRole u, 'quote pontiff'}`"
+      "robot.auth.hasRole ['quote pontiff'] = `#{robot.auth.hasRole u, ['quote pontiff']}`"
+    ].join "\n"
