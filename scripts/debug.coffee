@@ -40,7 +40,7 @@ module.exports = (robot) ->
       return
 
     resp = ("#{key}: #{value}" for own key, value of u).join("\n")
-    msg.reply dump(u, header)
+    msg.reply "```\n" + dump(u, header) + "\n```\n"
 
   robot.respond /debug_message/i, (msg) ->
-    msg.reply dump(msg.message, 'msg.message')
+    msg.reply "```\n" + dump(msg.message, 'msg.message') + "\n```\n"
