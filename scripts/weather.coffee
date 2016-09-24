@@ -25,7 +25,7 @@ module.exports = (robot) ->
         msg.send error
         return
       apikey = process.env.HUBOT_WEATHER_APIKEY
-      forecasturl = "https://api.forecast.io/forecast/#{apikey}/#{lat},#{lng}"
+      forecasturl = "https://api.darksky.net/forecast/#{apikey}/#{lat},#{lng}"
       msg.http(forecasturl).get() (err, res, body) ->
         msg.send err if err
         try
@@ -39,4 +39,3 @@ module.exports = (robot) ->
               msg.send "#{alert.title} - #{alert.uri}"
         catch error
           msg.send "Failed to retrieve forecast."
-        
