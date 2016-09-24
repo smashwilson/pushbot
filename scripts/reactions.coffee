@@ -49,6 +49,8 @@ module.exports = (robot) ->
     giverUid = msg.message.user.id
     receiverUid = msg.message.item_user.id
 
+    return if giverUid is receiverUid
+
     reactionsGiven.modifyTally giverUid, msg.message.reaction, delta
     reactionsReceived.modifyTally receiverUid, msg.message.reaction, delta
 
