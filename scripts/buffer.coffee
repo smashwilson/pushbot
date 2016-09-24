@@ -231,7 +231,7 @@ module.exports = (robot) ->
 
   # Accumulate Lines into the history buffer for each room.
   robot.catchAll (msg) ->
-    return unless msg.message.text
+    return unless msg.message.text and msg.message.room?
 
     Cache.forRoom(msg.message.room).append(msg)
 
