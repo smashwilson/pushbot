@@ -48,10 +48,19 @@ module.exports = (robot) ->
   robot.respond /debug_role/i, (msg) ->
     u = msg.message.user
 
+    console.log dump Object.keys(robot.brain.data.users)
+
+    brainUser = robot.brain.data.users[u.id]
+
     msg.reply [
-      "user.roles = `#{dump u.roles}`"
-      "robot.auth.userRoles = `#{robot.auth.userRoles u}`"
-      "robot.auth.isAdmin = `#{robot.auth.isAdmin u}`"
-      "robot.auth.hasRole 'quote pontiff' = `#{robot.auth.hasRole u, 'quote pontiff'}`"
-      "robot.auth.hasRole ['quote pontiff'] = `#{robot.auth.hasRole u, ['quote pontiff']}`"
+      "u.roles = `#{dump u.roles}`"
+      "robot.auth.userRoles u = `#{robot.auth.userRoles u}`"
+      "robot.auth.isAdmin u = `#{robot.auth.isAdmin u}`"
+      "robot.auth.hasRole u, 'quote pontiff' = `#{robot.auth.hasRole u, 'quote pontiff'}`"
+      "robot.auth.hasRole u, ['quote pontiff'] = `#{robot.auth.hasRole u, ['quote pontiff']}`"
+      "brainUser.roles = `#{dump brainUser.roles}`"
+      "robot.auth.userRoles brainUser = `#{robot.auth.userRoles brainUser}`"
+      "robot.auth.isAdmin brainUser = `#{robot.auth.isAdmin brainUser}`"
+      "robot.auth.hasRole brainUser, 'quote pontiff' = `#{robot.auth.hasRole brainUser, 'quote pontiff'}`"
+      "robot.auth.hasRole brainUser, ['quote pontiff'] = `#{robot.auth.hasRole brainUser, ['quote pontiff']}`"
     ].join "\n"
