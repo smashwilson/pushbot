@@ -48,8 +48,6 @@ module.exports = (robot) ->
   robot.respond /debug_role/i, (msg) ->
     u = msg.message.user
 
-    console.log dump Object.keys(robot.brain.data.users)
-
     brainUser = robot.brain.data.users[u.id]
 
     msg.reply [
