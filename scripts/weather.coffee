@@ -37,10 +37,10 @@ module.exports = (robot) ->
             "Tomorrow: #{json.daily.data[1].summary} H: #{json.daily.data[1].temperatureMax} °F L: #{json.daily.data[1].temperatureMin} °F"
           ]
 
-          for alert in json.alerts
+          for alert in json.alerts or []
               lines.push "Alert: <#{alert.uri}|#{alert.title}>"
 
-          lines.push "_Powered by <Dary Sky|https://darksky.net/poweredby/>_"
+          lines.push "_Powered by Dary Sky_ `https://darksky.net/poweredby/`"
 
           msg.send lines.join("\n")
         catch error
