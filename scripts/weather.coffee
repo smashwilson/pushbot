@@ -39,8 +39,8 @@ module.exports = (robot) ->
             fields: [
               { title: "Currently", value: "#{json.currently.summary}, #{json.currently.temperature} °F, feels like #{json.currently.apparentTemperature} °F" }
               { title: "Next hour", value: "#{json.minutely.summary}" }
-              { title: "Today", value: "#{json.daily.data[0].summary} _High:_ #{json.daily.data[0].temperatureMax} °F _Low:_ #{json.daily.data[0].temperatureMin} °F" }
-              { title: "Tomorrow", value: " #{json.daily.data[1].summary} _High:_ #{json.daily.data[1].temperatureMax} °F _Low:_ #{json.daily.data[1].temperatureMin} °F"}
+              { title: "Today", value: "#{json.daily.data[0].summary} High: #{json.daily.data[0].temperatureMax} °F Low: #{json.daily.data[0].temperatureMin} °F" }
+              { title: "Tomorrow", value: " #{json.daily.data[1].summary} High: #{json.daily.data[1].temperatureMax} °F Low: #{json.daily.data[1].temperatureMin} °F"}
             ]
             footer: "Powered by Dark Sky | https://darksky.net/poweredby/"
 
@@ -49,10 +49,6 @@ module.exports = (robot) ->
                 title: "#{alert.title}"
                 value: "<#{alert.uri}|details>"
 
-          payload =
-            attachments: [attachment]
-
-          console.log require('util').inspect(payload)
-          msg.send(payload)
+          msg.send({attachments: [attachment]})
         catch error
           msg.send "Failed to retrieve forecast.\n#{error}"
