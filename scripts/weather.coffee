@@ -37,7 +37,7 @@ module.exports = (robot) ->
             title: "Forecast for #{address}"
             title_url: "https://darksky.net/#{lat},#{lng}"
             fields: [
-              { title: "Currently", value: "#{json.currently.temperature} °F, feels like #{json.currently.apparentTemperature} °F. #{json.minutely.summary}" }
+              { title: "Currently", value: "#{json.minutely.summary}, #{json.currently.temperature} °F, feels like #{json.currently.apparentTemperature} °F." }
               { title: "Today", value: "#{json.daily.data[0].summary} High: #{json.daily.data[0].temperatureMax} °F Low: #{json.daily.data[0].temperatureMin} °F" }
               { title: "Tomorrow", value: " #{json.daily.data[1].summary} High: #{json.daily.data[1].temperatureMax} °F Low: #{json.daily.data[1].temperatureMin} °F"}
             ]
