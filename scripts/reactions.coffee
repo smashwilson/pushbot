@@ -82,7 +82,7 @@ module.exports = (robot) ->
       uid = user.id
 
       tally = reactionsReceived.getTallyMap(uid).beachball or 'no'
-      msg.send "@#{uname} has achieved *#{tally}* pun points."
+      msg.send "@#{uname} has been struck by *#{tally}* :beachball:."
       return
 
     punsPerUser = {}
@@ -97,7 +97,5 @@ module.exports = (robot) ->
 
     lines = ["*Top 10 punmakers*"]
     topN punsPerUser, 10, (uname, tally) ->
-      s = ''
-      s = 's' if tally isnt 1
-      lines.push "@#{uname} has made #{tally} pun#{s}."
+      lines.push "@#{uname} has been struck by *#{tally}* :beachball:."
     msg.send lines.join("\n")
