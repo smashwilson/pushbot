@@ -3,8 +3,8 @@
 #
 # Commands:
 #   hubot reactions @username - Show the number and kinds of reactions given to a user.
-#   hubot puncount - Show the top 10 :beachball: receivers.
-#   hubot puncount @username - Show the number of :beachball: reactions given to each user.
+#   hubot toppun - Show the top 10 :beachball: receivers.
+#   hubot toppun @username - Show the number of :beachball: reactions given to each user.
 
 _ = require 'underscore'
 ReactionMessage = require 'hubot-slack/src/reaction-message'
@@ -72,7 +72,7 @@ module.exports = (robot) ->
       lines.push ":#{reaction}: x#{tally}"
     msg.send lines.join "\n"
 
-  robot.respond /puncount(?:\s*@?(\S+))?/i, (msg) ->
+  robot.respond /toppun(?:\s*@?(\S+))?/i, (msg) ->
     if msg.match[1]?
       uname = msg.match[1]
       user = robot.brain.userForName uname
@@ -82,7 +82,7 @@ module.exports = (robot) ->
       uid = user.id
 
       tally = reactionsReceived.getTallyMap(uid).beachball or 'no'
-      msg.send "@#{uname} has made *#{tally}* horrible puns."
+      msg.send "@#{uname} has achieved *#{tally}* pun points."
       return
 
     punsPerUser = {}
