@@ -9,6 +9,15 @@
 #
 # HUBOT_WEATHER_APIKEY = forecast.io api key
 #
+
+tinycolor = require 'tinycolor2'
+
+COOL_COLOR = tinycolor("#aaf4fc")
+COOL_TEMP = 32
+
+HOT_COLOR = tinycolor("#fc5427")
+HOT_TEMP = 80
+
 module.exports = (robot) ->
 
   robot.respond /weather *(.+)/i, (msg) ->
@@ -31,9 +40,13 @@ module.exports = (robot) ->
         try
           json = JSON.parse(body)
 
+          temperatureBlend = (json.currently.temperature - COOL_TEMP) / (HOT_TEMP - COOL_TEMP) * 100.0
+          temperatureBlend = Math.max temperatureBlend, 0
+          temperatureBlend = Math.min temperatureBlend, 100
+
           attachment =
             fallback: "Dark Sky weather forecast"
-            color: "#4e7ef9"
+            color: tinycolor.mix(COOL_COLOR, HOT_COLOR, temperatureBlend).toHexString()
             title: "Forecast for #{address}"
             title_url: "https://darksky.net/#{lat},#{lng}"
             fields: [
