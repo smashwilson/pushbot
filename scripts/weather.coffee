@@ -30,7 +30,7 @@ iconToEmoji = (icon) ->
     when 'cloudy' then 'cloud'
     when 'partly-cloudy-day' then 'partly_sunny'
     when 'partly-cloudy-night' then 'partly_cloudy_night'
-  else 'shrug'
+    else 'shrug'
 
 module.exports = (robot) ->
 
