@@ -15,8 +15,22 @@ tinycolor = require 'tinycolor2'
 COOL_COLOR = tinycolor("#aaf4fc")
 COOL_TEMP = 32
 
-HOT_COLOR = tinycolor("#fc5427")
-HOT_TEMP = 80
+HOT_COLOR = tinycolor("#f42c18")
+HOT_TEMP = 90
+
+iconToEmoji = (icon) ->
+  switch icon
+    when 'clear-day' then 'sunny'
+    when 'clear-night' then ''
+    when 'rain' then 'umbrella'
+    when 'snow' then 'snowflake'
+    when 'sleet' then 'sleet'
+    when 'wind' then 'windy'
+    when 'fog' then 'foggy'
+    when 'cloudy' then 'cloud'
+    when 'partly-cloudy-day' then 'partly_sunny'
+    when 'partly-cloudy-night' then 'partly_cloudy_night'
+  else 'shrug'
 
 module.exports = (robot) ->
 
@@ -44,13 +58,15 @@ module.exports = (robot) ->
           temperatureBlend = Math.max temperatureBlend, 0
           temperatureBlend = Math.min temperatureBlend, 100
 
+          emoji = iconToEmoji json.currently.icon
+
           attachment =
             fallback: "Dark Sky weather forecast"
             color: tinycolor.mix(COOL_COLOR, HOT_COLOR, temperatureBlend).toHexString()
             title: "Forecast for #{address}"
             title_url: "https://darksky.net/#{lat},#{lng}"
             fields: [
-              { title: "Currently", value: "#{json.minutely.summary} #{json.currently.temperature} °F, feels like #{json.currently.apparentTemperature} °F." }
+              { title: "Currently", value: "#{json.minutely.summary} #{json.currently.temperature} °F, feels like #{json.currently.apparentTemperature} °F. :#{emoji}:" }
               { title: "Today", value: "#{json.daily.data[0].summary} High: #{json.daily.data[0].temperatureMax} °F Low: #{json.daily.data[0].temperatureMin} °F" }
               { title: "Tomorrow", value: " #{json.daily.data[1].summary} High: #{json.daily.data[1].temperatureMax} °F Low: #{json.daily.data[1].temperatureMin} °F"}
             ]
