@@ -41,6 +41,8 @@ module.exports = (robot) ->
           json = JSON.parse(body)
 
           temperatureBlend = (json.currently.temperature - COOL_TEMP) / (HOT_TEMP - COOL_TEMP) * 100.0
+          temperatureBlend = Math.max temperatureBlend, 0
+          temperatureBlend = Math.min temperatureBlend, 100
 
           attachment =
             fallback: "Dark Sky weather forecast"
