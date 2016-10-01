@@ -12,11 +12,35 @@
 
 tinycolor = require 'tinycolor2'
 
-COOL_COLOR = tinycolor("#aaf4fc")
-COOL_TEMP = 32
 
-HOT_COLOR = tinycolor("#f42c18")
-HOT_TEMP = 90
+MIN_TEMP = 10
+MAX_TEMP = 120
+
+colors = 
+  120: tinycolor("#FF00FF"),
+  100: tinycolor("#FF0000"),
+  90: tinycolor("#FF9200"),
+  80: tinycolor("#FFFF00"),
+  70: tinycolor("#A1FF00"),
+  60: tinycolor("#00FF00"),
+  50: tinycolor("#00A53A"),
+  40: tinycolor("#00FFFF"),
+  10: tinycolor("#0000FF")
+
+tempToColor = (temp) ->
+  if temp > MAX_TEMP
+    return colors[MAX_TEMP]
+  if temp < MIN_TEMP
+    return colors[MIN_TEMP]
+  lowBound = MIN_TEMP
+  highBound = MAX_TEMP
+  for checkTemp, checkColor of colors
+    if temp > checkTemp
+      lowBound = Math.max lowBound, checkTemp
+    if temp < checkTemp
+      highBound = Math.min highBound, checkTemp
+  temperatureBlend = (temp - lowBound) / (highBound - lowBound) * 100.0
+  tinycolor.mix(colors[lowBound], colors[highBound], temperatureBlend).toHexString()
 
 iconToEmoji = (icon) ->
   switch icon
@@ -53,18 +77,14 @@ module.exports = (robot) ->
         msg.send err if err
         try
           json = JSON.parse(body)
-
-          temperatureBlend = (json.currently.temperature - COOL_TEMP) / (HOT_TEMP - COOL_TEMP) * 100.0
-          temperatureBlend = Math.max temperatureBlend, 0
-          temperatureBlend = Math.min temperatureBlend, 100
-
+          
           currentlyEmoji = iconToEmoji json.currently.icon
           todayEmoji = iconToEmoji json.daily.data[0].icon
           tomorrowEmoji = iconToEmoji json.daily.data[1].icon
 
           attachment =
             fallback: "Dark Sky weather forecast"
-            color: tinycolor.mix(COOL_COLOR, HOT_COLOR, temperatureBlend).toHexString()
+            color: tempToColor json.currently.temperature
             title: "Forecast for #{address}"
             title_url: "https://darksky.net/#{lat},#{lng}"
             fields: [
