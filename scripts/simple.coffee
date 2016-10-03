@@ -59,7 +59,7 @@ module.exports = (robot) ->
       "http://i.imgur.com/KZEsyv0.gif"
       "https://i.imgur.com/vUDUN5k.gif"
       "https://static1.e621.net/data/54/92/54927df9c2746b6bd28e0db41229f88d.gif"
-      "https://github.com/smashwilson/pushbot/edit/master/scripts/simple.coffee"
+      "http://sixprizes.com/wp-content/uploads/2014/01/vulpix-misty-flamethrower-fire-1.jpg"
     ]
 
   robot.respond /zing/i, (msg) ->
