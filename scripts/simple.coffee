@@ -67,6 +67,9 @@ module.exports = (robot) ->
       "http://i.imgur.com/Wd9NiaB.jpg"
       "https://slack-files.com/files-tmb/T02D23B7G-F02ECEZEG-3fd432/img_201407206_133131_360.png"
       "http://media.giphy.com/media/xs6FqhzEdWMZW/giphy.gif#.png"
+      "http://i.imgur.com/pZPtRZm.jpg"
+      "http://i.imgur.com/Km8sGO8.jpg"
+      "http://i.imgur.com/vt0zL8z.jpg"
     ]
 
   robot.respond /magic8/i, (msg) ->
