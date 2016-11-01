@@ -60,6 +60,7 @@ module.exports = (robot) ->
       "https://i.imgur.com/vUDUN5k.gif"
       "https://static1.e621.net/data/54/92/54927df9c2746b6bd28e0db41229f88d.gif"
       "http://sixprizes.com/wp-content/uploads/2014/01/vulpix-misty-flamethrower-fire-1.jpg"
+      "http://mlb.mlb.com/images/0/7/2/177185072/050916_jose_helmet_med_a3yfultb.gif"
     ]
 
   robot.respond /zing/i, (msg) ->
