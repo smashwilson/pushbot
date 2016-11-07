@@ -14,6 +14,7 @@
 #   hubot poker - A very involved game of skill and chance.
 #   hubot sin - return a sin, courtesy of Jack Chick
 #   hubot pokemonsay <string> - Translate string into Pokemon Unown Slack emojis.
+#   hubot femshep - Express your rage in a healthy fashion
 #
 # Configuration:
 #
@@ -255,3 +256,6 @@ module.exports = (robot) ->
     lower_string = msg.match[1].toLowerCase()
     unown_string = lower_string.split('').map(unownify).join('')
     msg.send unown_string
+
+  robot.respond /femshep/i, (msg) ->
+    msg.send "http://media.tumblr.com/tumblr_lsxdm7yONC1qbplir.gif"
