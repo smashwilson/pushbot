@@ -6,10 +6,10 @@
 #   hubot attr [@<username>] dex <score> - Set your character's dexterity score
 #   hubot hp <amount> - Set your character's HP to a fixed amount
 #   hubot hp +/-<amount> - Add or remove HP from your character
-#   hubot initiative clear - Reset all initiative counts. (DM only)
-#   hubot initiative [@<username] <score> - Set your character's initiative count
-#   hubot initiative next - Advance the initiative count and announce the next character
-#   hubot initiative report - Show all initiative counts.
+#   hubot init clear - Reset all initiative counts. (DM only)
+#   hubot init [@<username] <score> - Set your character's initiative count
+#   hubot init next - Advance the initiative count and announce the next character
+#   hubot init report - Show all initiative counts.
 #   hubot character sheet [@<username>] - Summarize current character statistics
 #   hubot character report - Summarize all character statistics
 
@@ -65,7 +65,7 @@ module.exports = (robot) ->
 
     robot.brain.set('dnd:characterMap', characterMap)
 
-  robot.respond /attr\s+(?:@?(\w+)\s+)?(\w+)\s+(\d+)/i, (msg) ->
+  robot.respond /attr\s+(?:@?(\S+)\s+)?(\w+)\s+(\d+)/i, (msg) ->
     attrName = msg.match[2]
     score = parseInt(msg.match[3])
 
@@ -87,7 +87,7 @@ module.exports = (robot) ->
 
       msg.send "@#{character.username}'s #{attrName} is now #{score}."
 
-  robot.respond /hp\s+(?:@?(\w+)\s+)?(\+|-)?\s*(\d+)/i, (msg) ->
+  robot.respond /hp\s+(?:@?(\S+)\s+)?(\+|-)?\s*(\d+)/i, (msg) ->
     op = msg.match[2] or '='
     amount = parseInt(msg.match[3])
 
@@ -114,11 +114,11 @@ module.exports = (robot) ->
         lines.push "@#{character.username} is KO'ed!"
       msg.send lines.join("\n")
 
-  robot.respond /initiative\s+clear/i, (msg) ->
+  robot.respond /init\s+clear/i, (msg) ->
     robot.brain.set 'dnd:initiativeMap', INITIATIVE_MAP_DEFAULT
     msg.reply 'All initiative counts cleared.'
 
-  robot.respond /initiative(?:\s+@?(\w+))?\s+(-?\d+)/, (msg) ->
+  robot.respond /init(?:\s+@?(\S+))?\s+(-?\d+)/, (msg) ->
     score = parseInt(msg.match[2])
 
     initiativeMap = robot.brain.get('dnd:initiativeMap') or INITIATIVE_MAP_DEFAULT
@@ -136,11 +136,11 @@ module.exports = (robot) ->
         initiativeMap.scores.push created
 
       # Sort score array in decreasing initiative score.
-      initiativeMap.scores.sort (a, b) -> a.score - b.score
+      initiativeMap.scores.sort((a, b) -> b.score - a.score)
 
       msg.send "@#{character.username} will go at initiative count #{score}."
 
-  robot.respond /initiative\s+next/i, (msg) ->
+  robot.respond /init\s+next/i, (msg) ->
     initiativeMap = robot.brain.get('dnd:initiativeMap') or INITIATIVE_MAP_DEFAULT
 
     unless initiativeMap.scores.length > 0
@@ -174,7 +174,7 @@ module.exports = (robot) ->
 
     msg.send lines.join "\n"
 
-  robot.respond /character sheet(?:\s+@?(\w+))?/i, (msg) ->
+  robot.respond /character sheet(?:\s+@?(\S+))?/i, (msg) ->
     withCharacter msg, (existing, character) ->
       unless existing
         msg.reply "No character data for #{character.username} yet."
