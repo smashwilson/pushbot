@@ -157,7 +157,7 @@ module.exports = (robot) ->
     initiativeMap.current = nextCount
     msg.send "@#{current.username} is up. _(#{current.score})_"
 
-  robot.respond /initiative\s+report/i, (msg) ->
+  robot.respond /init\s+report/i, (msg) ->
     initiativeMap = robot.brain.get('dnd:initiativeMap') or INITIATIVE_MAP_DEFAULT
 
     unless initiativeMap.scores.length > 0
