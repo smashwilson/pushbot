@@ -2,63 +2,81 @@
 #   D&D related commands.
 #
 # Commands:
-#   hubot maxhp <username> <amount> - Set a character maximum HP
-#   hubot hp <username> <amount> - Set a character's HP to a fixed amount
-#   hubot hp <username> +/-<amount> - Add or remove HP from a character
+#   hubot maxhp <amount> - Set your character's maximum HP
+#   hubot hp <amount> - Set your character's HP to a fixed amount
+#   hubot hp +/-<amount> - Add or remove HP from your character
+#   hubot maxhp @<username> <amount> - Set another character's maximum HP (DM only)
+#   hubot hp @<username> <amount> - Set another character's HP to a fixed amount (DM only)
+#   hubot hp @<username> +/-<amount> - Add or remove HP from another character (DM only)
+
+DM_ROLE = 'dungeon master'
 
 module.exports = (robot) ->
 
-  robot.respond /maxhp\s+@?(\w+)\s+(\d+)/i, (msg) ->
-    username = msg.match[1]
+  characterNameFrom = (msg) ->
+    if msg.match[1]?
+      # Explicit username. DM-only
+      unless robot.auth.hasRole(msg.message.user, DM_ROLE)
+        msg.reply [
+          "You can't do that! You're not a *#{DM_ROLE}*."
+          "Ask an admin to run `#{robot.name} grant #{msg.message.user.name} the #{DM_ROLE} role`."
+        ].join("\n")
+        return null
+
+      msg.match[1]
+    else
+      msg.message.user.name
+
+  withCharacter = (msg, callback) ->
+    username = characterNameFrom msg
+    return unless username?
+
+    existing = true
+    characterMap = robot.brain.get('dnd:characterMap') or {}
+    character = characterMap[username]
+    unless character?
+      existing = false
+      character = {
+        username: username
+      }
+
+    callback(existing, character)
+    characterMap[username] = character
+
+    robot.brain.set('dnd:characterMap', characterMap)
+
+  robot.respond /maxhp\s+(?:@?(\w+)\s+)?(\d+)/i, (msg) ->
     amount = parseInt(msg.match[2])
 
-    robot.brain.set("dnd:maxhp:#{username}", amount)
-    msg.reply "#{username}'s maximum HP is now #{amount}."
+    withCharacter msg, (existing, character) ->
+      character.maxHP = amount
+      if character.currentHP and character.currentHP < character.maxHP
+        character.currentHP = character.maxHP
+      msg.reply "@#{character.username}'s maximum HP is now #{amount}."
 
-  robot.respond /hp\s+@?(\w+)\s+(\+|-)\s*(\d+)/i, (msg) ->
-    username = msg.match[1]
-    op = msg.match[2]
+  robot.respond /hp\s+(?:@?(\w+)\s+)?(\+|-)?\s*(\d+)/i, (msg) ->
+    op = msg.match[2] or '='
     amount = parseInt(msg.match[3])
 
-    maxHP = robot.brain.get("dnd:maxhp:#{username}")
-    if maxHP is null
-      msg.reply [
-        "#{username}'s maximum HP isn't set."
-        "Please run `@#{robot.name}: maxhp #{username} <amount>` first."
-      ].join("\n")
-      return
+    withCharacter msg, (existing, character) ->
+      unless character.maxHP?
+        msg.reply [
+          "@#{character.username}'s maximum HP isn't set."
+          "Please run `@#{robot.name}: maxhp <amount>` first."
+        ].join("\n")
+        return
 
-    initHP = robot.brain.get("dnd:hp:#{username}")
-    initHP = maxHP if currentHP is null
+      initHP = character.currentHP or character.maxHP
 
-    finalHP = switch op
-      when '+' then initHP + amount
-      when '-' then initHP - amount
-      else initHP
+      finalHP = switch op
+        when '+' then initHP + amount
+        when '-' then initHP - amount
+        else amount
 
-    finalHP = 0 if finalHP < 0
-    finalHP = maxHP if finalHP > maxHP
+      finalHP = character.maxHP if finalHP > character.maxHP
+      character.currentHP = finalHP
 
-    robot.brain.set("dnd:hp:#{username}", finalHP)
-
-    lines = ["#{username}'s HP: #{initHP} :point_right: #{finalHP}'"]
-    if finalHP is 0
-      lines.push "#{username} is KO'ed!"
-
-    msg.send lines.join("\n")
-
-  robot.respond /hp\s+@?(\w+)\s*$/i, (msg) ->
-    username = msg.match[1]
-
-    maxHP = robot.brain.get("dnd:maxhp:#{username}")
-    if maxHP is null
-      msg.reply [
-        "#{username}'s maximum HP isn't set."
-        "Please run `@#{robot.name}: maxhp #{username} <amount>` first."
-      ].join("\n")
-      return
-
-    currentHP = robot.brain.get("dnd:hp:#{username}")
-    currentHP = maxHP if currentHP is null
-
-    msg.send "#{username}: #{currentHP} / #{maxHP}"
+      lines = ["@#{character.username}'s HP: #{initHP} :point_right: #{finalHP} / #{character.maxHP}"]
+      if finalHP <= 0
+        lines.push "@#{character.username} is KO'ed!"
+      msg.send lines.join("\n")
