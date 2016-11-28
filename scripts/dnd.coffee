@@ -79,8 +79,11 @@ module.exports = (robot) ->
     withCharacter msg, (existing, character) ->
       character[attrName] = score
 
-      if attrName is 'maxhp' and character.currentHP and character.currentHP > character.maxhp
-        character.currentHP = character.maxhp
+      if attrName is 'maxhp'
+        if character.currentHP and character.currentHP > character.maxhp
+          character.currentHP = character.maxhp
+        unless character.currentHP?
+          character.currentHP = character.maxhp
 
       msg.send "@#{character.username}'s #{attrName} is now #{score}."
 
