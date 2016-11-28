@@ -2,7 +2,8 @@
 #   D&D related commands.
 #
 # Commands:
-#   hubot maxhp <amount> - Set your character's maximum HP
+#   hubot attr [@<username>] maxhp <amount> - Set your character's maximum HP
+#   hubot attr [@<username>] dex <score> - Set your character's dexterity score
 #   hubot hp <amount> - Set your character's HP to a fixed amount
 #   hubot hp +/-<amount> - Add or remove HP from your character
 #   hubot initiative clear - Reset all initiative counts. (DM only)
@@ -17,6 +18,8 @@ DM_ROLE = 'dungeon master'
 INITIATIVE_MAP_DEFAULT =
   scores: []
   current: null
+
+ATTRIBUTES = ['maxhp', 'str', 'dex', 'con', 'int', 'wis', 'cha']
 
 module.exports = (robot) ->
 
@@ -33,7 +36,7 @@ module.exports = (robot) ->
   characterNameFrom = (msg) ->
     if msg.match[1]?
       # Explicit username. DM-only
-      return null unless dmOnly(msg)
+      return null unless dmOnly(msg) or msg.match[1] is msg.message.user.name
       msg.match[1]
     else
       msg.message.user.name
@@ -56,7 +59,21 @@ module.exports = (robot) ->
 
     robot.brain.set('dnd:characterMap', characterMap)
 
-  robot.respond /character maxhp\s+(?:@?(\w+)\s+)?(\d+)/i, (msg) ->
+  robot.respond /attr\s+(?:@?(\w+)\s+)?(\w+)\s+(\d+)/i, (msg) ->
+    attrName = msg.match[1]
+    score = parseInt(msg.match[2])
+
+    unless ATTRIBUTES.indexOf(attrName) isnt -1
+      msg.reply [
+        "#{attrName} isn't a valid attribute name."
+        "Known attributes include: #{ATTRIBUTES.join ' '}"
+      ].join "\n"
+      return
+
+    withCharacter msg, (existing, character) ->
+      character[attrName] = score
+
+  robot.respond /maxhp\s+(?:@?(\w+)\s+)?(\d+)/i, (msg) ->
     amount = parseInt(msg.match[2])
 
     withCharacter msg, (existing, character) ->
@@ -73,7 +90,7 @@ module.exports = (robot) ->
       unless character.maxHP?
         msg.reply [
           "@#{character.username}'s maximum HP isn't set."
-          "Please run `@#{robot.name}: maxhp <amount>` first."
+          "Please run `@#{robot.name}: attr maxhp <amount>` first."
         ].join("\n")
         return
 
