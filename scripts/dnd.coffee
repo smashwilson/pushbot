@@ -21,6 +21,12 @@ INITIATIVE_MAP_DEFAULT =
 
 ATTRIBUTES = ['maxhp', 'str', 'dex', 'con', 'int', 'wis', 'cha']
 
+modifier = (score) -> Math.floor((score - 10) / 2)
+
+modifierStr = (score) ->
+  m = modifier(score)
+  if m < 0 then m.toString() else "+#{m}"
+
 module.exports = (robot) ->
 
   dmOnly = (msg) ->
@@ -60,8 +66,8 @@ module.exports = (robot) ->
     robot.brain.set('dnd:characterMap', characterMap)
 
   robot.respond /attr\s+(?:@?(\w+)\s+)?(\w+)\s+(\d+)/i, (msg) ->
-    attrName = msg.match[1]
-    score = parseInt(msg.match[2])
+    attrName = msg.match[2]
+    score = parseInt(msg.match[3])
 
     unless ATTRIBUTES.indexOf(attrName) isnt -1
       msg.reply [
@@ -72,6 +78,11 @@ module.exports = (robot) ->
 
     withCharacter msg, (existing, character) ->
       character[attrName] = score
+
+      if attrName is 'maxHP' and character.currentHP and character.currentHP > character.maxHP
+        character.currentHP = character.maxHP
+
+      msg.send "@#{character.username}'s #{attrName} is now #{score}."
 
   robot.respond /maxhp\s+(?:@?(\w+)\s+)?(\d+)/i, (msg) ->
     amount = parseInt(msg.match[2])
@@ -175,7 +186,18 @@ module.exports = (robot) ->
         msg.reply "No character data for #{character.username} yet."
         return
 
-      msg.send "*HP:* #{character.currentHP} / #{character.maxHP}"
+      lines = ["*HP:* #{character.currentHP} / #{character.maxHP}"]
+
+      for attrName in ['str', 'dex', 'con', 'int', 'wis', 'cha']
+        attrScore = character[attrName]
+        if attrScore?
+          attrStr = "#{attrScore} (#{modifierStr attrScore})"
+        else
+          attrStr = '_unassigned_'
+
+        lines.push "*#{attrName.toUpperCase()}:* #{attrStr}"
+
+      msg.send lines.join "\n"
 
   robot.respond /character report/i, (msg) ->
     characterMap = robot.brain.get('dnd:characterMap') or {}
