@@ -8,6 +8,8 @@
 #   hubot maxhp @<username> <amount> - Set another character's maximum HP (DM only)
 #   hubot hp @<username> <amount> - Set another character's HP to a fixed amount (DM only)
 #   hubot hp @<username> +/-<amount> - Add or remove HP from another character (DM only)
+#   hubot character sheet [@<username>] - Summarize current character statistics
+#   hubot character report - Summarize all character statistics
 
 DM_ROLE = 'dungeon master'
 
@@ -50,7 +52,7 @@ module.exports = (robot) ->
 
     withCharacter msg, (existing, character) ->
       character.maxHP = amount
-      if character.currentHP and character.currentHP < character.maxHP
+      if character.currentHP and character.currentHP > character.maxHP
         character.currentHP = character.maxHP
       msg.reply "@#{character.username}'s maximum HP is now #{amount}."
 
@@ -80,3 +82,18 @@ module.exports = (robot) ->
       if finalHP <= 0
         lines.push "@#{character.username} is KO'ed!"
       msg.send lines.join("\n")
+
+  robot.respond /character sheet(?: @?(\w+))?/i, (msg) ->
+    withCharacter msg, (existing, character) ->
+      unless existing
+        msg.reply "No character data for #{character.username} yet."
+        return
+
+      msg.send "*HP:* #{character.currentHP} / #{character.maxHP}"
+
+  robot.respond /character report/i, (msg) ->
+    characterMap = robot.brain.get('dnd:characterMap') or {}
+    lines = []
+    for username, character of characterMap
+      lines.push "*#{username}*: HP #{character.currentHP}/#{character.maxHP}"
+    msg.send lines.join "\n"
