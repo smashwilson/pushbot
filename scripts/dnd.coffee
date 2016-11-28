@@ -79,43 +79,34 @@ module.exports = (robot) ->
     withCharacter msg, (existing, character) ->
       character[attrName] = score
 
-      if attrName is 'maxHP' and character.currentHP and character.currentHP > character.maxHP
-        character.currentHP = character.maxHP
+      if attrName is 'maxhp' and character.currentHP and character.currentHP > character.maxhp
+        character.currentHP = character.maxhp
 
       msg.send "@#{character.username}'s #{attrName} is now #{score}."
-
-  robot.respond /maxhp\s+(?:@?(\w+)\s+)?(\d+)/i, (msg) ->
-    amount = parseInt(msg.match[2])
-
-    withCharacter msg, (existing, character) ->
-      character.maxHP = amount
-      if character.currentHP and character.currentHP > character.maxHP
-        character.currentHP = character.maxHP
-      msg.reply "@#{character.username}'s maximum HP is now #{amount}."
 
   robot.respond /hp\s+(?:@?(\w+)\s+)?(\+|-)?\s*(\d+)/i, (msg) ->
     op = msg.match[2] or '='
     amount = parseInt(msg.match[3])
 
     withCharacter msg, (existing, character) ->
-      unless character.maxHP?
+      unless character.maxhp?
         msg.reply [
           "@#{character.username}'s maximum HP isn't set."
           "Please run `@#{robot.name}: attr maxhp <amount>` first."
         ].join("\n")
         return
 
-      initHP = character.currentHP or character.maxHP
+      initHP = character.currentHP or character.maxhp
 
       finalHP = switch op
         when '+' then initHP + amount
         when '-' then initHP - amount
         else amount
 
-      finalHP = character.maxHP if finalHP > character.maxHP
+      finalHP = character.maxhp if finalHP > character.maxhp
       character.currentHP = finalHP
 
-      lines = ["@#{character.username}'s HP: #{initHP} :point_right: #{finalHP} / #{character.maxHP}"]
+      lines = ["@#{character.username}'s HP: #{initHP} :point_right: #{finalHP} / #{character.maxhp}"]
       if finalHP <= 0
         lines.push "@#{character.username} is KO'ed!"
       msg.send lines.join("\n")
@@ -186,7 +177,7 @@ module.exports = (robot) ->
         msg.reply "No character data for #{character.username} yet."
         return
 
-      lines = ["*HP:* #{character.currentHP} / #{character.maxHP}"]
+      lines = ["*HP:* #{character.currentHP} / #{character.maxhp}"]
 
       for attrName in ['str', 'dex', 'con', 'int', 'wis', 'cha']
         attrScore = character[attrName]
@@ -203,5 +194,5 @@ module.exports = (robot) ->
     characterMap = robot.brain.get('dnd:characterMap') or {}
     lines = []
     for username, character of characterMap
-      lines.push "*#{username}*: HP #{character.currentHP}/#{character.maxHP}"
+      lines.push "*#{username}*: HP #{character.currentHP}/#{character.maxhp}"
     msg.send lines.join "\n"
