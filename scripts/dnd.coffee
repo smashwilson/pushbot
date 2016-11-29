@@ -15,6 +15,8 @@
 #   hubot character sheet [@<username>] - Summarize current character statistics
 #   hubot character report - Summarize all character statistics
 
+_ = require 'underscore'
+
 PUBLIC_CHANNEL = process.env.DND_PUBLIC_CHANNEL
 
 DM_ROLE = 'dungeon master'
@@ -94,6 +96,7 @@ module.exports = (robot) ->
 
   resortInitiativeOrder = (initiativeMap) ->
     initiativeMap.unresolvedTies = {}
+    rerollTies = []
 
     # Sort score array in decreasing initiative score.
     # Break ties by DEX scores.
@@ -115,15 +118,31 @@ module.exports = (robot) ->
           aReroll = initiativeMap.rerolls[a.username]
           bReroll = initiativeMap.rerolls[b.username]
 
-          if aReroll? and bReroll? and aReroll isnt bReroll
-            bReroll - aReroll
+          if aReroll? and bReroll?
+            if aReroll isnt bReroll
+              bReroll - aReroll
+            else
+              # Re-roll tie; wipe results and try again.
+              delete initiativeMap.rerolls[a.username]
+              delete initiativeMap.rerolls[b.username]
+
+              rerollTies.push a.username, b.username
+              (initiativeMap.unresolvedTies[a.score] ?= []).push a.username, b.username
+              0
           else
             (initiativeMap.unresolvedTies[a.score] ?= []).push a.username, b.username
             0)
 
+    # Remove duplicates from the unresolvedTies map.
+    for score in Object.keys(initiativeMap.unresolvedTies)
+      initiativeMap.unresolvedTies[score] = _.uniq(initiativeMap.unresolvedTies[score])
+
+    # Return a de-duplicated rerollTies collection.
+    _.uniq(rerollTies)
+
   hasInitiativeTie = (initiativeMap, username) ->
     found = false
-    for _, usernames of initiativeMap.unresolvedTies
+    for x, usernames of initiativeMap.unresolvedTies
       if usernames.indexOf(username) isnt -1
         found = true
     found
@@ -236,16 +255,20 @@ module.exports = (robot) ->
     score = parseInt(msg.match[2])
 
     initiativeMap = robot.brain.get('dnd:initiativeMap') or INITIATIVE_MAP_DEFAULT
-    withCharacter msg, (existing, character) ->
-      unless hasInitiativeTie(initiativeMap, character.username)
-        msg.reply "You're not currently in an initiative tie."
-        return
+    username = null
+    withCharacter msg, (existing, character) -> username = character.username
 
-      initiativeMap.rerolls[character.username] = score
+    unless hasInitiativeTie(initiativeMap, username)
+      msg.reply "You're not currently in an initiative tie."
+      return
 
-    resortInitiativeOrder(initiativeMap)
+    initiativeMap.rerolls[username] = score
+
+    rerollTies = resortInitiativeOrder(initiativeMap)
     lines = ['Initiative re-roll recorded.']
-    if Object.keys(initiativeMap.unresolvedTies).length > 0
+    if rerollTies.indexOf(username) > 0
+      lines.push 'Whoops, the re-roll is still tied!'
+    else if Object.keys(initiativeMap.unresolvedTies).length > 0
       lines.push 'Waiting for remaining re-rolls.'
     else
       lines.push ':crossed_swords: Ready to go :crossed_swords:'
