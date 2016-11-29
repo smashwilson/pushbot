@@ -224,7 +224,7 @@ module.exports = (robot) ->
       character.currenthp = finalhp
 
       lines = ["@#{character.username}'s HP: #{inithp} :point_right: #{finalhp} / #{character.maxhp}"]
-      if finalHP <= 0
+      if finalhp <= 0
         lines.push "@#{character.username} is KO'ed!"
       msg.send lines.join("\n")
 
