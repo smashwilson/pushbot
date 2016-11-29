@@ -151,8 +151,13 @@ module.exports = (robot) ->
     if Object.keys(initiativeMap.unresolvedTies).length > 0
       lines = ['Unresolved initiative ties!']
       for score, usernames of initiativeMap.unresolvedTies
-        atMentions = ("@#{u}" for u in usernames).join(", ")
-        lines.push "Tied at #{score}: #{atMentions}"
+        atMentions = []
+        for u in usernames
+          if initiativeMap.rerolls[u]?
+            atMentions.push "_@#{u}_"
+          else
+            atMentions.push "@#{u}"
+        lines.push "Tied at #{score}: #{atMentions.join ', '}"
       lines.push "Please call `#{robot.name} init reroll <score>` to re-roll."
       msg.send lines.join("\n")
       false
