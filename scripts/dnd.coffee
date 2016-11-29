@@ -241,7 +241,6 @@ module.exports = (robot) ->
         msg.reply "You're not currently in an initiative tie."
         return
 
-      msg.send "@#{character.username} will go at initiative count #{score}."
       initiativeMap.rerolls[character.username] = score
 
     resortInitiativeOrder(initiativeMap)
