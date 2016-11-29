@@ -4,14 +4,17 @@
 # Commands:
 #   hubot attr [@<username>] maxhp <amount> - Set your character's maximum HP
 #   hubot attr [@<username>] dex <score> - Set your character's dexterity score
-#   hubot hp <amount> - Set your character's HP to a fixed amount
-#   hubot hp +/-<amount> - Add or remove HP from your character
+#   hubot hp [@<username>] - View your character's current HP
+#   hubot hp [@<username>] <amount> - Set your character's HP to a fixed amount
+#   hubot hp [@<username>] +/-<amount> - Add or remove HP from your character
 #   hubot init clear - Reset all initiative counts. (DM only)
-#   hubot init [@<username] <score> - Set your character's initiative count
+#   hubot init [@<username>] <score> - Set your character's initiative count
 #   hubot init next - Advance the initiative count and announce the next character
 #   hubot init report - Show all initiative counts.
 #   hubot character sheet [@<username>] - Summarize current character statistics
 #   hubot character report - Summarize all character statistics
+
+PUBLIC_CHANNEL = process.env.DND_PUBLIC_CHANNEL
 
 DM_ROLE = 'dungeon master'
 
@@ -29,15 +32,36 @@ modifierStr = (score) ->
 
 module.exports = (robot) ->
 
-  dmOnly = (msg) ->
+  dmOnlyError = (msg) ->
+    [
+      "You can't do that! You're not a *#{DM_ROLE}*."
+      "Ask an admin to run `#{robot.name} grant #{msg.message.user.name} the #{DM_ROLE} role`."
+    ].join("\n")
+
+  dmOnly = (msg, error=null) ->
     if robot.auth.hasRole(msg.message.user, DM_ROLE)
       true
     else
-      msg.reply [
-        "You can't do that! You're not a *#{DM_ROLE}*."
-        "Ask an admin to run `#{robot.name} grant #{msg.message.user.name} the #{DM_ROLE} role`."
-      ].join("\n")
+      error ?= dmOnlyError(msg)
+      msg.reply error
       false
+
+  isPublicChannel = (msg) ->
+    if PUBLIC_CHANNEL?
+      msg.envelope.room is PUBLIC_CHANNEL
+    else
+      msg.envelope.room[0] isnt 'D'
+
+  pmOnlyFromDM = (msg) ->
+    if isPublicChannel(msg)
+      true
+    else
+      error = ["Only a *#{DM_ROLE}* can do that here!"]
+      if PUBLIC_CHANNEL?
+        error.push "Try that again in the <##{PUBLIC_CHANNEL}> channel instead."
+      else
+        error.push "Try that again in a public channel instead."
+      dmOnly(msg, error.join "\n")
 
   characterNameFrom = (msg) ->
     if msg.match[1]?
@@ -65,9 +89,13 @@ module.exports = (robot) ->
 
     robot.brain.set('dnd:characterMap', characterMap)
 
-  robot.respond /attr\s+(?:@?(\S+)\s+)?(\w+)\s+(\d+)/i, (msg) ->
+  robot.respond /attr\s+(?:@(\S+)\s+)?(\w+)(?:\s+(\d+))?/i, (msg) ->
     attrName = msg.match[2]
-    score = parseInt(msg.match[3])
+    score = null
+
+    if msg.match[3]?
+      return unless pmOnlyFromDM(msg)
+      score = parseInt(msg.match[3])
 
     unless ATTRIBUTES.indexOf(attrName) isnt -1
       msg.reply [
@@ -77,19 +105,25 @@ module.exports = (robot) ->
       return
 
     withCharacter msg, (existing, character) ->
-      character[attrName] = score
+      if score?
+        character[attrName] = score
 
-      if attrName is 'maxhp'
-        if character.currentHP and character.currentHP > character.maxhp
-          character.currentHP = character.maxhp
-        unless character.currentHP?
-          character.currentHP = character.maxhp
+        if attrName is 'maxhp'
+          if character.currenthp and character.currenthp > character.maxhp
+            character.currenthp = character.maxhp
+          unless character.currenthp?
+            character.currenthp = character.maxhp
 
-      msg.send "@#{character.username}'s #{attrName} is now #{score}."
+        msg.send "@#{character.username}'s #{attrName} is now #{score}."
+      else
+        msg.send "@#{character.username}'s #{attrName} is #{character[attrName]}."
 
-  robot.respond /hp\s+(?:@?(\S+)\s+)?(\+|-)?\s*(\d+)/i, (msg) ->
+  robot.respond /hp(?:\s+@(\S+))?(?:\s+(\+|-)?\s*(\d+))?/i, (msg) ->
     op = msg.match[2] or '='
-    amount = parseInt(msg.match[3])
+    amountStr = msg.match[3]
+    if amountStr?
+      return unless pmOnlyFromDM(msg)
+      amount = parseInt(amountStr)
 
     withCharacter msg, (existing, character) ->
       unless character.maxhp?
@@ -99,17 +133,22 @@ module.exports = (robot) ->
         ].join("\n")
         return
 
-      initHP = character.currentHP or character.maxhp
+      inithp = character.currenthp or character.maxhp
 
-      finalHP = switch op
-        when '+' then initHP + amount
-        when '-' then initHP - amount
+      # Query only
+      unless amount?
+        msg.send "@#{character.username}'s current HP is #{inithp} / #{character.maxhp}."
+        return
+
+      finalhp = switch op
+        when '+' then inithp + amount
+        when '-' then inithp - amount
         else amount
 
-      finalHP = character.maxhp if finalHP > character.maxhp
-      character.currentHP = finalHP
+      finalhp = character.maxhp if finalhp > character.maxhp
+      character.currenthp = finalhp
 
-      lines = ["@#{character.username}'s HP: #{initHP} :point_right: #{finalHP} / #{character.maxhp}"]
+      lines = ["@#{character.username}'s HP: #{inithp} :point_right: #{finalhp} / #{character.maxhp}"]
       if finalHP <= 0
         lines.push "@#{character.username} is KO'ed!"
       msg.send lines.join("\n")
@@ -118,7 +157,8 @@ module.exports = (robot) ->
     robot.brain.set 'dnd:initiativeMap', INITIATIVE_MAP_DEFAULT
     msg.reply 'All initiative counts cleared.'
 
-  robot.respond /init(?:\s+@?(\S+))?\s+(-?\d+)/, (msg) ->
+  robot.respond /init(?:\s+@(\S+))?\s+(-?\d+)/, (msg) ->
+    return unless pmOnlyFromDM(msg)
     score = parseInt(msg.match[2])
 
     initiativeMap = robot.brain.get('dnd:initiativeMap') or INITIATIVE_MAP_DEFAULT
@@ -167,20 +207,19 @@ module.exports = (robot) ->
     lines = []
     i = 0
     for each in initiativeMap.scores
-      prefix = ''
-      prefix = ':arrow_right: ' if (initiativeMap.current or 0) is i
-      lines.push "#{prefix}_(#{each.score})_ @#{each.username}"
+      prefix = if (initiativeMap.current or 0) is i then ':black_square_button:' else ':black_square:'
+      lines.push "#{prefix} _(#{each.score})_ @#{each.username}"
       i++
 
     msg.send lines.join "\n"
 
-  robot.respond /character sheet(?:\s+@?(\S+))?/i, (msg) ->
+  robot.respond /character sheet(?:\s+@(\S+))?/i, (msg) ->
     withCharacter msg, (existing, character) ->
       unless existing
         msg.reply "No character data for #{character.username} yet."
         return
 
-      lines = ["*HP:* #{character.currentHP} / #{character.maxhp}"]
+      lines = ["*HP:* #{character.currenthp} / #{character.maxhp}"]
 
       for attrName in ['str', 'dex', 'con', 'int', 'wis', 'cha']
         attrScore = character[attrName]
@@ -197,5 +236,5 @@ module.exports = (robot) ->
     characterMap = robot.brain.get('dnd:characterMap') or {}
     lines = []
     for username, character of characterMap
-      lines.push "*#{username}*: HP #{character.currentHP}/#{character.maxhp}"
+      lines.push "*#{username}*: HP #{character.currenthp}/#{character.maxhp}"
     msg.send lines.join "\n"
