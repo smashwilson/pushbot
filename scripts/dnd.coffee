@@ -9,6 +9,7 @@
 #   hubot hp [@<username>] +/-<amount> - Add or remove HP from your character
 #   hubot init clear - Reset all initiative counts. (DM only)
 #   hubot init [@<username>] <score> - Set your character's initiative count
+#   hubot init reroll [@<username>] <score> - Re-roll your initiative to break a tie.
 #   hubot init next - Advance the initiative count and announce the next character
 #   hubot init report - Show all initiative counts.
 #   hubot character sheet [@<username>] - Summarize current character statistics
@@ -21,6 +22,8 @@ DM_ROLE = 'dungeon master'
 INITIATIVE_MAP_DEFAULT =
   scores: []
   current: null
+  unresolvedTies: {}
+  rerolls: {}
 
 ATTRIBUTES = ['maxhp', 'str', 'dex', 'con', 'int', 'wis', 'cha']
 
@@ -88,6 +91,54 @@ module.exports = (robot) ->
     characterMap[username] = character
 
     robot.brain.set('dnd:characterMap', characterMap)
+
+  resortInitiativeOrder = (initiativeMap) ->
+    initiativeMap.unresolvedTies = {}
+
+    # Sort score array in decreasing initiative score.
+    # Break ties by DEX scores.
+    # If *those* are tied, demand rerolls until the tie is resolved.
+    initiativeMap.scores.sort((a, b) ->
+      if a.score isnt b.score
+        b.score - a.score
+      else
+        characterMap = robot.brain.get('dnd:characterMap') or {}
+        aCharacter = characterMap[a.username] or { dex: 0 }
+        bCharacter = characterMap[b.username] or { dex: 0 }
+
+        aDex = aCharacter.dex or 0
+        bDex = bCharacter.dex or 0
+
+        if aDex isnt bDex
+          bDex - aDex
+        else
+          aReroll = initiativeMap.rerolls[a.username]
+          bReroll = initiativeMap.rerolls[b.username]
+
+          if aReroll? and bReroll? and aReroll isnt bReroll
+            bReroll - aReroll
+          else
+            (initiativeMap.unresolvedTies[a.score] ?= []).push a.username, b.username
+            0)
+
+  hasInitiativeTie = (initiativeMap, username) ->
+    found = false
+    for _, usernames of initiativeMap.unresolvedTies
+      if usernames.indexOf(username) isnt -1
+        found = true
+    found
+
+  reportInitiativeTies = (msg, initiativeMap) ->
+    if Object.keys(initiativeMap.unresolvedTies).length > 0
+      lines = ['Unresolved initiative ties!']
+      for score, usernames of initiativeMap.unresolvedTies
+        atMentions = ("@#{u}" for u in usernames).join(", ")
+        lines.push "Tied at #{score}: #{atMentions}"
+      lines.push "Please call `#{robot.name} init reroll <score>` to re-roll."
+      msg.send lines.join("\n")
+      false
+    else
+      true
 
   robot.respond /attr\s+(?:@(\S+)\s+)?(\w+)(?:\s+(\d+))?/i, (msg) ->
     attrName = msg.match[2]
@@ -175,10 +226,33 @@ module.exports = (robot) ->
           score: score
         initiativeMap.scores.push created
 
-      # Sort score array in decreasing initiative score.
-      initiativeMap.scores.sort((a, b) -> b.score - a.score)
+      resortInitiativeOrder(initiativeMap)
+      lines = ["@#{character.username} will go at initiative count #{score}."]
+      lines.push "It's a tie!" if hasInitiativeTie(initiativeMap, character.username)
+      msg.send lines.join("\n")
+      robot.brain.set('dnd:initiativeMap', initiativeMap)
+
+  robot.respond /init\s+reroll(?:\s+@(\S+))?\s+(-?\d+)/i, (msg) ->
+    score = parseInt(msg.match[2])
+
+    initiativeMap = robot.brain.get('dnd:initiativeMap') or INITIATIVE_MAP_DEFAULT
+    withCharacter msg, (existing, character) ->
+      unless hasInitiativeTie(initiativeMap, character.username)
+        msg.reply "You're not currently in an initiative tie."
+        return
 
       msg.send "@#{character.username} will go at initiative count #{score}."
+      initiativeMap.rerolls[character.username] = score
+
+    resortInitiativeOrder(initiativeMap)
+    lines = ['Initiative re-roll recorded.']
+    if Object.keys(initiativeMap.unresolvedTies).length > 0
+      lines.push 'Waiting for remaining re-rolls.'
+    else
+      lines.push ':crossed_swords: Ready to go :crossed_swords:'
+    msg.reply lines.join("\n")
+
+    robot.brain.set('dnd:initiativeMap', initiativeMap)
 
   robot.respond /init\s+next/i, (msg) ->
     initiativeMap = robot.brain.get('dnd:initiativeMap') or INITIATIVE_MAP_DEFAULT
@@ -186,6 +260,8 @@ module.exports = (robot) ->
     unless initiativeMap.scores.length > 0
       msg.reply 'No known initiative scores.'
       return
+
+    return unless reportInitiativeTies(msg, initiativeMap)
 
     if initiativeMap.current?
       nextCount = initiativeMap.current + 1
@@ -203,6 +279,8 @@ module.exports = (robot) ->
     unless initiativeMap.scores.length > 0
       msg.reply 'No known initiative scores.'
       return
+
+    return unless reportInitiativeTies(msg, initiativeMap)
 
     lines = []
     i = 0
