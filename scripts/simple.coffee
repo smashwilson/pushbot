@@ -73,6 +73,7 @@ module.exports = (robot) ->
       "http://i.imgur.com/pZPtRZm.jpg"
       "http://i.imgur.com/Km8sGO8.jpg"
       "http://i.imgur.com/vt0zL8z.jpg"
+      "http://i.imgur.com/m0CUETW.jpg"
     ]
 
   robot.respond /magic8/i, (msg) ->
