@@ -117,6 +117,7 @@ module.exports = (robot) ->
       "As sure as my name is.... wait, who am I?"
       "The stars say... MAYBE."
       "http://i.imgur.com/rl2o77j.jpg"
+      "INSUFFICIENT DATA FOR MEANINGFUL ANSWER"
     ]
 
     all = positive
