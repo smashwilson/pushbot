@@ -62,6 +62,7 @@ module.exports = (robot) ->
       "https://static1.e621.net/data/54/92/54927df9c2746b6bd28e0db41229f88d.gif"
       "http://sixprizes.com/wp-content/uploads/2014/01/vulpix-misty-flamethrower-fire-1.jpg"
       "http://mlb.mlb.com/images/0/7/2/177185072/050916_jose_helmet_med_a3yfultb.gif"
+      "https://media.giphy.com/media/OIoQ9FzLel1qo/giphy.gif"
     ]
 
   robot.respond /zing/i, (msg) ->
@@ -72,6 +73,7 @@ module.exports = (robot) ->
       "http://i.imgur.com/pZPtRZm.jpg"
       "http://i.imgur.com/Km8sGO8.jpg"
       "http://i.imgur.com/vt0zL8z.jpg"
+      "http://i.imgur.com/m0CUETW.jpg"
     ]
 
   robot.respond /magic8/i, (msg) ->
@@ -115,6 +117,7 @@ module.exports = (robot) ->
       "As sure as my name is.... wait, who am I?"
       "The stars say... MAYBE."
       "http://i.imgur.com/rl2o77j.jpg"
+      "INSUFFICIENT DATA FOR MEANINGFUL ANSWER"
     ]
 
     all = positive
