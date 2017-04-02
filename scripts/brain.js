@@ -18,7 +18,7 @@ module.exports = function (robot) {
     return;
   }
 
-  const db = pg(databaseUrl);
+  const db = robot.postgres = pg(databaseUrl);
   const columnSet = new pg.helpers.ColumnSet([
     'type',
     'key',
