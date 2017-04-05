@@ -5,13 +5,47 @@
 
 const preprocessors = require('preprocessor');
 
-function errorHandler = function (msg) {
+exports.generate = function(robot, documentSet, spec) {
+  if (features.add !== null) {
+    addCommands(robot, documentSet, spec, spec.features.add);
+  }
+
+  if (features.set !== null) {
+    setCommand(robot, documentSet, spec, spec.features.add);
+  }
+
+  if (features.query !== null) {
+    queryCommand(robot, documentSet, spec, spec.features.query);
+  }
+
+  if (features.count !== null) {
+    countCommand(robot, documentSet, spec, spec.features.count);
+  }
+
+  if (features.stats !== null) {
+    statsCommand(robot, documentSet, spec, spec.features.stats);
+  }
+
+  if (features.by !== null) {
+    byQueryCommand(robot, documentSet, spec, spec.features.by);
+  }
+
+  if (features.about !== null) {
+    aboutQueryCommand(robot, documentSet, spec, spec.features.about);
+  }
+
+  if (features.kov !== null) {
+    kovCommands(robot.documentSet, spec, spec.features.kov);
+  }
+}
+
+function errorHandler(msg) {
   return function (error) {
     msg.reply(`:boom: Something went wrong!\n\`\`\`\n${error.stack}\n\`\`\`\n`);
   }
 }
 
-exports.addCommands = function (robot, documentSet, spec) {
+function addCommands(robot, documentSet, spec, feature) {
   const preprocessorNames = Object.keys(preprocessors);
   for (let i = 0; i < preprocessorNames.length; i++) {
     const preprocessorName = preprocessorNames[i];
@@ -21,7 +55,7 @@ exports.addCommands = function (robot, documentSet, spec) {
     // "slackapp quote: ..."
     const pattern = new RegExp(`${preprocessorName}\s+${spec.name}${argumentPattern}`);
     robot.respond(pattern, msg => {
-      if (!spec.role.verify(robot, msg)) return;
+      if (!feature.role.verify(robot, msg)) return;
 
       const submitter = msg.message.user.name;
       let body, attributes;
@@ -41,14 +75,16 @@ exports.addCommands = function (robot, documentSet, spec) {
   }
 }
 
-exports.userSetCommands = function (robot, documentSet, spec) {
+function setCommand(robot, documentSet, spec, feature) {
   //
 }
 
-exports.queryCommand = function (robot, documentSet, spec) {
+function queryCommand(robot, documentSet, spec, feature) {
   const pattern = new RegExp(`${spec.name}(?:\s*([^]*))?`);
 
   robot.respond(pattern, msg => {
+    if (!feature.role.verify(robot, msg)) return;
+
     const query = msg.match[1] || '';
 
     documentSet.randomMatching([], query)
@@ -57,7 +93,7 @@ exports.queryCommand = function (robot, documentSet, spec) {
   });
 }
 
-function attributeQuery(robot, documentSet, spec, patternBase, attrKind) {
+function attributeQuery(robot, documentSet, spec, feature, patternBase, attrKind) {
   const pattern = new RegExp(`${patternBase}\s+(\S+)(?:\s+([^]+))?`);
 
   robot.respond(pattern, msg => {
@@ -73,22 +109,22 @@ function attributeQuery(robot, documentSet, spec, patternBase, attrKind) {
   });
 }
 
-exports.byQueryCommand = function (robot, documentSet, spec) {
-  attributeQuery(robot, documentSet, spec, `${spec.name}by`, 'speaker');
+function byQueryCommand(robot, documentSet, spec, feature) {
+  attributeQuery(robot, documentSet, spec, feature, `${spec.name}by`, 'speaker');
 }
 
-exports.aboutQueryCommand = function (robot, documentSet, spec) {
-  attributeQuery(robot, documentSet, spec, `${spec.name}about`, 'mention');
+function aboutQueryCommand(robot, documentSet, spec, feature) {
+  attributeQuery(robot, documentSet, spec, feature, `${spec.name}about`, 'mention');
 }
 
-exports.userQueryCommand = function (robot, documentSet, spec) {
+function countCommands(robot, documentSet, spec, feature) {
   //
 }
 
-exports.countCommands = function (robot, documentSet, spec) {
+function statsCommand(robot, documentSet, spec, feature) {
   //
 }
 
-exports.statsCommand = function (robot, documentSet, spec) {
+function kovCommands(robot, documentSet, spec, feature) {
   //
 }
