@@ -4,7 +4,7 @@
 
 const {DocumentSet} = require('./model');
 const Storage = require('./storage');
-const commands = require('./commands');
+const {generate} = require('./commands');
 const {Anyone} = require('../roles');
 
 function populateCommand(name, command) {
@@ -29,13 +29,14 @@ function populateCommand(name, command) {
   return populated;
 }
 
-// Initialize command related to a set of documents based on a spec.
-exports.defineDocumentSet = function createDocumentSet(robot, name, commands) {
+// Initialize commands related to a set of documents based on a spec.
+exports.createDocumentSet = function createDocumentSet(robot, name, commands) {
   const spec = {
     name,
     features: {
       add: populateCommand(name, commands.add),
       set: populateCommand(name, command.set),
+      query: populateCommand(name, commands.query),
       count: populateCommand(name, commands.count),
       stats: populateCommand(name, commands.stat),
       by: populateCommand(name, commands.by),
@@ -43,4 +44,6 @@ exports.defineDocumentSet = function createDocumentSet(robot, name, commands) {
       kov: populateCommand(name, commands.kov)
     }
   };
+
+  generate(robot, name, commands);
 }
