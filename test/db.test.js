@@ -6,7 +6,7 @@ const path = require('path');
 
 const interceptor = require('./db');
 
-describe.only('Interceptor', function() {
+describe('Interceptor', function() {
   let db, fixtureRoot;
 
   beforeEach(function() {

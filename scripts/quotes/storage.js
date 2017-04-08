@@ -1,10 +1,7 @@
 // PostgreSQL-backed storage for various kinds of quotes.
 
-const Promise = require('bluebird');
-const pg = require('pg-promise')({
-  promiseLib: Promise
-});
-const queryParser = require('./parser/query');
+const pg = require('pg-promise')();
+const queryParser = require('./query');
 
 class Storage {
   constructor(options) {
@@ -25,31 +22,30 @@ class Storage {
       attributeTable: documentSet.attributeTableName()
     };
 
-    return Promise.all([
-      this.db.none(`
-        CREATE TABLE IF NOT EXISTS $<documentTable> (
-          id SERIAL PRIMARY KEY,
-          created TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          submitter TEXT,
-          body TEXT
-        )
-      `, values),
-      this.db.none(`
-        CREATE TABLE IF NOT EXISTS $<attributeTable> (
-          id SERIAL PRIMARY KEY,
-          document_id INTEGER REFERENCES $<documentTable>
-            ON DELETE CASCADE,
-          kind SMALLINT NOT NULL,
-          value TEXT
-        )
-      `, values),
-    ]).then(() => {
+    return this.db.none(`
+      CREATE TABLE IF NOT EXISTS $<documentTable:name> (
+        id SERIAL PRIMARY KEY,
+        created TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        submitter TEXT,
+        body TEXT
+      )
+    `, values)
+    .then(() => this.db.none(`
+      CREATE TABLE IF NOT EXISTS $<attributeTable:name> (
+        id SERIAL PRIMARY KEY,
+        document_id INTEGER REFERENCES $<documentTable:name>
+          ON DELETE CASCADE,
+        kind TEXT NOT NULL,
+        value TEXT
+      )
+    `, values))
+    .then(() => {
       const columnSet = {
         attributeInsert: new pg.helpers.ColumnSet(
           ['document_id', 'kind', 'value'],
-          {table: attributeTable}
-        );
+          {table: values.attributeTable}
+        )
       };
 
       this.columnSets.set(documentSet, columnSet);
@@ -66,13 +62,13 @@ class Storage {
     let docResult = null;
 
     return this.db.one(`
-      INSERT INTO $<documentTable>
+      INSERT INTO $<documentTable:name>
       (submitter, body)
       VALUES ($<submitter>, $<body>)
       RETURNING id, created, updated
     `, values)
     .then(row => {
-      docResult = Object.assign({submitter, body}, row);
+      docResult = Object.assign({submitter, body, attributes: []}, row);
       if (attributes.length === 0) {
         return Promise.resolve([]);
       }
@@ -80,7 +76,7 @@ class Storage {
       const linkedAttributes = attributes
         .map(attribute => Object.assign({document_id: row.id}, attribute));
 
-      const cs = this.columnSets.get(documentSet);
+      const cs = this.columnSets.get(documentSet).attributeInsert;
       const query = pg.helpers.insert(linkedAttributes, cs) +
         'RETURNING id';
 
@@ -89,9 +85,9 @@ class Storage {
       for (let i = 0; i < attrRows.length; i++) {
         const original = attributes[i];
         const row = attrRows[i];
-        const full = Object.assign({}, row, original));
+        const full = Object.assign({}, row, original);
 
-        docResult.addAttribute(full);
+        docResult.attributes.push(full);
       }
     }).then(() => docResult);
   }
@@ -136,8 +132,8 @@ class Storage {
           ${scopeClause}
           ORDER BY RANDOM()
           LIMIT 1
-        `, parameters)
-    );
+        `, parameters);
+    });
   }
 
   countDocumentsMatching(documentSet, attributes, query) {
@@ -155,7 +151,7 @@ class Storage {
       // Attributes and query
       const attr = attributeQuery(attributes, 3, 4);
       const query = `
-        SELECT COUNT(*) AS count FROM $1 WHERE
+        SELECT COUNT(*) AS count FROM $1:name WHERE
         body ~* $2 AND
         id IN (${attr.query})
       `;
@@ -164,14 +160,25 @@ class Storage {
       return this.db.one(query, parameters);
     } else if (attributes.length === 0 && query === '') {
       // No attributes, no query
-      return this.db.one('SELECT COUNT(*) AS count FROM $1', [documentTableName]);
+      return this.db.one('SELECT COUNT(*) AS count FROM $1:name', [documentTableName]);
     } else if (attributes.length === 0 && query !== '') {
       // No attributes, query
-      const query = 'SELECT COUNT(*) AS count FROM $1 WHERE body ~* $2';
+      const query = 'SELECT COUNT(*) AS count FROM $1:name WHERE body ~* $2';
       const parameters = [documentTableName, queryParser(query)];
 
       return this.db.one(query, parameters);
     }
+  }
+
+  destroyDocumentSet(documentSet) {
+    const values = {
+      documentTable: documentSet.documentTableName(),
+      attributeTable: documentSet.attributeTableName()
+    };
+
+    return this.db.none('DROP TABLE IF EXISTS $<attributeTable:name>', values)
+    .then(() => this.db.none('DROP TABLE IF EXISTS $<documentTable:name>', values))
+    .then(() => this.columnSets.delete(documentSet));
   }
 }
 
@@ -192,7 +199,7 @@ function attributeQuery(attributes, attrTablePlaceholder, placeholderBase) {
 
     for (let j = 0; j < attrValues.length; j++) {
       const subSelect = `
-        SELECT document_id FROM $${attrTablePlaceholder}
+        SELECT document_id FROM $${attrTablePlaceholder}:name
         WHERE kind = $${attrKindPlaceholder} AND value = $${placeholder}
       `;
       parameters.push(attrValues[j]);

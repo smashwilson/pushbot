@@ -1,9 +1,12 @@
 // Export quote parsers as a convenient map.
 
 // Standard preprocessing.
-function processThen(text, parser) {
-  const preprocessed = text.replace(/\u200B/g, '');
-  return parser(preprocessed);
+function processThen(parser) {
+  return function(robot, msg) {
+    console.log(msg.match);
+    const preprocessed = msg.match[1].replace(/\u200B/g, '');
+    return parser(preprocessed);
+  }
 }
 
 exports.verbatim = {

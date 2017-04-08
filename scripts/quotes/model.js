@@ -8,7 +8,7 @@ class DocumentSet {
     this.storage = storage;
     this.name = name;
 
-    this.nullDocument = new nullDocument(nullBody);
+    this.nullDocument = new NullDocument(nullBody);
 
     this.connected = this.storage.connectDocumentSet(this);
   }
@@ -34,8 +34,12 @@ class DocumentSet {
 
   countMatching(attributes, query) {
     return this.connected
-    .then(() => this.storage.countDocumentsMatching(attributes, query))
+    .then(() => this.storage.countDocumentsMatching(this, attributes, query))
     .then(row => row.count);
+  }
+
+  destroy() {
+    return this.storage.destroyDocumentSet(this);
   }
 
   documentTableName() {
@@ -58,15 +62,11 @@ class Document {
     this.submitter = result.submitter;
     this.body = result.body;
 
-    this.attributes = [];
+    this.attributes = result.attributes.map(row => new Attribute(this, row));
   }
 
   getBody() {
     return this.body;
-  }
-
-  addAttribute(row) {
-    this.attributes.push(new Attribute(this, row));
   }
 }
 

@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS $<documentTable:name> ( id SERIAL PRIMARY KEY, created TIMESTAMP WITH TIME ZONE DEFAULT NOW(), updated TIMESTAMP WITH TIME ZONE DEFAULT NOW(), submitter TEXT, body TEXT )
+---
+{
+  "attributeTable": "blarf_attributes",
+  "documentTable": "blarf_documents"
+}
+---
+none

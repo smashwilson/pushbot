@@ -3,44 +3,45 @@
 // Dynamically generate message handlers to interact with a document set
 // based on a spec.
 
-const preprocessors = require('preprocessor');
+const preprocessors = require('./preprocessor');
 
 exports.generate = function(robot, documentSet, spec) {
-  if (features.add !== null) {
+  if (spec.features.add !== null) {
     addCommands(robot, documentSet, spec, spec.features.add);
   }
 
-  if (features.set !== null) {
+  if (spec.features.set !== null) {
     setCommand(robot, documentSet, spec, spec.features.add);
   }
 
-  if (features.query !== null) {
+  if (spec.features.query !== null) {
     queryCommand(robot, documentSet, spec, spec.features.query);
   }
 
-  if (features.count !== null) {
+  if (spec.features.count !== null) {
     countCommand(robot, documentSet, spec, spec.features.count);
   }
 
-  if (features.stats !== null) {
+  if (spec.features.stats !== null) {
     statsCommand(robot, documentSet, spec, spec.features.stats);
   }
 
-  if (features.by !== null) {
+  if (spec.features.by !== null) {
     byQueryCommand(robot, documentSet, spec, spec.features.by);
   }
 
-  if (features.about !== null) {
+  if (spec.features.about !== null) {
     aboutQueryCommand(robot, documentSet, spec, spec.features.about);
   }
 
-  if (features.kov !== null) {
+  if (spec.features.kov !== null) {
     kovCommands(robot.documentSet, spec, spec.features.kov);
   }
 }
 
 function errorHandler(msg) {
   return function (error) {
+    console.log(error.stack);
     msg.reply(`:boom: Something went wrong!\n\`\`\`\n${error.stack}\n\`\`\`\n`);
   }
 }
@@ -50,17 +51,19 @@ function addCommands(robot, documentSet, spec, feature) {
   for (let i = 0; i < preprocessorNames.length; i++) {
     const preprocessorName = preprocessorNames[i];
     const preprocessor = preprocessors[preprocessorName];
-    const argumentPattern = preprocessor.argument ? ':\s*([^]+)' : '';
+    const argumentPattern = preprocessor.argument ? ':\\s*([^]+)' : '';
 
     // "slackapp quote: ..."
-    const pattern = new RegExp(`${preprocessorName}\s+${spec.name}${argumentPattern}`);
+    const pattern = new RegExp(`${preprocessorName}\\s+${spec.name}${argumentPattern}`);
     robot.respond(pattern, msg => {
       if (!feature.role.verify(robot, msg)) return;
 
       const submitter = msg.message.user.name;
       let body, attributes;
       try {
-        {body, attributes} = preprocessor.call(robot, msg);
+        const result = preprocessor.call(robot, msg);
+        body = result.body;
+        attributes = result.attributes;
       } catch (e) {
         msg.reply(`http://www.sadtrombone.com/\n\`\`\`\n${e.stack}\n\`\`\`\n`);
         return
@@ -69,7 +72,10 @@ function addCommands(robot, documentSet, spec, feature) {
       documentSet.add(submitter, body, attributes)
       .then(doc => preprocessor.echo && msg.send(doc.getBody()))
       .then(() => documentSet.countMatching([], ''))
-      .then(count => msg.send(`${count} quotes loaded.`));
+      .then(count => {
+        const noun = Number(count) === 1 ? spec.name : spec.plural;
+        msg.send(`${count} ${noun} loaded.`);
+      })
       .catch(errorHandler(msg));
     });
   }

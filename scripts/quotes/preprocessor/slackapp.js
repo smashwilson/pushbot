@@ -19,15 +19,15 @@ function parseTs(ts) {
   return parsed;
 }
 
-module.exports = function(robot, msg) {
+module.exports = function(text) {
   let nick, ts, ampm;
 
   const result = [];
   const speakers = new Set();
 
-  const lines = msg.match[1].split(/\r?\n/);
+  const lines = text.split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
+    let line = lines[i];
 
     if (rxWs.test(line)) {
       continue;
@@ -37,11 +37,18 @@ module.exports = function(robot, msg) {
       continue;
     }
 
-    const match = rxTsLine.exec(line);
-    if (match) {
-      nick = match[1];
-      ts = parseTs(match[2]);
-      ampm = parseTs(match[3]);
+    const nickMatch = rxNickLine.exec(line);
+    if (nickMatch) {
+      nick = nickMatch[1];
+      ts = parseTs(nickMatch[2]);
+      ampm = nickMatch[3];
+      continue;
+    }
+
+    const tsMatch = rxTsLine.exec(line);
+    if (tsMatch) {
+      ts = parseTs(tsMatch[1]);
+      ampm = tsMatch[2];
       continue;
     }
 
@@ -57,6 +64,6 @@ module.exports = function(robot, msg) {
 
   return {
     body: result.join('\n'),
-    attributes: Array.from(speakers, value => {kind: 'speaker', value})
+    attributes: Array.from(speakers, value => ({kind: 'speaker', value}))
   };
 };
