@@ -153,9 +153,48 @@ describe.only('Interceptor', function() {
       db = interceptor(this, null, false);
     });
 
-    it('returns recorded results');
-    it('fails with an incompatible query');
-    it('fails with incompatible parameters');
-    it('fails with no recorded query');
+    it('returns recorded results', function() {
+      return db.one('SELECT number, thingy FROM snarf WHERE number = $1', [34])
+      .then(row => {
+        expect(row.number).to.equal(34);
+        expect(row.thingy).to.equal('eh');
+      })
+    });
+
+    it('is insensitive to query whitespace', function() {
+      return db.one(`
+        SELECT number, thingy
+        FROM snarf
+        WHERE thingy = $1
+      `, ['wat'])
+      .then(row => {
+        expect(row.number).to.equal(12);
+        expect(row.thingy).to.equal('wat');
+      })
+    });
+
+    it('fails with an incompatible query', function() {
+      return db.one('SELECT number, thingy FROM snarf WHERE number = $1', [34])
+      .then(
+        row => expect.fail('', '', `expected query to fail but succeeded with ${util.inspect(row)}`),
+        err => expect(err.message).to.match(/incorrect query SQL/)
+      );
+    });
+
+    it('fails with incompatible parameters', function() {
+      return db.one('SELECT number, thingy FROM snarf WHERE number = $1', [34])
+      .then(
+        row => expect.fail('', '', `expected query to fail but succeeded with ${util.inspect(row)}`),
+        err => expect(err.message).to.match(/incorrect query parameters/)
+      );
+    });
+
+    it('fails with no recorded query', function() {
+      return db.one('SELECT number, thingy FROM snarf WHERE number = $1', [34])
+      .then(
+        row => expect.fail('', '', `expected query to fail but succeeded with ${util.inspect(row)}`),
+        err => expect(err.message).to.match(/Unexpected query/)
+      );
+    });
   });
 });

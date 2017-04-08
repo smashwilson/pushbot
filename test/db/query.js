@@ -176,9 +176,10 @@ class Query {
 
   matchesCall(query, parameters) {
     const normalizedQuery = Query.normalize(query);
+    const maybeParameters = (parameters === undefined || parameters === null) ? NONE : parameters;
 
-    expect(normalizedQuery, 'incorrect normalized query SQL').to.equal(this.query);
-    expect(parameters, 'incorrect query parameters').to.deep.equal(this.parameters);
+    expect(normalizedQuery, 'incorrect query SQL').to.equal(this.query);
+    expect(maybeParameters, 'incorrect query parameters').to.deep.equal(this.parameters);
   }
 }
 
