@@ -48,7 +48,7 @@ class Interceptor {
           const actual = Query.observe(index, query, parameters, results);
 
           // Asserts with chai
-          expected.match(actual);
+          expected.matches(actual);
 
           return results;
         });

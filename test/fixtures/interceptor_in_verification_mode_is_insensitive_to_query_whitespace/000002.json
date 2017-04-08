@@ -1,0 +1,10 @@
+SELECT number, thingy FROM snarf WHERE number = $1
+---
+[
+  12
+]
+---
+{
+  "number": 12,
+  "thingy": "wat"
+}

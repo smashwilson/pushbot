@@ -13,7 +13,7 @@ class Query {
   static normalize(text) {
     let index = 0;
     let withinQuote = false;
-    let withinWhitespace = false;
+    let withinWhitespace = true;
     let normalized = '';
 
     while (index < text.length) {
@@ -41,9 +41,11 @@ class Query {
         }
       } else {
         // Unquoted
-        if (/\s/.test(char) && !withinWhitespace) {
-          withinWhitespace = true;
-          normalized += ' ';
+        if (/\s/.test(char)) {
+          if (!withinWhitespace) {
+            withinWhitespace = true;
+            normalized += ' ';
+          }
         } else {
           withinWhitespace = false;
           normalized += char;
@@ -56,7 +58,7 @@ class Query {
       index++;
     }
 
-    return normalized;
+    return normalized.replace(/\s+$/, '');
   }
 
   static pathFor(index, fixtureDirectory) {
@@ -81,15 +83,15 @@ class Query {
         try {
           let parameters, results;
 
-          if (/^none$/i.test(parameterSrc)) {
+          if (/^\s*none\s*$/i.test(parameterSrc)) {
             parameters = NONE;
           } else {
             parameters = JSON.parse(parameterSrc);
           }
 
-          if (/^anything$/i.test(resultSrc)) {
+          if (/^\s*anything\s*$/i.test(resultSrc)) {
             results = ANYTHING;
-          } else if (/^none$/i.test(resultSrc)) {
+          } else if (/^\s*none\s*$/i.test(resultSrc)) {
             results = NONE;
           } else {
             results = JSON.parse(resultSrc);
@@ -169,14 +171,14 @@ class Query {
   matches(other) {
     const masked = this.isAnything() ? other.withResultsMasked() : other;
 
-    expect(this.serialize()).to.equal(masked.serialize());
+    expect(masked.serialize(), 'incorrect database query').to.equal(this.serialize());
   }
 
   matchesCall(query, parameters) {
     const normalizedQuery = Query.normalize(query);
 
-    expect(normalizedQuery).to.equal(this.query);
-    expect(parameters).to.deep.equal(this.parameters);
+    expect(normalizedQuery, 'incorrect normalized query SQL').to.equal(this.query);
+    expect(parameters, 'incorrect query parameters').to.deep.equal(this.parameters);
   }
 }
 

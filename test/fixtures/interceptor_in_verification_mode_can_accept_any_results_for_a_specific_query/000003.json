@@ -1,0 +1,5 @@
+SELECT number, thingy FROM snarf ORDER BY RANDOM()
+---
+none
+---
+anything

@@ -1,0 +1,9 @@
+SELECT thingy FROM snarf WHERE number = $1
+---
+[
+  34
+]
+---
+{
+  "thingy": "eh"
+}

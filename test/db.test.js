@@ -1,5 +1,6 @@
 // Test the database interceptor.
 
+const util = require('util');
 const fs = require('fs-promise');
 const path = require('path');
 
@@ -72,15 +73,79 @@ describe.only('Interceptor', function() {
 
   describe('in verification mode', function() {
     beforeEach(function() {
+      if (!database) {
+        this.skip();
+        return;
+      }
+
       db = interceptor(this, database, false);
+
+      return db.none('CREATE TABLE IF NOT EXISTS snarf (number INTEGER, thingy TEXT)')
+      .then(() => db.none('INSERT INTO snarf (number, thingy) VALUES ($1, $2), ($3, $4)', [12, 'wat', 34, 'eh']));
     });
 
-    it('passes when the query, parameters, and results match');
-    it('is insensitive to query whitespace');
-    it('can accept any results for a specific query');
-    it('fails with an incompatible query');
-    it('fails with incompatible parameters');
-    it('fails with unexpected results');
+    afterEach(function() {
+      return db.none('DROP TABLE IF EXISTS snarf');
+    });
+
+    it('passes when the query, parameters, and results match', function() {
+      return db.one('SELECT number, thingy FROM snarf WHERE number = $1', [34])
+      .then(row => {
+        expect(row.number).to.equal(34);
+        expect(row.thingy).to.equal('eh');
+      });
+    });
+
+    it('is insensitive to query whitespace', function() {
+      return db.one(`
+        SELECT number, thingy
+        FROM snarf WHERE
+        number  =  $1
+      `, [12])
+      .then(row => {
+        expect(row.number).to.equal(12);
+        expect(row.thingy).to.equal('wat');
+      });
+    });
+
+    it('can accept any results for a specific query', function() {
+      return db.none('INSERT INTO snarf (number, thingy) VALUES ($1, $2), ($3, $4), ($5, $6)',
+        [56, 'herp', 78, 'derp', 90, 'blarf'])
+      .then(() => db.many('SELECT number, thingy FROM snarf ORDER BY RANDOM()'))
+      .then(rows => {
+        expect(rows).to.deep.include.members([
+          { number: 12, thingy: 'wat' },
+          { number: 34, thingy: 'eh' },
+          { number: 56, thingy: 'herp' },
+          { number: 78, thingy: 'derp' },
+          { number: 90, thingy: 'blarf' }
+        ]);
+      });
+    });
+
+    it('fails with an incompatible query', function() {
+      return db.one('SELECT number, thingy FROM snarf WHERE number = $1', [34])
+      .then(
+        row => expect.fail('', '', `expected query to fail but succeeded with ${util.inspect(row)}`),
+        err => expect(err.message).to.match(/incorrect database query/)
+      );
+    });
+
+    it('fails with incompatible parameters', function() {
+      return db.one('SELECT number, thingy FROM snarf WHERE number = $1', [12])
+      .then(
+        row => expect.fail('', '', `expected query to fail but succeeded with ${util.inspect(row)}`),
+        err => expect(err.message).to.match(/incorrect database query/)
+      );
+    });
+
+    it('fails with unexpected results', function() {
+      return db.one('SELECT number, thingy FROM snarf WHERE number = $1', [34])
+      .then(
+        row => expect.fail('', '', `expected query to fail but succeeded with ${util.inspect(row)}`),
+        err => expect(err.message).to.match(/incorrect database query/)
+      );
+    });
   });
 
   describe('in offline mode', function() {
