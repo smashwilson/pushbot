@@ -6,7 +6,7 @@ global.expect = require('chai').expect;
 global.database = process.env.DATABASE_URL ? pg(process.env.DATABASE_URL) : null;
 
 global.delay = function(timeoutMs) {
-  const timeout = timeoutMs || 500;
+  const timeout = timeoutMs || (database ? 1000 : 10);
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
 

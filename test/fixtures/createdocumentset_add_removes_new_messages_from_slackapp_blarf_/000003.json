@@ -1,0 +1,12 @@
+insert into "blarf_attributes"("document_id","kind","value") values(1,'speaker','person-one'),(1,'speaker','person-two')RETURNING id
+---
+none
+---
+[
+  {
+    "id": 1
+  },
+  {
+    "id": 2
+  }
+]

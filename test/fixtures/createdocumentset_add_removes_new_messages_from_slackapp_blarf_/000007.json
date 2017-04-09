@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS $<attributeTable:name>
+DROP TABLE IF EXISTS $<documentTable:name>
 ---
 {
   "attributeTable": "blarf_attributes",
