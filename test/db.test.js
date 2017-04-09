@@ -123,6 +123,15 @@ describe('Interceptor', function() {
       });
     });
 
+    it('can accept any results for a specific JSON path', function() {
+      return db.one(`
+        INSERT INTO snarf (number, thingy)
+        VALUES (TRUNC(RANDOM() * 100), $1)
+        RETURNING number, NOW() AS ts
+        `, ['wut'])
+      .then(row => expect(row.number).to.be.within(0, 100));
+    });
+
     it('fails with an incompatible query', function() {
       return db.one('SELECT number, thingy FROM snarf WHERE number = $1', [34])
       .then(

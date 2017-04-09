@@ -81,23 +81,32 @@ class Query {
 
         const [query, parameterSrc, resultSrc] = contents.split(SEPARATOR);
         try {
-          let parameters, results;
+          const parseSource = src => {
+            if (/^\s*anything\s*$/i.test(src)) {
+              return [ANYTHING, []];
+            }
 
-          if (/^\s*none\s*$/i.test(parameterSrc)) {
-            parameters = NONE;
-          } else {
-            parameters = JSON.parse(parameterSrc);
-          }
+            if (/^\s*none\s*$/i.test(src)) {
+              return [NONE, []];
+            }
 
-          if (/^\s*anything\s*$/i.test(resultSrc)) {
-            results = ANYTHING;
-          } else if (/^\s*none\s*$/i.test(resultSrc)) {
-            results = NONE;
-          } else {
-            results = JSON.parse(resultSrc);
-          }
+            const anyMatch = /^\s*any\s*([^\n]+)/i.exec(src);
+            if (anyMatch) {
+              const anyPaths = anyMatch[1].split(/,/).map(each => each.trim());
+              const rest = src.substring(anyMatch[0].length);
+              return [JSON.parse(rest), anyPaths];
+            }
 
-          resolve(new Query(index, query, parameters, results));
+            return [JSON.parse(src), []];
+          };
+
+          const [parameters, parameterPaths] = parseSource(parameterSrc);
+          const [results, resultPaths] = parseSource(resultSrc);
+
+          const q = new Query(index, query, parameters, results);
+          q.parameterPaths = parameterPaths;
+          q.resultPaths = resultPaths;
+          resolve(q);
         } catch (e) {
           reject(e);
         }
@@ -117,7 +126,9 @@ class Query {
     this.index = index;
     this.query = query;
     this.parameters = parameters;
+    this.parameterPaths = [];
     this.results = results;
+    this.resultPaths = [];
   }
 
   save(fixtureDirectory) {
@@ -140,26 +151,41 @@ class Query {
     return this.results === ANYTHING;
   }
 
-  withResultsMasked() {
-    return new Query(this.index, this.query, this.parameters, ANYTHING);
+  asMaskedBy(expectedQuery) {
+    const applyMask = (original, expected, attrPaths) => {
+      if (expected === ANYTHING) {
+        return ANYTHING;
+      }
+
+      for (let i = 0; i < attrPaths.length; i++) {
+        const attrPath = attrPaths[i];
+        original[attrPath] = expected[attrPath];
+      }
+
+      return original;
+    };
+
+    const maskedParameters = applyMask(this.parameters, expectedQuery.parameters, expectedQuery.parameterPaths);
+    const maskedResults = applyMask(this.results, expectedQuery.results, expectedQuery.resultPaths);
+
+    return new Query(this.index, this.query, maskedParameters, maskedResults);
   }
 
   serialize() {
-    let parameterPayload, resultPayload;
+    const serializeField = value => {
+      if (value === NONE) {
+        return 'none';
+      }
 
-    if (this.parameters === NONE) {
-      parameterPayload = 'none';
-    } else {
-      parameterPayload = stringify(this.parameters, {space: 2});
+      if (value === ANYTHING) {
+        return 'anything';
+      }
+
+      return stringify(value, {space: 2});
     }
 
-    if (this.results === ANYTHING) {
-      resultPayload = 'anything';
-    } else if (this.results === NONE) {
-      resultPayload = 'none';
-    } else {
-      resultPayload = stringify(this.results, {space: 2});
-    }
+    const parameterPayload = serializeField(this.parameters);
+    const resultPayload = serializeField(this.results);
 
     return [
       this.query,
@@ -169,7 +195,7 @@ class Query {
   }
 
   matches(other) {
-    const masked = this.isAnything() ? other.withResultsMasked() : other;
+    const masked = other.asMaskedBy(this);
 
     expect(masked.serialize(), 'incorrect database query').to.equal(this.serialize());
   }
