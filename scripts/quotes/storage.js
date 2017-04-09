@@ -127,7 +127,7 @@ class Storage {
 
       return this.db.oneOrNone(`
           SELECT id, created, updated, submitter, body
-          FROM $1
+          FROM $1:name
           WHERE body ~* $2
           ${scopeClause}
           ORDER BY RANDOM()

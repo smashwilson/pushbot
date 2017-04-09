@@ -27,8 +27,7 @@ class DocumentSet {
         return this.nullDocument;
       }
 
-      return new Document(
-        this, row.id, row.created, row.updated, row.submitter, row.body);
+      return new Document(this, row);
     });
   }
 
@@ -62,7 +61,7 @@ class Document {
     this.submitter = result.submitter;
     this.body = result.body;
 
-    this.attributes = result.attributes.map(row => new Attribute(this, row));
+    this.attributes = (result.attributes || []).map(row => new Attribute(this, row));
   }
 
   getBody() {

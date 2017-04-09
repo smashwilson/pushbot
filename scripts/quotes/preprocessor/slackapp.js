@@ -8,8 +8,8 @@ const TS = '\\[(\\d{1,2}:\\d{2}( [aApP][mM])?)\\]'; // [11:22 AM] *or* [16:00]
 // RegExps
 const rxWs = /^\s*$/;
 const rxNickLine = new RegExp(`^\\s*(\\S+)\\s+${TS}\\s*$`);
-const rxTsLine = new RegExp(`^\\s*#{TS}\\s*$`);
-const rxNewMessagesLine = new RegExp(`^\\snew messages*\\s*$`);
+const rxTsLine = new RegExp(`^\\s*${TS}\\s*$`);
+const rxNewMessagesLine = new RegExp(`^\\s*new messages\\s*$`);
 
 function parseTs(ts) {
   const parsed = moment(ts, ['h:mm a', 'H:mm'], true);
@@ -39,7 +39,7 @@ module.exports = function(text) {
 
     const nickMatch = rxNickLine.exec(line);
     if (nickMatch) {
-      nick = nickMatch[1];
+      nick = nickMatch[1].replace(/APP$/, '');
       ts = parseTs(nickMatch[2]);
       ampm = nickMatch[3];
       continue;
@@ -47,8 +47,8 @@ module.exports = function(text) {
 
     const tsMatch = rxTsLine.exec(line);
     if (tsMatch) {
-      ts = parseTs(tsMatch[1]);
-      ampm = tsMatch[2];
+      ampm = tsMatch[2] || ampm || '';
+      ts = parseTs(tsMatch[1] + ampm);
       continue;
     }
 

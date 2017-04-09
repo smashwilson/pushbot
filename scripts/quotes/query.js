@@ -46,5 +46,5 @@ module.exports = function (query) {
     i++;
   }
 
-  return terms;
+  return terms.join('|');
 }
