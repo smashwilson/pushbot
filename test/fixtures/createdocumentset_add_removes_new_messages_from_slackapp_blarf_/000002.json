@@ -6,9 +6,8 @@ INSERT INTO $<documentTable:name> (submitter, body) VALUES ($<submitter>, $<body
   "submitter": "me"
 }
 ---
-any created, id, updated
 {
-  "created": "2017-04-09T19:43:34.687Z",
+  "created": "2017-04-12T01:09:01.484Z",
   "id": 1,
-  "updated": "2017-04-09T19:43:34.687Z"
+  "updated": "2017-04-12T01:09:01.484Z"
 }

@@ -1,6 +1,7 @@
 // Unit tests for the manipulations of arbitrary DocumentSets.
 
 const interceptor = require('../db');
+const path = require('path');
 const moment = require('moment');
 
 const Helper = require('hubot-test-helper');
@@ -8,7 +9,18 @@ const helper = new Helper([]);
 
 const {createDocumentSet} = require('../../scripts/quotes');
 
-describe.only('createDocumentSet', function() {
+const OnlyMe = {
+  verify: (robot, msg) => {
+    if (msg.message.user.name === 'me') {
+      return true;
+    }
+
+    msg.reply('NOPE');
+    return false;
+  }
+};
+
+describe('createDocumentSet', function() {
   let room, documentSet;
   let realNow;
 
@@ -29,7 +41,9 @@ describe.only('createDocumentSet', function() {
 
   describe('add', function() {
     beforeEach(function() {
-      documentSet = createDocumentSet(room.robot, 'blarf', { add: true });
+      documentSet = createDocumentSet(room.robot, 'blarf',
+        { add: { role: OnlyMe } }
+      );
       return documentSet.connected;
     });
 
@@ -149,13 +163,87 @@ describe.only('createDocumentSet', function() {
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
     });
 
-    it('rejects malformed "slackapp blarf:" input');
+    it('rejects malformed "slackapp blarf:" input', function() {
+      usesDatabase(this);
 
-    it('creates "verbatim blarf:"');
+      const malformedBlarf = '!quote\n' +
+        '\n' +
+        'person [1:10 PM]\n' +
+        'some response\n';
 
-    it('creates "buffer blarf"');
+      return room.user.say('me', `@hubot slackapp blarf: ${malformedBlarf}`)
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.have.length(2);
+        expect(room.messages[0]).to.deep.equal(['me', `@hubot slackapp blarf: ${malformedBlarf}`]);
+        expect(room.messages[1][1]).to.match(/sadtrombone\.com/);
+      });
+    });
 
-    it('validates a required role');
+    it('creates "verbatim blarf:"', function() {
+      usesDatabase(this);
+
+      const verbatimBlarf = 'look ma\n' +
+        'no formatting';
+
+      return room.user.say('me', `@hubot verbatim blarf: ${verbatimBlarf}`)
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', `@hubot verbatim blarf: ${verbatimBlarf}`],
+          ['hubot', '1 blarf loaded.']
+        ]);
+
+        return documentSet.randomMatching([], 'formatting');
+      }).then(doc => expect(doc.getBody()).to.equal(verbatimBlarf));
+    });
+
+    it('creates "buffer blarf"', function() {
+      usesDatabase(this);
+
+      room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee');
+
+      const ts = hhmm => moment(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm');
+      const makeLine = obj => {
+        obj.isRaw = () => false;
+        return obj;
+      };
+
+      const buffer = room.robot.bufferForUserName('me')
+      buffer.append(makeLine({timestamp: ts('9:30'), speaker: 'person-one', text: 'one one one'}));
+      buffer.append(makeLine({timestamp: ts('9:31'), speaker: 'person-two', text: 'two two two'}));
+      buffer.append(makeLine({timestamp: ts('9:32'), speaker: 'person-three', text: 'three three three'}));
+
+      const expectedBlarf = '[9:30 AM 1 Apr 2017] person-one: one one one\n' +
+        '[9:31 AM 1 Apr 2017] person-two: two two two\n' +
+        '[9:32 AM 1 Apr 2017] person-three: three three three';
+
+      return room.user.say('me', '@hubot buffer blarf')
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot buffer blarf'],
+          ['hubot', expectedBlarf],
+          ['hubot', '1 blarf loaded.']
+        ]);
+
+        return documentSet.randomMatching([], 'two');
+      })
+      .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
+    });
+
+    it('validates a required role', function() {
+      return room.user.say('you', '@hubot verbatim blarf: nope')
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['you', '@hubot verbatim blarf: nope'],
+          ['hubot', '@you NOPE']
+        ]);
+
+        return documentSet.countMatching([], '');
+      })
+      .then(count => expect(count).to.equal(0));
+    });
   });
 
   describe('set', function() {

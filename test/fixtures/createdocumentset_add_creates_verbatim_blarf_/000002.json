@@ -1,13 +1,13 @@
 INSERT INTO $<documentTable:name> (submitter, body) VALUES ($<submitter>, $<body>) RETURNING id, created, updated
 ---
 {
-  "body": "[2:00 PM 9 Apr 2017] person-one: foo bar baz\n[2:01 PM 9 Apr 2017] person-one: aaa bbb ccc",
+  "body": "look ma\nno formatting",
   "documentTable": "blarf_documents",
   "submitter": "me"
 }
 ---
 {
-  "created": "2017-04-12T01:08:59.000Z",
+  "created": "2017-04-12T01:09:07.449Z",
   "id": 1,
-  "updated": "2017-04-12T01:08:59.000Z"
+  "updated": "2017-04-12T01:09:07.449Z"
 }
