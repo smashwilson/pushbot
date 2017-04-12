@@ -24,6 +24,6 @@ module.exports = function (robot, msg) {
 
   return {
     body: processed.join('\n'),
-    attributes: Array.from(speakers, value => {kind: 'speaker', value})
+    attributes: Array.from(speakers, value => ({kind: 'speaker', value}))
   };
 };
