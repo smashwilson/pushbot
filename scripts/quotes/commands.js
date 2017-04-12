@@ -73,7 +73,7 @@ function addCommands(robot, documentSet, spec, feature) {
       .then(doc => preprocessor.echo && msg.send(doc.getBody()))
       .then(() => documentSet.countMatching([], ''))
       .then(count => {
-        const noun = Number(count) === 1 ? spec.name : spec.plural;
+        const noun = count === 1 ? spec.name : spec.plural;
         msg.send(`${count} ${noun} loaded.`);
       })
       .catch(errorHandler(msg));

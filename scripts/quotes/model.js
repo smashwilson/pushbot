@@ -34,7 +34,7 @@ class DocumentSet {
   countMatching(attributes, query) {
     return this.connected
     .then(() => this.storage.countDocumentsMatching(this, attributes, query))
-    .then(row => row.count);
+    .then(row => parseInt(row.count));
   }
 
   destroy() {
