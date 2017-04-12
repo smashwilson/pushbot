@@ -19,3 +19,9 @@ exports.slackapp = {
   echo: false,
   call: processThen(require('./slackapp'))
 };
+
+exports.buffer = {
+  argument: false,
+  echo: true,
+  call: require('./buffer')
+};
