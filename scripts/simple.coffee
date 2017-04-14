@@ -262,3 +262,9 @@ module.exports = (robot) ->
 
   robot.respond /femshep/i, (msg) ->
     msg.send "http://media.tumblr.com/tumblr_lsxdm7yONC1qbplir.gif"
+
+  robot.hear /robot\s+body/i, (msg) ->
+    msg.send atRandom [
+      "http://img.sharetv.com/shows/episodes/standard/345637.jpg"
+      "https://68.media.tumblr.com/d6d9c3286d944ef1bdbf3e41e2f99d48/tumblr_omhzugCO4R1tpri36o1_500.png"
+    ]
