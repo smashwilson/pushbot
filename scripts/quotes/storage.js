@@ -135,8 +135,6 @@ class Storage {
       LIMIT 1
     `;
 
-    console.log(require('util').inspect({sql, parameters}, { depth: null }));
-
     return this.db.oneOrNone(sql, parameters);
   }
 
