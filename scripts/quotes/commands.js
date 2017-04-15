@@ -70,7 +70,6 @@ function addCommands(robot, documentSet, spec, feature) {
       }
 
       documentSet.add(submitter, body, attributes)
-      .then(() => { return Promise.reject(new Error('boom')) })
       .then(doc => preprocessor.echo && msg.send(doc.getBody()))
       .then(() => documentSet.countMatching([], ''))
       .then(count => {

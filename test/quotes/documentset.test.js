@@ -1,6 +1,5 @@
 // Unit tests for the manipulations of arbitrary DocumentSets.
 
-const interceptor = require('../db');
 const path = require('path');
 const moment = require('moment');
 
