@@ -470,7 +470,22 @@ describe('createDocumentSet', function() {
       })
     });
 
-    it('collects words within double quotes as a single term');
+    it('collects words within double quotes as a single term', function() {
+      usesDatabase(this);
+
+      return populate(true, [
+        'aaa nope bbb', 'aaa nope bbb', 'aaa nope bbb', 'aaa nope bbb', 'aaa nope bbb',
+        'correct aaa bbb'
+      ])
+      .then(() => room.user.say('me', '@hubot blarf "aaa bbb"'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarf "aaa bbb"'],
+          ['hubot', 'correct aaa bbb']
+        ]);
+      })
+    });
 
     it('collects words within single quotes as a single term');
 
