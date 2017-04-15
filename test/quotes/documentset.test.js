@@ -411,7 +411,6 @@ describe('createDocumentSet', function() {
   });
 
   describe('query', function() {
-    it('creates "blarf <query>"');
     function populate(commandOpts = true, docs = []) {
       documentSet = createDocumentSet(room.robot, 'blarf', {
         query: commandOpts
@@ -436,7 +435,22 @@ describe('createDocumentSet', function() {
       });
     });
 
-    it('returns a random document containing all terms within a query');
+    it('returns a random document containing all terms within a query', function() {
+      usesDatabase(this);
+
+      return populate(true, [
+        'aaa 111 zzz', 'aaa 222 yyy', 'yyy 333 xxx',
+        'aaa nope', 'aaa nope', 'aaa nope', 'aaa nope', 'aaa nope', 'aaa nope', 'aaa nope', 'aaa nope'
+      ])
+      .then(() => room.user.say('me', '@hubot blarf aaa 222'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarf aaa 222'],
+          ['hubot', 'aaa 222 yyy']
+        ]);
+      });
+    });
 
     it('escapes regular expression metacharacters within query terms');
 
