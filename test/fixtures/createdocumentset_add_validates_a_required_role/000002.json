@@ -1,9 +1,0 @@
-SELECT COUNT(*) AS count FROM $1:name
----
-[
-  "blarf_documents"
-]
----
-{
-  "count": "0"
-}

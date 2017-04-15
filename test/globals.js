@@ -14,5 +14,7 @@ global.usesDatabase = function(context, timeoutMs) {
   if (database) {
     const timeout = timeoutMs || 5000;
     context.timeout(timeout);
+  } else {
+    context.skip();
   }
 }

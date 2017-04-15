@@ -35,7 +35,7 @@ describe('createDocumentSet', function() {
     realNow = moment.now;
     moment.now = () => 1491766054971; // Sunday, April 9th 2017, 3:28:30 pm
 
-    room.robot.postgres = interceptor(this, global.database, false);
+    room.robot.postgres = global.database;
   });
 
   afterEach(function() {

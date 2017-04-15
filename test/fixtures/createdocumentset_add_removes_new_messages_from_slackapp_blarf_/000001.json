@@ -1,8 +1,0 @@
-CREATE TABLE IF NOT EXISTS $<attributeTable:name> ( id SERIAL PRIMARY KEY, document_id INTEGER REFERENCES $<documentTable:name> ON DELETE CASCADE, kind TEXT NOT NULL, value TEXT )
----
-{
-  "attributeTable": "blarf_attributes",
-  "documentTable": "blarf_documents"
-}
----
-none

@@ -1,8 +1,0 @@
-DROP TABLE IF EXISTS $<attributeTable:name>
----
-{
-  "attributeTable": "blarf_attributes",
-  "documentTable": "blarf_documents"
-}
----
-none
