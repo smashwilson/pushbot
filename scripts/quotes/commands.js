@@ -11,7 +11,7 @@ exports.generate = function(robot, documentSet, spec) {
   }
 
   if (spec.features.set !== null) {
-    setCommand(robot, documentSet, spec, spec.features.add);
+    setCommand(robot, documentSet, spec, spec.features.set);
   }
 
   if (spec.features.query !== null) {
@@ -70,6 +70,7 @@ function addCommands(robot, documentSet, spec, feature) {
       }
 
       documentSet.add(submitter, body, attributes)
+      .then(() => { return Promise.reject(new Error('boom')) })
       .then(doc => preprocessor.echo && msg.send(doc.getBody()))
       .then(() => documentSet.countMatching([], ''))
       .then(count => {
@@ -82,7 +83,25 @@ function addCommands(robot, documentSet, spec, feature) {
 }
 
 function setCommand(robot, documentSet, spec, feature) {
-  //
+  const pattern = new RegExp(`set${spec.name}(?:\\s+@?([^:]+))?:\\s*([^]+)`);
+  robot.respond(pattern, msg => {
+    const submitter = msg.message.user.name;
+    const target = (msg.match[1] || submitter).trim();
+
+    if (submitter === target) {
+      if (!feature.roleForSelf.verify(robot, msg)) return;
+    } else {
+      if (!feature.roleForOther.verify(robot, msg)) return;
+    }
+
+    const body = msg.match[2].trim();
+    const attribute = {kind: 'subject', value: target};
+
+    return documentSet.deleteMatching({subject: [target]})
+    .then(() => documentSet.add(submitter, body, [attribute]))
+    .then(doc => msg.send(`${target}'s ${spec.name} has been set to '${doc.getBody()}'.`))
+    .catch(errorHandler(msg));
+  });
 }
 
 function queryCommand(robot, documentSet, spec, feature) {

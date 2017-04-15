@@ -20,6 +20,12 @@ const OnlyMe = {
   }
 };
 
+const Nobody = {
+  verify: (robot, msg) => {
+    return false;
+  }
+}
+
 describe('createDocumentSet', function() {
   let room, documentSet;
   let realNow;
@@ -248,6 +254,158 @@ describe('createDocumentSet', function() {
 
   describe('set', function() {
     it('creates "setblarf:"');
+    it('adds a new document with "setblarf:"', function() {
+      usesDatabase(this);
+      documentSet = createDocumentSet(room.robot, 'blarf', { set: true });
+
+      return room.user.say('me', '@hubot setblarf: something embarassing')
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot setblarf: something embarassing'],
+          ['hubot', "me's blarf has been set to 'something embarassing'."]
+        ]);
+
+        return documentSet.randomMatching({subject: ['me']}, '');
+      })
+      .then(doc => expect(doc.getBody()).to.equal('something embarassing'));
+    });
+
+    it('adds a new document for a different user with "setblarf @<username>:"', function() {
+      usesDatabase(this);
+      documentSet = createDocumentSet(room.robot, 'blarf', { set: true });
+
+      return room.user.say('me', '@hubot setblarf @other: something embarassing')
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot setblarf @other: something embarassing'],
+          ['hubot', "other's blarf has been set to 'something embarassing'."]
+        ]);
+
+        return documentSet.randomMatching({subject: ['other']}, '');
+      })
+      .then(doc => expect(doc.getBody()).to.equal('something embarassing'));
+    })
+
+    it('replaces an existing document with "setblarf:"', function() {
+      usesDatabase(this);
+      documentSet = createDocumentSet(room.robot, 'blarf', { set: true });
+
+      return documentSet.add('admin', 'blah', [{kind: 'subject', value: 'me'}])
+      .then(() => room.user.say('me', '@hubot setblarf: something better'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot setblarf: something better'],
+          ['hubot', "me's blarf has been set to 'something better'."]
+        ]);
+
+        return Promise.all([
+          documentSet.countMatching({subject: ['me']}, ''),
+          documentSet.randomMatching({subject: ['me']}, '')
+        ]);
+      })
+      .then(results => {
+        expect(results[0]).to.equal(1);
+        expect(results[1].getBody()).to.equal('something better');
+      });
+    });
+
+    it('replaces an existing document for a different user with "setblarf @<username>:"', function() {
+      usesDatabase(this);
+      documentSet = createDocumentSet(room.robot, 'blarf', { set: true });
+
+      return documentSet.add('admin', 'blah', [{kind: 'subject', value: 'other'}])
+      .then(() => room.user.say('me', '@hubot setblarf other: something better'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot setblarf other: something better'],
+          ['hubot', "other's blarf has been set to 'something better'."]
+        ]);
+
+        return Promise.all([
+          documentSet.countMatching({subject: ['other']}, ''),
+          documentSet.randomMatching({subject: ['other']}, '')
+        ]);
+      })
+      .then(results => {
+        expect(results[0]).to.equal(1);
+        expect(results[1].getBody()).to.equal('something better');
+      });
+    });
+
+    it('validates a required role for setting your own', function() {
+      usesDatabase(this);
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        set: { roleForSelf: OnlyMe }
+      });
+
+      return room.user.say('you', '@hubot setblarf: nice try')
+      .then(delay)
+      .then(() => room.user.say('you', '@hubot setblarf me: this works'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['you', '@hubot setblarf: nice try'],
+          ['hubot', '@you NOPE'],
+          ['you', '@hubot setblarf me: this works'],
+          ['hubot', "me's blarf has been set to 'this works'."]
+        ]);
+
+        return Promise.all([
+          documentSet.countMatching({subject: ['me']}, ''),
+          documentSet.countMatching({subject: ['you']}, ''),
+        ]);
+      })
+      .then(results => expect(results).to.deep.equal([1, 0]));
+    });
+
+    it('validates a required role for setting another', function() {
+      usesDatabase(this);
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        set: { roleForOther: OnlyMe }
+      });
+
+      return room.user.say('you', '@hubot setblarf me: nice try')
+      .then(delay)
+      .then(() => room.user.say('you', '@hubot setblarf: this works'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['you', '@hubot setblarf me: nice try'],
+          ['hubot', '@you NOPE'],
+          ['you', '@hubot setblarf: this works'],
+          ['hubot', "you's blarf has been set to 'this works'."]
+        ]);
+
+        return Promise.all([
+          documentSet.countMatching({subject: ['me']}, ''),
+          documentSet.countMatching({subject: ['you']}, ''),
+        ]);
+      })
+      .then(results => expect(results).to.deep.equal([0, 1]));
+    });
+
+    it('validates the correct role for explicitly setting your own', function() {
+      usesDatabase(this);
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        set: { roleForSelf: OnlyMe, roleForOther: Nobody }
+      });
+
+      return room.user.say('me', '@hubot setblarf me: this works')
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot setblarf me: this works'],
+          ['hubot', "me's blarf has been set to 'this works'."]
+        ]);
+
+        return documentSet.countMatching({subject: ['me']}, '');
+      })
+      .then(count => expect(count).to.equal(1));
+    });
   });
 
   describe('query', function() {

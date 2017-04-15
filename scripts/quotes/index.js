@@ -7,7 +7,7 @@ const Storage = require('./storage');
 const {generate} = require('./commands');
 const {Anyone} = require('../roles');
 
-function populateCommand(name, command) {
+function populateCommand(name, command, userOriented = false) {
   if (command === undefined || command === null || command === false) {
     return null;
   }
@@ -18,8 +18,18 @@ function populateCommand(name, command) {
     populated.role = Anyone;
   }
 
-  if (populated.defaultToSelf === undefined) {
-    populated.defaultToSelf = false;
+  if (userOriented) {
+    if (populated.roleForSelf === undefined) {
+      populated.roleForSelf = populated.role;
+    }
+
+    if (populated.roleForOther === undefined) {
+      populated.roleForOther = populated.role;
+    }
+
+    if (populated.defaultToSelf === undefined) {
+      populated.defaultToSelf = false;
+    }
   }
 
   return populated;
@@ -36,7 +46,7 @@ exports.createDocumentSet = function createDocumentSet(robot, name, commands) {
     plural,
     features: {
       add: populateCommand(name, commands.add),
-      set: populateCommand(name, commands.set),
+      set: populateCommand(name, commands.set, true),
       query: populateCommand(name, commands.query),
       count: populateCommand(name, commands.count),
       stats: populateCommand(name, commands.stat),

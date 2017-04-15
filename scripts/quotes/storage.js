@@ -81,7 +81,8 @@ class Storage {
         'RETURNING id';
 
       return this.db.many(query);
-    }).then(attrRows => {
+    })
+    .then(attrRows => {
       for (let i = 0; i < attrRows.length; i++) {
         const original = attributes[i];
         const row = attrRows[i];
@@ -89,7 +90,8 @@ class Storage {
 
         docResult.attributes.push(full);
       }
-    }).then(() => docResult);
+    })
+    .then(() => docResult);
   }
 
   randomDocumentMatching(documentSet, attributes, query) {
@@ -140,14 +142,17 @@ class Storage {
     const documentTableName = documentSet.documentTableName();
     const attributeTableName = documentSet.attributeTableName();
 
-    if (attributes.length > 0 && query === '') {
+    const hasAttributes = Object.keys(attributes).length > 0;
+    const hasQuery = query !== '';
+
+    if (hasAttributes && !hasQuery) {
       // Only attributes
       const attr = attributeQuery(attributes, 1, 2);
       const query = `SELECT COUNT(*) AS count FROM (${attr.query}) AS attrs`;
       const parameters = [attributeTableName, ...attr.parameters];
 
       return this.db.one(query, parameters);
-    } else if (attributes.length > 0 && query !== '') {
+    } else if (hasAttributes && !hasQuery) {
       // Attributes and query
       const attr = attributeQuery(attributes, 3, 4);
       const query = `
@@ -158,16 +163,31 @@ class Storage {
       const parameters = [documentTableName, queryParser(query), attributeTableName, ...attr.parameters];
 
       return this.db.one(query, parameters);
-    } else if (attributes.length === 0 && query === '') {
+    } else if (!hasAttributes && !hasQuery) {
       // No attributes, no query
       return this.db.one('SELECT COUNT(*) AS count FROM $1:name', [documentTableName]);
-    } else if (attributes.length === 0 && query !== '') {
+    } else if (!hasAttributes && hasQuery) {
       // No attributes, query
       const query = 'SELECT COUNT(*) AS count FROM $1:name WHERE body ~* $2';
       const parameters = [documentTableName, queryParser(query)];
 
       return this.db.one(query, parameters);
     }
+  }
+
+  deleteDocumentsMatching(documentSet, attributes) {
+    const documentTableName = documentSet.documentTableName();
+    const attributeTableName = documentSet.attributeTableName();
+
+    if (attributes.length === 0) {
+      return this.destroyDocumentSet(documentSet);
+    }
+
+    const attr = attributeQuery(attributes, 2, 3);
+    const query = `DELETE FROM $1:name WHERE id IN (${attr.query})`;
+    const parameters = [documentTableName, attributeTableName, ...attr.parameters];
+
+    return this.db.none(query, parameters);
   }
 
   destroyDocumentSet(documentSet) {

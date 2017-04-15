@@ -37,6 +37,11 @@ class DocumentSet {
     .then(row => parseInt(row.count));
   }
 
+  deleteMatching(attributes) {
+    return this.connected
+    .then(() => this.storage.deleteDocumentsMatching(this, attributes));
+  }
+
   destroy() {
     return this.storage.destroyDocumentSet(this);
   }
