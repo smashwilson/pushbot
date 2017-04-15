@@ -517,10 +517,36 @@ describe('createDocumentSet', function() {
           ['me', `@hubot blarf aaa\\"bbb\\'ccc`],
           ['hubot', `correct aaa"bbb'ccc`]
         ]);
-      })
+      });
     });
 
-    it("validates the caller's role");
+    it("permits access based on the caller's role", function() {
+      usesDatabase(this);
+
+      return populate({ role: OnlyMe }, ['aaa'])
+      .then(() => room.user.say('me', '@hubot blarf'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarf'],
+          ['hubot', 'aaa']
+        ]);
+      });
+    });
+
+    it("prohibits access based on the caller's role", function() {
+      usesDatabase(this);
+
+      return populate({ role: OnlyMe }, ['aaa'])
+      .then(() => room.user.say('you', '@hubot blarf'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['you', '@hubot blarf'],
+          ['hubot', '@you NOPE']
+        ]);
+      })
+    });
   });
 
   describe('count', function() {
