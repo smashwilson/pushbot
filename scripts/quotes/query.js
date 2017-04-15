@@ -46,5 +46,9 @@ module.exports = function (query) {
     i++;
   }
 
-  return terms.join('|');
+  if (currentTerm.length > 0) {
+    terms.push(currentTerm);
+  }
+
+  return terms;
 }
