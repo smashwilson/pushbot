@@ -104,7 +104,7 @@ function setCommand(robot, documentSet, spec, feature) {
 }
 
 function queryCommand(robot, documentSet, spec, feature) {
-  const pattern = new RegExp(`${spec.name}(?:\s*([^]*))?`);
+  const pattern = new RegExp(`${spec.name}(\\s+[^]+)?`);
 
   robot.respond(pattern, msg => {
     if (!feature.role.verify(robot, msg)) return;
