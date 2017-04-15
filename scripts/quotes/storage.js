@@ -98,44 +98,46 @@ class Storage {
     const documentTableName = documentSet.documentTableName();
     const attributeTableName = documentSet.attributeTableName();
 
-    let first = Promise.resolve(null);
-    if (attributes.length > 0) {
-      const attr = attributeQuery(attributes, 1, 2);
-      const parameters = [values.attributeTableName, ...attr.parameters];
+    const hasAttributes = Object.keys(attributes).length > 0;
+    const hasQuery = /\s*\S/.test(query);
 
-      first = this.db.any(attr.query, parameters);
+    let where = '';
+    let queryClause = '';
+    let separator = '';
+    let attrClause = '';
+    const parameters = [documentTableName, attributeTableName];
+
+    if (hasQuery || hasAttributes) {
+      where = 'WHERE';
     }
 
-    return first.then(ids => {
-      const parameters = [
-        documentTableName,
-        queryParser(query)
-      ];
+    if (hasQuery) {
+      const {clause, parameters: queryParameters} = createQueryClause(query, 'body', parameters.length + 1);
+      queryClause = clause;
+      parameters.push(...queryParameters);
+    }
 
-      let scopeClause = '';
+    if (hasQuery && hasAttributes) {
+      separator = 'AND';
+    }
 
-      if (ids !== null) {
-        if (ids.length === 0) {
-          return null;
-        } else if (ids.length === 1) {
-          scopeClause = 'AND id = $3';
-          parameters.push(ids[0]);
-        } else if (ids.length > 1) {
-          const idList = ids.map((id, index) => `$${3 + index}`).join(', ');
-          scopeClause = `AND id IN (${idList})`;
-          parameters.push(...ids);
-        }
-      }
+    if (hasAttributes) {
+      const {query, parameters: attrParameters} = createAttributeQuery(attributes, 2, parameters.length + 1);
+      attrClause = `id IN (${query})`;
+      parameters.push(...attrParameters);
+    }
 
-      return this.db.oneOrNone(`
-          SELECT id, created, updated, submitter, body
-          FROM $1:name
-          WHERE body ~* $2
-          ${scopeClause}
-          ORDER BY RANDOM()
-          LIMIT 1
-        `, parameters);
-    });
+    const sql = `
+      SELECT id, created, updated, submitter, body
+      FROM $1:name
+      ${where} ${queryClause} ${separator} ${attrClause}
+      ORDER BY RANDOM()
+      LIMIT 1
+    `;
+
+    console.log(require('util').inspect({sql, parameters}, { depth: null }));
+
+    return this.db.oneOrNone(sql, parameters);
   }
 
   countDocumentsMatching(documentSet, attributes, query) {
@@ -147,20 +149,21 @@ class Storage {
 
     if (hasAttributes && !hasQuery) {
       // Only attributes
-      const attr = attributeQuery(attributes, 1, 2);
+      const attr = createAttributeQuery(attributes, 1, 2);
       const query = `SELECT COUNT(*) AS count FROM (${attr.query}) AS attrs`;
       const parameters = [attributeTableName, ...attr.parameters];
 
       return this.db.one(query, parameters);
     } else if (hasAttributes && !hasQuery) {
       // Attributes and query
-      const attr = attributeQuery(attributes, 3, 4);
-      const query = `
+      const {clause: queryClause, parameters: queryParameters} = createQueryClause(query, 'body', 3);
+      const {query: attrQuery, parameters: attrParameters} = createAttributeQuery(attributes, 2, 3 + queryParameters.length);
+      const sql = `
         SELECT COUNT(*) AS count FROM $1:name WHERE
-        body ~* $2 AND
-        id IN (${attr.query})
+        ${queryClause} AND
+        id IN (${attrQuery})
       `;
-      const parameters = [documentTableName, queryParser(query), attributeTableName, ...attr.parameters];
+      const parameters = [documentTableName, attributeTableName, ...queryParameters, ...attrParameters];
 
       return this.db.one(query, parameters);
     } else if (!hasAttributes && !hasQuery) {
@@ -183,7 +186,7 @@ class Storage {
       return this.destroyDocumentSet(documentSet);
     }
 
-    const attr = attributeQuery(attributes, 2, 3);
+    const attr = createAttributeQuery(attributes, 2, 3);
     const query = `DELETE FROM $1:name WHERE id IN (${attr.query})`;
     const parameters = [documentTableName, attributeTableName, ...attr.parameters];
 
@@ -202,7 +205,17 @@ class Storage {
   }
 }
 
-function attributeQuery(attributes, attrTablePlaceholder, placeholderBase) {
+function createQueryClause(quoteSrc, fieldName, placeholderBase) {
+  const terms = queryParser(quoteSrc);
+  return {
+    clause: terms
+      .map((term, index) => `${fieldName} ~* $${placeholderBase + index}`)
+      .join(' AND '),
+    parameters: terms
+  };
+}
+
+function createAttributeQuery(attributes, attrTablePlaceholder, placeholderBase) {
   const parameters = [];
 
   const kinds = Object.keys(attributes);
