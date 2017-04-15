@@ -1,6 +1,6 @@
 # PushBot
 
-[![Docker Repository on Quay.io](https://quay.io/repository/smashwilson/pushbot/status "Docker Repository on Quay.io")](https://quay.io/repository/smashwilson/pushbot)
+[![Build Status](https://travis-ci.org/smashwilson/pushbot.svg?branch=master)](https://travis-ci.org/smashwilson/pushbot) | [![Docker Repository on Quay.io](https://quay.io/repository/smashwilson/pushbot/status "Docker Repository on Quay.io")](https://quay.io/repository/smashwilson/pushbot)
 
 This is a version of GitHub's chat bot, [Hubot](https://hubot.github.com/). We use it to do silly things in our Slack chat.
 
