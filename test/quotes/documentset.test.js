@@ -422,6 +422,8 @@ describe('createDocumentSet', function() {
     }
 
     it('returns a random result', function() {
+      usesDatabase(this);
+
       return populate(true, ['one', 'two', 'three'])
       .then(() => room.user.say('me', '@hubot blarf'))
       .then(delay)
