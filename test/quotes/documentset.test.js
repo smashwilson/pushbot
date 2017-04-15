@@ -487,9 +487,38 @@ describe('createDocumentSet', function() {
       })
     });
 
-    it('collects words within single quotes as a single term');
+    it('collects words within single quotes as a single term', function() {
+      usesDatabase(this);
 
-    it('allows terms to contain single and double quotes escaped with a backslash');
+      return populate(true, [
+        'aaa nope bbb', 'aaa nope bbb', 'aaa nope bbb', 'aaa nope bbb', 'aaa nope bbb',
+        'correct aaa bbb'
+      ])
+      .then(() => room.user.say('me', "@hubot blarf 'aaa bbb'"))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', "@hubot blarf 'aaa bbb'"],
+          ['hubot', 'correct aaa bbb']
+        ]);
+      })
+    });
+
+    it('allows terms to contain single and double quotes escaped with a backslash', function() {
+      usesDatabase(this);
+
+      return populate(true, [
+        `correct aaa"bbb'ccc`, 'wrong aaabbbccc', 'wrong aaabbbccc', 'wrong aaabbbccc', 'wrong aaabbbccc'
+      ])
+      .then(() => room.user.say('me', `@hubot blarf aaa\\"bbb\\'ccc`))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', `@hubot blarf aaa\\"bbb\\'ccc`],
+          ['hubot', `correct aaa"bbb'ccc`]
+        ]);
+      })
+    });
 
     it("validates the caller's role");
   });
