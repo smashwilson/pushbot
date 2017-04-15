@@ -252,7 +252,6 @@ describe('createDocumentSet', function() {
   });
 
   describe('set', function() {
-    it('creates "setblarf:"');
     it('adds a new document with "setblarf:"', function() {
       usesDatabase(this);
       documentSet = createDocumentSet(room.robot, 'blarf', { set: true });
@@ -409,6 +408,41 @@ describe('createDocumentSet', function() {
 
   describe('query', function() {
     it('creates "blarf <query>"');
+    function populate(commandOpts = true, docs = []) {
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        query: commandOpts
+      });
+
+      return Promise.all(
+        docs.map(doc => documentSet.add('me', doc, []))
+      );
+    }
+
+    it('returns a random result', function() {
+      return populate(true, ['one', 'two', 'three'])
+      .then(() => room.user.say('me', '@hubot blarf'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.have.length(2);
+        expect(room.messages[0]).to.deep.equal(['me', '@hubot blarf']);
+
+        const [speaker, message] = room.messages[1];
+        expect(speaker).to.equal('hubot');
+        expect(message).to.be.oneOf(['one', 'two', 'three']);
+      });
+    });
+
+    it('returns a random document containing all terms within a query');
+
+    it('escapes regular expression metacharacters within query terms');
+
+    it('collects words within double quotes as a single term');
+
+    it('collects words within single quotes as a single term');
+
+    it('allows terms to contain single and double quotes escaped with a backslash');
+
+    it("validates the caller's role");
   });
 
   describe('count', function() {

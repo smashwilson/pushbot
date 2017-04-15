@@ -112,7 +112,7 @@ function queryCommand(robot, documentSet, spec, feature) {
     const query = msg.match[1] || '';
 
     documentSet.randomMatching([], query)
-      .then(doc => msg.reply(doc.getBody()))
+      .then(doc => msg.send(doc.getBody()))
       .catch(errorHandler(msg));
   });
 }
