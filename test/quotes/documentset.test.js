@@ -454,7 +454,21 @@ describe('createDocumentSet', function() {
       });
     });
 
-    it('escapes regular expression metacharacters within query terms');
+    it('escapes regular expression metacharacters within query terms', function() {
+      usesDatabase(this);
+
+      return populate(true, [
+        'aaa+bbb', 'nope', 'nope', 'nope', 'nope', 'nope', 'nope', 'nope', 'nope', 'nope', 'nope'
+      ])
+      .then(() => room.user.say('me', '@hubot blarf \\+'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarf \\+'],
+          ['hubot', 'aaa+bbb']
+        ]);
+      })
+    });
 
     it('collects words within double quotes as a single term');
 
