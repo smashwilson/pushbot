@@ -1,0 +1,13 @@
+dist: trusty
+sudo: false
+language: node_js
+node_js:
+- node
+addons:
+ postgresql: "9.6"
+services:
+- postgresql
+env:
+  DATABASE_URL: postgres://postgres@localhost/travis?ssl=false
+notifications:
+  email: false
