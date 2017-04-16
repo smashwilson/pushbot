@@ -1,8 +1,10 @@
-// Accept text as-is from a command's input. Derive no speakers or about metadata.
+// Accept text as-is from a command's input. Derive no speaker metadata.
 
-module.exports = function(text) {
-  return {
-    body: text,
-    attributes: []
-  };
+const createMentionDetector = require('./mentions');
+
+module.exports = function(robot, text) {
+  const mentions = createMentionDetector(robot).scan(text);
+  const attributes = Array.from(mentions, value => ({kind: 'mention', value}));
+
+  return {body: text, attributes};
 };

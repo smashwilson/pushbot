@@ -4,7 +4,7 @@
 function processThen(parser) {
   return function(robot, msg) {
     const preprocessed = msg.match[1].replace(/\u200B/g, '');
-    return parser(preprocessed);
+    return parser(robot, preprocessed);
   }
 }
 

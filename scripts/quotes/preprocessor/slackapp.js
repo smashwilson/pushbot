@@ -1,6 +1,7 @@
 // Accept text copied and pasted from the Slack thick-client.
 
 const moment = require('moment');
+const createMentionDetector = require('./mentions');
 
 // RegExp snippets for re-use
 const TS = '\\[(\\d{1,2}:\\d{2}( [aApP][mM])?)\\]'; // [11:22 AM] *or* [16:00]
@@ -19,11 +20,13 @@ function parseTs(ts) {
   return parsed;
 }
 
-module.exports = function(text) {
+module.exports = function(robot, text) {
   let nick, ts, ampm;
+  const mentionDetector = createMentionDetector(robot);
 
   const result = [];
   const speakers = new Set();
+  const mentions = new Set();
 
   const lines = text.split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
@@ -58,12 +61,17 @@ module.exports = function(text) {
 
     line = line.replace(/\s*\(edited\)$/, '');
 
+    for (const mention of mentionDetector.scan(line)) {
+      mentions.add(mention);
+    }
+
     result.push(`[${ts.format('h:mm A D MMM YYYY')}] ${nick}: ${line}`);
     speakers.add(nick);
   }
 
-  return {
-    body: result.join('\n'),
-    attributes: Array.from(speakers, value => ({kind: 'speaker', value}))
-  };
+  const attributes = [];
+  attributes.push(...Array.from(speakers, value => ({kind: 'speaker', value})));
+  attributes.push(...Array.from(mentions, value => ({kind: 'mention', value})));
+
+  return {body: result.join('\n'), attributes};
 };
