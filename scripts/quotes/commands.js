@@ -87,11 +87,8 @@ function setCommand(robot, documentSet, spec, feature) {
     const submitter = msg.message.user.name;
     const target = (msg.match[1] || submitter).trim();
 
-    if (submitter === target) {
-      if (!feature.roleForSelf.verify(robot, msg)) return;
-    } else {
-      if (!feature.roleForOther.verify(robot, msg)) return;
-    }
+    const role = submitter === target ? feature.roleForSelf : feature.roleForOther;
+    if (!role.verify(robot, msg)) return;
 
     const body = msg.match[2].trim();
     const attribute = {kind: 'subject', value: target};
