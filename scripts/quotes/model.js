@@ -1,7 +1,5 @@
 // Model classes for quotefile entries
 
-const Promise = require('bluebird');
-
 // A queryable collection of related documents.
 class DocumentSet {
   constructor(storage, name, nullBody) {
@@ -43,7 +41,12 @@ class DocumentSet {
   }
 
   destroy() {
-    return this.storage.destroyDocumentSet(this);
+    return this.connected
+    .then(() => this.storage.destroyDocumentSet(this));
+  }
+
+  whenConnected() {
+    return this.connected;
   }
 
   documentTableName() {
