@@ -574,13 +574,86 @@ describe('createDocumentSet', function() {
       });
     });
 
-    it('counts documents matching all query terms');
+    it('uses a singular noun for single results', function() {
+      return populate(true, ['111'])
+      .then(() => room.user.say('me', '@hubot blarfcount'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarfcount'],
+          ['hubot', '@me there is 1 blarf.']
+        ]);
+      });
+    });
 
-    it('counts documents matching quoted query terms');
+    it('counts documents matching all query terms', function() {
+      usesDatabase(this);
 
-    it("permits access based on the caller's role");
+      return populate(true, ['aaa zzz 1', 'aaa zzz 2', 'aaa bbb 0', 'bbb zzz 0', 'xxx yyy 0'])
+      .then(() => room.user.say('me', '@hubot blarfcount zzz aaa'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarfcount zzz aaa'],
+          ['hubot', '@me there are 2 blarfs matching `zzz aaa`.']
+        ]);
+      });
+    });
 
-    it("prohibits access based on the caller's role");
+    it('counts documents matching quoted query terms', function() {
+      usesDatabase(this);
+
+      return populate(true, ['aaa zzz 1', 'aaa zzz 2', 'aaa bbb 0', 'bbb zzz 0', 'xxx yyy 0', 'zzz aaa 0'])
+      .then(() => room.user.say('me', '@hubot blarfcount "aaa zzz"'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarfcount "aaa zzz"'],
+          ['hubot', '@me there are 2 blarfs matching `"aaa zzz"`.']
+        ]);
+      });
+    });
+
+    it('uses a singular noun for single results matching a query', function() {
+      return populate(true, ['111', '222'])
+      .then(() => room.user.say('me', '@hubot blarfcount 11'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarfcount 11'],
+          ['hubot', '@me there is 1 blarf matching `11`.']
+        ]);
+      });
+    });
+
+    it("permits access based on the caller's role", function() {
+      usesDatabase(this);
+
+      return populate({ role: OnlyMe }, ['aaa zzz 1', 'aaa zzz 2', 'aaa zzz 3', 'bbb zzz 0', 'xxx yyy 0'])
+      .then(() => room.user.say('me', '@hubot blarfcount aaa zzz'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarfcount aaa zzz'],
+          ['hubot', '@me there are 3 blarfs matching `aaa zzz`.']
+        ]);
+      });
+    });
+
+    it("prohibits access based on the caller's role", function() {
+      usesDatabase(this);
+
+      return populate({ role: OnlyMe }, ['aaa zzz 1', 'aaa zzz 2'])
+      .then(() => room.user.say('you', '@hubot blarfcount aaa zzz'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['you', '@hubot blarfcount aaa zzz'],
+          ['hubot', '@you NOPE']
+        ]);
+      });
+    });
+
   });
 
   describe('stats', function() {
