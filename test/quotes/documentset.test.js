@@ -45,7 +45,9 @@ describe('createDocumentSet', function() {
     room.destroy();
     moment.now = realNow;
 
-    return documentSet && documentSet.destroy();
+    if (documentSet) {
+      return documentSet.destroy().then(delay);
+    }
   });
 
   function setUsers(usernames) {
