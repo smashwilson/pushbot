@@ -46,7 +46,7 @@ describe('createDocumentSet', function() {
     moment.now = realNow;
 
     if (documentSet) {
-      return documentSet.destroy().then(delay);
+      return documentSet.destroy();
     }
   });
 
