@@ -545,12 +545,42 @@ describe('createDocumentSet', function() {
           ['you', '@hubot blarf'],
           ['hubot', '@you NOPE']
         ]);
-      })
+      });
     });
   });
 
   describe('count', function() {
-    it('creates "blarfcount"');
+    function populate(commandOpts = true, docs = []) {
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        count: commandOpts
+      });
+
+      return Promise.all(
+        docs.map(doc => documentSet.add('me', doc, []))
+      );
+    }
+
+    it('counts all documents', function() {
+      usesDatabase(this);
+
+      return populate(true, ['111', '222', '333', '444', '555'])
+      .then(() => room.user.say('me', '@hubot blarfcount'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarfcount'],
+          ['hubot', '@me there are 5 blarfs.']
+        ]);
+      });
+    });
+
+    it('counts documents matching all query terms');
+
+    it('counts documents matching quoted query terms');
+
+    it("permits access based on the caller's role");
+
+    it("prohibits access based on the caller's role");
   });
 
   describe('stats', function() {

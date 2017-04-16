@@ -118,7 +118,7 @@ function queryCommand(robot, documentSet, spec, feature) {
 }
 
 function attributeQuery(robot, documentSet, spec, feature, patternBase, attrKind) {
-  const pattern = new RegExp(`${patternBase}\s+(\S+)(?:\s+([^]+))?`);
+  const pattern = new RegExp(`${patternBase}\s+(\S+)(?:\s+([^]+))?`, 'i');
 
   robot.respond(pattern, msg => {
     const subjects = msg.match[1]
@@ -141,8 +141,24 @@ function aboutQueryCommand(robot, documentSet, spec, feature) {
   attributeQuery(robot, documentSet, spec, feature, `${spec.name}about`, 'mention');
 }
 
-function countCommands(robot, documentSet, spec, feature) {
-  //
+function countCommand(robot, documentSet, spec, feature) {
+  const pattern = new RegExp(`${spec.name}count(\\s+[^]+)?`, 'i');
+
+  robot.respond(pattern, msg => {
+    if (!feature.role.verify(robot, msg)) return;
+
+    const query = msg.match[1] || '';
+    const hasQuery = query.trim().length > 0;
+
+    documentSet.countMatching({}, query)
+    .then(count => {
+      if (hasQuery) {
+        msg.reply(`there are ${count} ${spec.plural} matching "${query.trim()}".`);
+      } else {
+        msg.reply(`there are ${count} ${spec.plural}.`);
+      }
+    })
+  });
 }
 
 function statsCommand(robot, documentSet, spec, feature) {
