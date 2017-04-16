@@ -118,9 +118,11 @@ function queryCommand(robot, documentSet, spec, feature) {
 }
 
 function attributeQuery(robot, documentSet, spec, feature, patternBase, attrKind) {
-  const pattern = new RegExp(`${patternBase}\s+(\S+)(?:\s+([^]+))?`, 'i');
+  const pattern = new RegExp(`${patternBase}\\s+(\\S+)(\\s+[^]+)?`, 'i');
 
   robot.respond(pattern, msg => {
+    if (!feature.role.verify(robot, msg)) return;
+
     const subjects = msg.match[1]
       .split(/\+/)
       .map(subject => subject.replace(/^@/, ''));
@@ -128,7 +130,7 @@ function attributeQuery(robot, documentSet, spec, feature, patternBase, attrKind
     const query = msg.match[2] || '';
 
     documentSet.randomMatching(attributes, query)
-      .then(doc => msg.reply(doc.getBody()))
+      .then(doc => msg.send(doc.getBody()))
       .catch(errorHandler(msg));
   });
 }
