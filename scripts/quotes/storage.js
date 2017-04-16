@@ -143,37 +143,50 @@ class Storage {
     const attributeTableName = documentSet.attributeTableName();
 
     const hasAttributes = Object.keys(attributes).length > 0;
-    const hasQuery = query !== '';
+    const hasQuery = query.trim() !== '';
 
-    if (hasAttributes && !hasQuery) {
-      // Only attributes
-      const attr = createAttributeQuery(attributes, 1, 2);
-      const query = `SELECT COUNT(*) AS count FROM (${attr.query}) AS attrs`;
-      const parameters = [attributeTableName, ...attr.parameters];
+    // Avoid an unnecessary join for attribute-only queries
+    if (!hasQuery && hasAttributes) {
+      const {query, parameters: attrParameters} = createAttributeQuery(attributes, 1, 2);
+      const sql = `SELECT COUNT(*) AS count FROM (${query}) AS attrs`;
+      const parameters = [attributeTableName, ...attrParameters];
 
-      return this.db.one(query, parameters);
-    } else if (hasAttributes && !hasQuery) {
-      // Attributes and query
-      const {clause: queryClause, parameters: queryParameters} = createQueryClause(query, 'body', 3);
-      const {query: attrQuery, parameters: attrParameters} = createAttributeQuery(attributes, 2, 3 + queryParameters.length);
-      const sql = `
-        SELECT COUNT(*) AS count FROM $1:name WHERE
-        ${queryClause} AND
-        id IN (${attrQuery})
-      `;
-      const parameters = [documentTableName, attributeTableName, ...queryParameters, ...attrParameters];
-
-      return this.db.one(query, parameters);
-    } else if (!hasAttributes && !hasQuery) {
-      // No attributes, no query
-      return this.db.one('SELECT COUNT(*) AS count FROM $1:name', [documentTableName]);
-    } else if (!hasAttributes && hasQuery) {
-      // No attributes, query
-      const query = 'SELECT COUNT(*) AS count FROM $1:name WHERE body ~* $2';
-      const parameters = [documentTableName, queryParser(query)];
-
-      return this.db.one(query, parameters);
+      return this.db.one(sql, parameters);
     }
+
+    let where = '';
+    let queryClause = '';
+    let separator = '';
+    let attrClause = '';
+    const parameters = [documentTableName, attributeTableName];
+
+    if (hasQuery || hasAttributes) {
+      where = 'WHERE';
+    }
+
+    if (hasQuery) {
+      const {clause, parameters: queryParameters} = createQueryClause(query, 'body', parameters.length + 1);
+      queryClause = clause;
+      parameters.push(...queryParameters);
+    }
+
+    if (hasQuery && hasAttributes) {
+      separator = 'AND';
+    }
+
+    if (hasAttributes) {
+      const {query, parameters: attrParameters} = createAttributeQuery(attributes, 2, parameters.length + 1);
+      attrClause = `id IN (${query})`;
+      parameters.push(...attrParameters);
+    }
+
+    const sql = `
+      SELECT COUNT(*) AS count
+      FROM $1:name
+      ${where} ${queryClause} ${separator} ${attrClause}
+    `;
+
+    return this.db.one(sql, parameters);
   }
 
   deleteDocumentsMatching(documentSet, attributes) {
