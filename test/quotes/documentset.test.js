@@ -568,6 +568,10 @@ describe('createDocumentSet', function() {
       });
     });
 
+    it('can be configured to always query with a subject user');
+
+    it('can be configured to default to self with no query');
+
     it('generates default help text');
 
     it('accepts custom help text');
