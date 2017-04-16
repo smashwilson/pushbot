@@ -41,7 +41,7 @@ exports.generate = function(robot, documentSet, spec) {
 
 function errorHandler(msg) {
   return function (error) {
-    console.log(error.stack);
+    console.error(error.stack);
     msg.reply(`:boom: Something went wrong!\n\`\`\`\n${error.stack}\n\`\`\`\n`);
   }
 }
