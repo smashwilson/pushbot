@@ -7,7 +7,7 @@ const Storage = require('./storage');
 const {generate} = require('./commands');
 const {Anyone} = require('../roles');
 
-function populateCommand(name, command, userOriented = false) {
+function populateCommand(name, command, alwaysUserOriented = false) {
   if (command === undefined || command === null || command === false) {
     return null;
   }
@@ -18,7 +18,7 @@ function populateCommand(name, command, userOriented = false) {
     populated.role = Anyone;
   }
 
-  if (userOriented) {
+  if (alwaysUserOriented || command.userOriented) {
     if (populated.roleForSelf === undefined) {
       populated.roleForSelf = populated.role;
     }
