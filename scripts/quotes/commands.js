@@ -152,12 +152,13 @@ function countCommand(robot, documentSet, spec, feature) {
 
     documentSet.countMatching({}, query)
     .then(count => {
-      if (hasQuery) {
-        msg.reply(`there are ${count} ${spec.plural} matching "${query.trim()}".`);
-      } else {
-        msg.reply(`there are ${count} ${spec.plural}.`);
-      }
+      const verb = count === 1 ? 'is' : 'are';
+      const noun = count === 1 ? spec.name : spec.plural;
+      const matching = hasQuery ? ` matching \`${query.trim()}\`` : '';
+
+      msg.reply(`there ${verb} ${count} ${noun}${matching}.`);
     })
+    .catch(errorHandler(msg));
   });
 }
 
