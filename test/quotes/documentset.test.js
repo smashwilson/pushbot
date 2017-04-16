@@ -76,14 +76,57 @@ describe('createDocumentSet', function() {
           ['hubot', '1 blarf loaded.']
         ]);
 
-        return documentSet.randomMatching([], '"foo bar baz"');
+        return documentSet.randomMatching({}, '"foo bar baz"');
       })
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
     });
 
-    it('extracts "speaker" attributes from slackapp input');
+    it('extracts "speaker" attributes from slackapp input', function() {
+      const blarfToAdd = 'person-one [2:00 PM] \n' +
+        'one one one' +
+        '\n' +
+        '[2:01]  \n' +
+        'two two two\n' +
+        '\n' +
+        'person-two [9:09 AM] \n' +
+        'three three three';
 
-    it('extracts "about" attributes from slackapp input');
+      const expectedBlarf = '[2:00 PM 9 Apr 2017] person-one: one one one\n' +
+        '[2:01 PM 9 Apr 2017] person-one: two two two\n' +
+        '[9:09 AM 9 Apr 2017] person-two: three three three';
+
+      return room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`)
+      .then(delay)
+      .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
+      .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
+    });
+
+    it('extracts "mention" attributes from slackapp input', function() {
+      const blarfToAdd = 'person-one [2:00 PM] \n' +
+        'one one one' +
+        '\n' +
+        '[2:01]  \n' +
+        '@person-two: two two two\n' +
+        '\n' +
+        'person-two [9:09 AM] \n' +
+        'three three three person-three';
+
+      const expectedBlarf = '[2:00 PM 9 Apr 2017] person-one: one one one\n' +
+        '[2:01 PM 9 Apr 2017] person-one: @person-two: two two two\n' +
+        '[9:09 AM 9 Apr 2017] person-two: three three three person-three';
+
+      room.robot.brain.data.users = {
+        1: {name: 'person-one'},
+        2: {name: 'person-two'},
+        3: {name: 'person-three'},
+        4: {name: 'person-four'}
+      };
+
+      return room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`)
+      .then(delay)
+      .then(() => documentSet.randomMatching({mention: ['person-two', 'person-three']}, ''))
+      .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
+    });
 
     it('removes "new messages" from "slackapp blarf:"', function() {
       usesDatabase(this);
@@ -211,7 +254,7 @@ describe('createDocumentSet', function() {
       }).then(doc => expect(doc.getBody()).to.equal(verbatimBlarf));
     });
 
-    it('extracts "about" attributes from verbatim input');
+    it('extracts "mention" attributes from verbatim input');
 
     it('creates "buffer blarf"', function() {
       usesDatabase(this);
@@ -249,7 +292,7 @@ describe('createDocumentSet', function() {
 
     it('extracts "speaker" attributes from buffer input');
 
-    it('extracts "about" attributes from buffer input');
+    it('extracts "mention" attributes from buffer input');
 
     it('can be configured with a document formatter');
 
