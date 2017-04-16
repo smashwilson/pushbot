@@ -81,6 +81,10 @@ describe('createDocumentSet', function() {
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
     });
 
+    it('extracts "speaker" attributes from slackapp input');
+
+    it('extracts "about" attributes from slackapp input');
+
     it('removes "new messages" from "slackapp blarf:"', function() {
       usesDatabase(this);
 
@@ -207,6 +211,8 @@ describe('createDocumentSet', function() {
       }).then(doc => expect(doc.getBody()).to.equal(verbatimBlarf));
     });
 
+    it('extracts "about" attributes from verbatim input');
+
     it('creates "buffer blarf"', function() {
       usesDatabase(this);
 
@@ -241,6 +247,12 @@ describe('createDocumentSet', function() {
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
     });
 
+    it('extracts "speaker" attributes from buffer input');
+
+    it('extracts "about" attributes from buffer input');
+
+    it('can be configured with a document formatter');
+
     it('validates a required role', function() {
       return room.user.say('you', '@hubot verbatim blarf: nope')
       .then(() => {
@@ -253,6 +265,10 @@ describe('createDocumentSet', function() {
       })
       .then(count => expect(count).to.equal(0));
     });
+
+    it('generates default help text');
+
+    it('accepts custom help text');
   });
 
   describe('set', function() {
@@ -408,6 +424,10 @@ describe('createDocumentSet', function() {
       })
       .then(count => expect(count).to.equal(1));
     });
+
+    it('generates default help text');
+
+    it('accepts custom help text');
   });
 
   describe('query', function() {
@@ -547,6 +567,10 @@ describe('createDocumentSet', function() {
         ]);
       });
     });
+
+    it('generates default help text');
+
+    it('accepts custom help text');
   });
 
   describe('count', function() {
@@ -654,6 +678,9 @@ describe('createDocumentSet', function() {
       });
     });
 
+    it('generates default help text');
+
+    it('accepts custom help text');
   });
 
   describe('stats', function() {
