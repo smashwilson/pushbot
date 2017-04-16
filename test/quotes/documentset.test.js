@@ -61,15 +61,10 @@ describe('createDocumentSet', function() {
   };
 
   describe('add', function() {
-    beforeEach(function() {
-      documentSet = createDocumentSet(room.robot, 'blarf',
-        { add: { role: OnlyMe } }
-      );
-      return documentSet.connected;
-    });
-
     it('creates "slackapp blarf:"', function() {
       usesDatabase(this);
+
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
 
       const blarfToAdd = 'person-one [2:00 PM] \n' +
         'foo bar baz\n' +
@@ -80,7 +75,8 @@ describe('createDocumentSet', function() {
       const expectedBlarf = '[2:00 PM 9 Apr 2017] person-one: foo bar baz\n' +
         '[2:01 PM 9 Apr 2017] person-one: aaa bbb ccc';
 
-      return room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`)
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
       .then(delay)
       .then(() => {
         expect(room.messages).to.eql([
@@ -94,6 +90,8 @@ describe('createDocumentSet', function() {
     });
 
     it('extracts "speaker" attributes from slackapp input', function() {
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
+
       const blarfToAdd = 'person-one [2:00 PM] \n' +
         'one one one' +
         '\n' +
@@ -107,13 +105,18 @@ describe('createDocumentSet', function() {
         '[2:01 PM 9 Apr 2017] person-one: two two two\n' +
         '[9:09 AM 9 Apr 2017] person-two: three three three';
 
-      return room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`)
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
       .then(delay)
       .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
     });
 
     it('extracts "mention" attributes from slackapp input', function() {
+      usesDatabase(this);
+
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
+
       const blarfToAdd = 'person-one [2:00 PM] \n' +
         'one one one' +
         '\n' +
@@ -129,7 +132,8 @@ describe('createDocumentSet', function() {
 
       setUsers(['person-one', 'person-two', 'person-three', 'person-four']);
 
-      return room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`)
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
       .then(delay)
       .then(() => documentSet.randomMatching({mention: ['person-two', 'person-three']}, ''))
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
@@ -137,6 +141,8 @@ describe('createDocumentSet', function() {
 
     it('removes "new messages" from "slackapp blarf:"', function() {
       usesDatabase(this);
+
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
 
       const blarfToAdd = 'person-one [2:00 PM] \n' +
         'one one one' +
@@ -153,7 +159,8 @@ describe('createDocumentSet', function() {
         '[2:01 PM 9 Apr 2017] person-one: two two two\n' +
         '[9:09 AM 9 Apr 2017] person-two: three three three';
 
-      return room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`)
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
       .then(delay)
       .then(() => {
         expect(room.messages).to.eql([
@@ -169,6 +176,8 @@ describe('createDocumentSet', function() {
     it('removes "edited" from "slackapp blarf:"', function() {
       usesDatabase(this);
 
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
+
       const blarfToAdd = 'person-one [8:53 PM] \n' +
         'one one one' +
         '\n' +
@@ -183,7 +192,8 @@ describe('createDocumentSet', function() {
         '[8:53 PM 9 Apr 2017] person-one: whatever\n' +
         '[8:53 PM 9 Apr 2017] person-one: three three three';
 
-      return room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`)
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
       .then(delay)
       .then(() => {
         expect(room.messages).to.eql([
@@ -199,6 +209,8 @@ describe('createDocumentSet', function() {
     it('removes APP from integration output in "slackapp blarf:"', function() {
       usesDatabase(this);
 
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
+
       const blarfToAdd = 'me [1:10 PM]\n' +
         '!quote\n' +
         '\n' +
@@ -213,7 +225,8 @@ describe('createDocumentSet', function() {
         '[1:10 PM 9 Apr 2017] pushbot: some response\n' +
         '[1:20 PM 9 Apr 2017] someone-else: more text';
 
-      return room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`)
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
       .then(delay)
       .then(() => {
         expect(room.messages).to.eql([
@@ -229,12 +242,15 @@ describe('createDocumentSet', function() {
     it('rejects malformed "slackapp blarf:" input', function() {
       usesDatabase(this);
 
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
+
       const malformedBlarf = '!quote\n' +
         '\n' +
         'person [1:10 PM]\n' +
         'some response\n';
 
-      return room.user.say('me', `@hubot slackapp blarf: ${malformedBlarf}`)
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', `@hubot slackapp blarf: ${malformedBlarf}`))
       .then(delay)
       .then(() => {
         expect(room.messages).to.have.length(2);
@@ -246,10 +262,13 @@ describe('createDocumentSet', function() {
     it('creates "verbatim blarf:"', function() {
       usesDatabase(this);
 
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
+
       const verbatimBlarf = 'look ma\n' +
         'no formatting';
 
-      return room.user.say('me', `@hubot verbatim blarf: ${verbatimBlarf}`)
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', `@hubot verbatim blarf: ${verbatimBlarf}`))
       .then(delay)
       .then(() => {
         expect(room.messages).to.deep.equal([
@@ -264,13 +283,16 @@ describe('createDocumentSet', function() {
     it('extracts "mention" attributes from verbatim input', function() {
       usesDatabase(this);
 
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
+
       const verbatimBlarf = 'something about person-four\n' +
         'and @person-two with an @\n' +
         'andperson-onebutnotreally';
 
       setUsers(['person-one', 'person-two', 'person-three', 'person-four']);
 
-      return room.user.say('me', `@hubot verbatim blarf: ${verbatimBlarf}`)
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', `@hubot verbatim blarf: ${verbatimBlarf}`))
       .then(delay)
       .then(() => documentSet.randomMatching({mention: ['person-two', 'person-four']}, ''))
       .then(doc => expect(doc.getBody()).to.equal(verbatimBlarf));
@@ -278,6 +300,8 @@ describe('createDocumentSet', function() {
 
     it('creates "buffer blarf"', function() {
       usesDatabase(this);
+
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
 
       room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee');
 
@@ -296,7 +320,8 @@ describe('createDocumentSet', function() {
         '[9:31 AM 1 Apr 2017] person-two: two two two\n' +
         '[9:32 AM 1 Apr 2017] person-three: three three three';
 
-      return room.user.say('me', '@hubot buffer blarf')
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', '@hubot buffer blarf'))
       .then(delay)
       .then(() => {
         expect(room.messages).to.deep.equal([
@@ -312,6 +337,8 @@ describe('createDocumentSet', function() {
 
     it('extracts "speaker" attributes from buffer input', function() {
       usesDatabase(this);
+
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
 
       room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee');
 
@@ -330,7 +357,8 @@ describe('createDocumentSet', function() {
         '[10:01 AM 1 Apr 2017] person-two: two two two\n' +
         '[10:01 AM 1 Apr 2017] person-one: three three three @person-one';
 
-      return room.user.say('me', '@hubot buffer blarf')
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', '@hubot buffer blarf'))
       .then(delay)
       .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
@@ -338,6 +366,8 @@ describe('createDocumentSet', function() {
 
     it('extracts "mention" attributes from buffer input', function() {
       usesDatabase(this);
+
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
 
       room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee');
 
@@ -358,7 +388,8 @@ describe('createDocumentSet', function() {
 
       setUsers(['person-one', 'person-two', 'person-three', 'person-four']);
 
-      return room.user.say('me', '@hubot buffer blarf')
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', '@hubot buffer blarf'))
       .then(delay)
       .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
@@ -367,7 +398,12 @@ describe('createDocumentSet', function() {
     it('can be configured with a document formatter');
 
     it('validates a required role', function() {
-      return room.user.say('you', '@hubot verbatim blarf: nope')
+      documentSet = createDocumentSet(room.robot, 'blarf',
+        { add: { role: OnlyMe } }
+      );
+
+      return documentSet.whenConnected()
+      .then(() => room.user.say('you', '@hubot verbatim blarf: nope'))
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['you', '@hubot verbatim blarf: nope'],
@@ -389,7 +425,8 @@ describe('createDocumentSet', function() {
       usesDatabase(this);
       documentSet = createDocumentSet(room.robot, 'blarf', { set: true });
 
-      return room.user.say('me', '@hubot setblarf: something embarassing')
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', '@hubot setblarf: something embarassing'))
       .then(delay)
       .then(() => {
         expect(room.messages).to.deep.equal([
@@ -406,7 +443,8 @@ describe('createDocumentSet', function() {
       usesDatabase(this);
       documentSet = createDocumentSet(room.robot, 'blarf', { set: true });
 
-      return room.user.say('me', '@hubot setblarf @other: something embarassing')
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', '@hubot setblarf @other: something embarassing'))
       .then(delay)
       .then(() => {
         expect(room.messages).to.deep.equal([
@@ -473,7 +511,8 @@ describe('createDocumentSet', function() {
         set: { roleForSelf: OnlyMe }
       });
 
-      return room.user.say('you', '@hubot setblarf: nice try')
+      return documentSet.whenConnected()
+      .then(() => room.user.say('you', '@hubot setblarf: nice try'))
       .then(delay)
       .then(() => room.user.say('you', '@hubot setblarf me: this works'))
       .then(delay)
@@ -499,7 +538,8 @@ describe('createDocumentSet', function() {
         set: { roleForOther: OnlyMe }
       });
 
-      return room.user.say('you', '@hubot setblarf me: nice try')
+      return documentSet.whenConnected()
+      .then(() => room.user.say('you', '@hubot setblarf me: nice try'))
       .then(delay)
       .then(() => room.user.say('you', '@hubot setblarf: this works'))
       .then(delay)
@@ -525,7 +565,8 @@ describe('createDocumentSet', function() {
         set: { roleForSelf: OnlyMe, roleForOther: Nobody }
       });
 
-      return room.user.say('me', '@hubot setblarf me: this works')
+      return documentSet.whenConnected()
+      .then(() => room.user.say('me', '@hubot setblarf me: this works'))
       .then(delay)
       .then(() => {
         expect(room.messages).to.deep.equal([
@@ -634,7 +675,7 @@ describe('createDocumentSet', function() {
           ['me', "@hubot blarf 'aaa bbb'"],
           ['hubot', 'correct aaa bbb']
         ]);
-      })
+      });
     });
 
     it('allows terms to contain single and double quotes escaped with a backslash', function() {
