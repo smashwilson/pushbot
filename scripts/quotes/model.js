@@ -23,7 +23,7 @@ class DocumentSet {
     return this.connected
     .then(() => this.storage.randomDocumentMatching(this, attributes, query))
     .then(row => {
-      if (row === null) {
+      if (!row) {
         return this.nullDocument;
       }
 
@@ -77,7 +77,7 @@ class Document {
 // A Document to be returned from queries that return no results.
 class NullDocument {
   constructor(body) {
-    this.body;
+    this.body = body;
   }
 
   getBody() {
