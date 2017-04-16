@@ -48,6 +48,16 @@ describe('createDocumentSet', function() {
     return documentSet && documentSet.destroy();
   });
 
+  function setUsers(usernames) {
+    const userMap = {};
+    for (let i = 0; i < usernames.length; i++) {
+      const username = usernames[i];
+      userMap[i] = {name: username};
+    }
+
+    room.robot.brain.data.users = userMap;
+  };
+
   describe('add', function() {
     beforeEach(function() {
       documentSet = createDocumentSet(room.robot, 'blarf',
@@ -115,12 +125,7 @@ describe('createDocumentSet', function() {
         '[2:01 PM 9 Apr 2017] person-one: @person-two: two two two\n' +
         '[9:09 AM 9 Apr 2017] person-two: three three three person-three';
 
-      room.robot.brain.data.users = {
-        1: {name: 'person-one'},
-        2: {name: 'person-two'},
-        3: {name: 'person-three'},
-        4: {name: 'person-four'}
-      };
+      setUsers(['person-one', 'person-two', 'person-three', 'person-four']);
 
       return room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`)
       .then(delay)
@@ -250,11 +255,24 @@ describe('createDocumentSet', function() {
           ['hubot', '1 blarf loaded.']
         ]);
 
-        return documentSet.randomMatching([], 'formatting');
+        return documentSet.randomMatching({}, 'formatting');
       }).then(doc => expect(doc.getBody()).to.equal(verbatimBlarf));
     });
 
-    it('extracts "mention" attributes from verbatim input');
+    it('extracts "mention" attributes from verbatim input', function() {
+      usesDatabase(this);
+
+      const verbatimBlarf = 'something about person-four\n' +
+        'and @person-two with an @\n' +
+        'andperson-onebutnotreally';
+
+      setUsers(['person-one', 'person-two', 'person-three', 'person-four']);
+
+      return room.user.say('me', `@hubot verbatim blarf: ${verbatimBlarf}`)
+      .then(delay)
+      .then(() => documentSet.randomMatching({mention: ['person-two', 'person-four']}, ''))
+      .then(doc => expect(doc.getBody()).to.equal(verbatimBlarf));
+    });
 
     it('creates "buffer blarf"', function() {
       usesDatabase(this);
@@ -267,7 +285,7 @@ describe('createDocumentSet', function() {
         return obj;
       };
 
-      const buffer = room.robot.bufferForUserName('me')
+      const buffer = room.robot.bufferForUserName('me');
       buffer.append(makeLine({timestamp: ts('9:30'), speaker: 'person-one', text: 'one one one'}));
       buffer.append(makeLine({timestamp: ts('9:31'), speaker: 'person-two', text: 'two two two'}));
       buffer.append(makeLine({timestamp: ts('9:32'), speaker: 'person-three', text: 'three three three'}));
@@ -290,9 +308,59 @@ describe('createDocumentSet', function() {
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
     });
 
-    it('extracts "speaker" attributes from buffer input');
+    it('extracts "speaker" attributes from buffer input', function() {
+      usesDatabase(this);
 
-    it('extracts "mention" attributes from buffer input');
+      room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee');
+
+      const ts = hhmm => moment(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm');
+      const makeLine = obj => {
+        obj.isRaw = () => false;
+        return obj;
+      };
+
+      const buffer = room.robot.bufferForUserName('me');
+      buffer.append(makeLine({timestamp: ts('10:00'), speaker: 'person-one', text: 'person-four: one one one'}));
+      buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-two', text: 'two two two'}));
+      buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-one', text: 'three three three @person-one'}));
+
+      const expectedBlarf = '[10:00 AM 1 Apr 2017] person-one: person-four: one one one\n' +
+        '[10:01 AM 1 Apr 2017] person-two: two two two\n' +
+        '[10:01 AM 1 Apr 2017] person-one: three three three @person-one';
+
+      return room.user.say('me', '@hubot buffer blarf')
+      .then(delay)
+      .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
+      .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
+    });
+
+    it('extracts "mention" attributes from buffer input', function() {
+      usesDatabase(this);
+
+      room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee');
+
+      const ts = hhmm => moment(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm');
+      const makeLine = obj => {
+        obj.isRaw = () => false;
+        return obj;
+      };
+
+      const buffer = room.robot.bufferForUserName('me');
+      buffer.append(makeLine({timestamp: ts('10:00'), speaker: 'person-one', text: 'one one one @person-two'}));
+      buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-two', text: 'two two two'}));
+      buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-one', text: 'three three three person-three'}));
+
+      const expectedBlarf = '[10:00 AM 1 Apr 2017] person-one: one one one @person-two\n' +
+        '[10:01 AM 1 Apr 2017] person-two: two two two\n' +
+        '[10:01 AM 1 Apr 2017] person-one: three three three person-three';
+
+      setUsers(['person-one', 'person-two', 'person-three', 'person-four']);
+
+      return room.user.say('me', '@hubot buffer blarf')
+      .then(delay)
+      .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
+      .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
+    });
 
     it('can be configured with a document formatter');
 
