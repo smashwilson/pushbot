@@ -691,142 +691,144 @@ describe('createDocumentSet', function() {
     it('creates "blarfstats"');
   });
 
-  describe('by', function() {
-    function populate(commandOpts = true, docs = []) {
-      documentSet = createDocumentSet(room.robot, 'blarf', {
-        by: commandOpts
+  function generateAttributeQueryTests(commandName, attributeName) {
+    return function() {
+      function populate(commandOpts = true, docs = []) {
+        documentSet = createDocumentSet(room.robot, 'blarf', {
+          [commandName]: commandOpts
+        });
+
+        return Promise.all(
+          docs.map(doc => {
+            const attributes = doc.attrs.map(value => ({kind: attributeName, value}));
+            return documentSet.add('me', doc.body, attributes);
+          })
+        );
+      }
+
+      it(`returns a random document ${commandName} the requested speaker`, function() {
+        usesDatabase(this);
+
+        return populate(true, [
+          {body: 'yes 1', attrs: ['aaa', 'bbb']},
+          {body: 'no 1', attrs: ['bbb']},
+          {body: 'yes 2', attrs: ['zzz', 'aaa']},
+          {body: 'no 2', attrs: ['yyy', 'ccc', 'bbb']},
+          {body: 'no 3', attrs: ['qqq']},
+        ])
+        .then(() => room.user.say('me', `@hubot blarf${commandName} aaa`))
+        .then(delay)
+        .then(() => {
+          expect(room.messages).to.have.length(2);
+          expect(room.messages[0]).to.deep.equal(['me', `@hubot blarf${commandName} aaa`]);
+
+          const [speaker, text] = room.messages[1];
+          expect(speaker).to.equal('hubot');
+          expect(text).to.be.oneOf(['yes 1', 'yes 2']);
+        });
       });
 
-      return Promise.all(
-        docs.map(doc => {
-          const attributes = doc.speakers.map(speaker => ({kind: 'speaker', value: speaker}));
-          return documentSet.add('me', doc.body, attributes);
+      it(`returns a random document with the requested ${attributeName} matching a query`, function() {
+        usesDatabase(this);
+
+        return populate(true, [
+          {body: 'no 1', attrs: ['aaa', 'bbb']},
+          {body: 'no 2', attrs: ['bbb']},
+          {body: 'yes 1', attrs: ['zzz', 'aaa']},
+          {body: 'no 3', attrs: ['yyy', 'ccc', 'bbb']},
+          {body: 'no 4', attrs: ['aaa']},
+        ])
+        .then(() => room.user.say('me', `@hubot blarf${commandName} @aaa yes`))
+        .then(delay)
+        .then(() => {
+          expect(room.messages).to.deep.equal([
+            ['me', `@hubot blarf${commandName} @aaa yes`],
+            ['hubot', 'yes 1']
+          ]);
+        });
+      });
+
+      it('returns a random document with multiple ${attributeName}s', function() {
+        usesDatabase(this);
+
+        return populate(true, [
+          {body: 'no 1', attrs: ['aaa', 'bbb']},
+          {body: 'no 2', attrs: ['bbb']},
+          {body: 'no 3', attrs: ['zzz', 'aaa']},
+          {body: 'yes 1', attrs: ['yyy', 'ccc', 'bbb']},
+          {body: 'no 4', attrs: ['aaa']},
+        ])
+        .then(() => room.user.say('me', `@hubot blarf${commandName} @ccc+yyy`))
+        .then(delay)
+        .then(() => {
+          expect(room.messages).to.deep.equal([
+            ['me', `@hubot blarf${commandName} @ccc+yyy`],
+            ['hubot', 'yes 1']
+          ]);
+        });
+      });
+
+      it('returns a random document with multiple ${attributeName}s matching a query', function() {
+        usesDatabase(this);
+
+        return populate(true, [
+          {body: 'no 1', attrs: ['aaa', 'bbb']},
+          {body: 'no 2', attrs: ['bbb']},
+          {body: 'no 3', attrs: ['zzz', 'aaa']},
+          {body: 'no 4', attrs: ['yyy', 'ccc', 'bbb']},
+          {body: 'yes 1', attrs: ['aaa', 'bbb']},
+        ])
+        .then(() => room.user.say('me', `@hubot blarf${commandName} @aaa+bbb yes`))
+        .then(delay)
+        .then(() => {
+          expect(room.messages).to.deep.equal([
+            ['me', `@hubot blarf${commandName} @aaa+bbb yes`],
+            ['hubot', 'yes 1']
+          ]);
+        });
+      });
+
+      it("permits access based on the caller's role", function() {
+        usesDatabase(this);
+
+        return populate({role: OnlyMe}, [
+          {body: 'yes 1', attrs: ['aaa', 'bbb']}
+        ])
+        .then(() => room.user.say('me', `@hubot blarf${commandName} bbb`))
+        .then(delay)
+        .then(() => {
+          expect(room.messages).to.deep.equal([
+            ['me', `@hubot blarf${commandName} bbb`],
+            ['hubot', 'yes 1']
+          ]);
         })
-      );
-    }
-
-    it('returns a random document by the requested speaker', function() {
-      usesDatabase(this);
-
-      return populate(true, [
-        {body: 'yes 1', speakers: ['aaa', 'bbb']},
-        {body: 'no 1', speakers: ['bbb']},
-        {body: 'yes 2', speakers: ['zzz', 'aaa']},
-        {body: 'no 2', speakers: ['yyy', 'ccc', 'bbb']},
-        {body: 'no 3', speakers: ['qqq']},
-      ])
-      .then(() => room.user.say('me', '@hubot blarfby aaa'))
-      .then(delay)
-      .then(() => {
-        expect(room.messages).to.have.length(2);
-        expect(room.messages[0]).to.deep.equal(['me', '@hubot blarfby aaa']);
-
-        const [speaker, text] = room.messages[1];
-        expect(speaker).to.equal('hubot');
-        expect(text).to.be.oneOf(['yes 1', 'yes 2']);
       });
-    });
 
-    it('returns a random document with the requested speaker matching a query', function() {
-      usesDatabase(this);
+      it("prohibits access based on the caller's role", function() {
+        usesDatabase(this);
 
-      return populate(true, [
-        {body: 'no 1', speakers: ['aaa', 'bbb']},
-        {body: 'no 2', speakers: ['bbb']},
-        {body: 'yes 1', speakers: ['zzz', 'aaa']},
-        {body: 'no 3', speakers: ['yyy', 'ccc', 'bbb']},
-        {body: 'no 4', speakers: ['aaa']},
-      ])
-      .then(() => room.user.say('me', '@hubot blarfby @aaa yes'))
-      .then(delay)
-      .then(() => {
-        expect(room.messages).to.deep.equal([
-          ['me', '@hubot blarfby @aaa yes'],
-          ['hubot', 'yes 1']
-        ]);
+        return populate({role: OnlyMe}, [
+          {body: 'yes 1', attrs: ['aaa', 'bbb']}
+        ])
+        .then(() => room.user.say('you', `@hubot blarf${commandName} bbb`))
+        .then(delay)
+        .then(() => {
+          expect(room.messages).to.deep.equal([
+            ['you', `@hubot blarf${commandName} bbb`],
+            ['hubot', '@you NOPE']
+          ]);
+        });
       });
-    });
 
-    it('returns a random document with multiple speakers', function() {
-      usesDatabase(this);
+      it('generates default help text');
 
-      return populate(true, [
-        {body: 'no 1', speakers: ['aaa', 'bbb']},
-        {body: 'no 2', speakers: ['bbb']},
-        {body: 'no 3', speakers: ['zzz', 'aaa']},
-        {body: 'yes 1', speakers: ['yyy', 'ccc', 'bbb']},
-        {body: 'no 4', speakers: ['aaa']},
-      ])
-      .then(() => room.user.say('me', '@hubot blarfby @ccc+yyy'))
-      .then(delay)
-      .then(() => {
-        expect(room.messages).to.deep.equal([
-          ['me', '@hubot blarfby @ccc+yyy'],
-          ['hubot', 'yes 1']
-        ]);
-      });
-    });
+      it('accepts custom help text');
+    };
+  };
 
-    it('returns a random document with multiple speakers matching a query', function() {
-      usesDatabase(this);
+  describe('by', generateAttributeQueryTests('by', 'speaker'));
 
-      return populate(true, [
-        {body: 'no 1', speakers: ['aaa', 'bbb']},
-        {body: 'no 2', speakers: ['bbb']},
-        {body: 'no 3', speakers: ['zzz', 'aaa']},
-        {body: 'no 4', speakers: ['yyy', 'ccc', 'bbb']},
-        {body: 'yes 1', speakers: ['aaa', 'bbb']},
-      ])
-      .then(() => room.user.say('me', '@hubot blarfby @aaa+bbb yes'))
-      .then(delay)
-      .then(() => {
-        expect(room.messages).to.deep.equal([
-          ['me', '@hubot blarfby @aaa+bbb yes'],
-          ['hubot', 'yes 1']
-        ]);
-      });
-    });
-
-    it("permits access based on the caller's role", function() {
-      usesDatabase(this);
-
-      return populate({role: OnlyMe}, [
-        {body: 'yes 1', speakers: ['aaa', 'bbb']}
-      ])
-      .then(() => room.user.say('me', '@hubot blarfby bbb'))
-      .then(delay)
-      .then(() => {
-        expect(room.messages).to.deep.equal([
-          ['me', '@hubot blarfby bbb'],
-          ['hubot', 'yes 1']
-        ]);
-      })
-    });
-
-    it("prohibits access based on the caller's role", function() {
-      usesDatabase(this);
-
-      return populate({role: OnlyMe}, [
-        {body: 'yes 1', speakers: ['aaa', 'bbb']}
-      ])
-      .then(() => room.user.say('you', '@hubot blarfby bbb'))
-      .then(delay)
-      .then(() => {
-        expect(room.messages).to.deep.equal([
-          ['you', '@hubot blarfby bbb'],
-          ['hubot', '@you NOPE']
-        ]);
-      });
-    });
-
-    it('generates default help text');
-
-    it('accepts custom help text');
-  });
-
-  describe('about', function() {
-    it('creates "blarfabout"');
-  });
+  describe('about', generateAttributeQueryTests('about', 'mention'));
 
   describe('kov', function() {
     it('creates "blarfkov"');
