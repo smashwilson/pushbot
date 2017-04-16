@@ -591,7 +591,17 @@ describe('createDocumentSet', function() {
       });
 
       return Promise.all(
-        docs.map(doc => documentSet.add('me', doc, []))
+        docs.map(doc => {
+          let body = '';
+          const attributes = [];
+          if (doc.body && doc.subject) {
+            body = doc.body;
+            attributes.push({kind: 'subject', value: doc.subject});
+          } else {
+            body = doc;
+          }
+          return documentSet.add('me', body, attributes);
+        })
       );
     }
 
@@ -722,9 +732,43 @@ describe('createDocumentSet', function() {
       });
     });
 
-    it('can be configured to always query with a subject user');
+    it('can be configured to query with a subject user', function() {
+      usesDatabase(this);
 
-    it('can be configured to default to self with no query');
+      return populate({ userOriented: true }, [
+        {body: 'wrong 1', subject: 'me'},
+        {body: 'correct', subject: 'you'},
+        {body: 'wrong 2', subject: 'other'}
+      ])
+      .then(() => room.user.say('me', '@hubot blarf @you'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarf @you'],
+          ['hubot', 'correct']
+        ]);
+      });
+    });
+
+    it('can be configured to default to self with no query', function() {
+      usesDatabase(this);
+
+      return populate({ userOriented: true }, [
+        {body: 'wrong 1', subject: 'you'},
+        {body: 'wrong 2', subject: 'you'},
+        {body: 'correct', subject: 'me'},
+        {body: 'wrong 3', subject: 'other'},
+        {body: 'wrong 4', subject: 'person-four'},
+      ])
+      .then(() => room.user.say('me', '@hubot blarf'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarf'],
+          ['hubot', 'correct']
+        ]);
+      });
+    });
 
     it('generates default help text');
 

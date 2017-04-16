@@ -103,15 +103,41 @@ function setCommand(robot, documentSet, spec, feature) {
 function queryCommand(robot, documentSet, spec, feature) {
   const pattern = new RegExp(`${spec.name}(\\s+[^]+)?`);
 
-  robot.respond(pattern, msg => {
-    if (!feature.role.verify(robot, msg)) return;
+  if (feature.userOriented) {
+    robot.respond(pattern, msg => {
+      const requester = msg.message.user.name;
+      const input = (msg.match[1] || '').trim();
 
-    const query = msg.match[1] || '';
+      let query = '';
+      let subject = '';
 
-    documentSet.randomMatching([], query)
-      .then(doc => msg.send(doc.getBody()))
-      .catch(errorHandler(msg));
-  });
+      const usernameMatch = /^@?(\S+)\b/.exec(input);
+      if (usernameMatch) {
+        subject = usernameMatch[1];
+        query = input.substring(usernameMatch[0].length);
+      } else {
+        subject = msg.message.user.name;
+        query = input;
+      }
+
+      const role = requester === subject ? feature.roleForSelf : feature.roleForOther;
+      if (!role.verify(robot, msg)) return;
+
+      documentSet.randomMatching({subject: [subject]}, query)
+        .then(doc => msg.send(doc.getBody()))
+        .catch(errorHandler(msg));
+    });
+  } else {
+    robot.respond(pattern, msg => {
+      if (!feature.role.verify(robot, msg)) return;
+
+      const query = msg.match[1] || '';
+
+      documentSet.randomMatching({}, query)
+        .then(doc => msg.send(doc.getBody()))
+        .catch(errorHandler(msg));
+    });
+  }
 }
 
 function attributeQuery(robot, documentSet, spec, feature, patternBase, attrKind) {
