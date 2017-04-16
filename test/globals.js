@@ -18,3 +18,15 @@ global.usesDatabase = function(context, timeoutMs) {
     context.skip();
   }
 }
+
+Promise.prototype.tap = function(chunk) {
+  return this.then((...values) => {
+    chunk()
+
+    if (values.length > 1) {
+      return Promise.all(values)
+    } else {
+      return values[0];
+    }
+  })
+}
