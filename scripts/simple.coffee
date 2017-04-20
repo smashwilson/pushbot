@@ -261,7 +261,10 @@ module.exports = (robot) ->
     msg.send unown_string
 
   robot.respond /femshep/i, (msg) ->
-    msg.send "http://media.tumblr.com/tumblr_lsxdm7yONC1qbplir.gif"
+    msg.send atRandom [
+      "http://media.tumblr.com/tumblr_lsxdm7yONC1qbplir.gif"
+      "http://i.imgur.com/vJL0E6t.gif"
+    ]
 
   robot.hear /robot\s+body/i, (msg) ->
     msg.send atRandom [
