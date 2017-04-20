@@ -265,6 +265,7 @@ module.exports = (robot) ->
       "http://media.tumblr.com/tumblr_lsxdm7yONC1qbplir.gif"
       "http://i.imgur.com/vJL0E6t.gif"
     ]
+
   robot.hear /robot\s+body/i, (msg) ->
     msg.send atRandom [
       "http://img.sharetv.com/shows/episodes/standard/345637.jpg"
