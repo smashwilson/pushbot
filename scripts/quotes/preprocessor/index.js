@@ -11,17 +11,20 @@ function processThen(parser) {
 exports.verbatim = {
   argument: true,
   echo: false,
+  defaultHelpText: 'Insert a %s exactly as given.',
   call: processThen(require('./verbatim'))
 };
 
 exports.slackapp = {
   argument: true,
   echo: false,
+  defaultHelpText: "Parse a %s from the Slack app's paste format.",
   call: processThen(require('./slackapp'))
 };
 
 exports.buffer = {
   argument: false,
   echo: true,
+  defaultHelpText: 'Insert a %s from the current contents of your buffer.',
   call: require('./buffer')
 };

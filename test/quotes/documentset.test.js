@@ -5,6 +5,7 @@ const moment = require('moment');
 
 const Helper = require('hubot-test-helper');
 const helper = new Helper([]);
+const hubotHelp = require('hubot-help');
 
 const {createDocumentSet} = require('../../scripts/quotes');
 
@@ -59,6 +60,13 @@ describe('createDocumentSet', function() {
 
     room.robot.brain.data.users = userMap;
   };
+
+  function helpLines() {
+    return room.messages
+      .filter(pair => pair[0] === 'hubot')
+      .map(pair => pair[1].replace(/^@me\s+/, ''))
+      .reduce((acc, line) => acc.concat(line.split(/\n/)), []);
+  }
 
   describe('add', function() {
     it('creates "slackapp blarf:"', function() {
@@ -415,9 +423,45 @@ describe('createDocumentSet', function() {
       .then(count => expect(count).to.equal(0));
     });
 
-    it('generates default help text');
+    it('generates default help text', function() {
+      usesDatabase(this);
+      hubotHelp(room.robot, '*');
 
-    it('accepts custom help text');
+      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
+
+      return room.user.say('me', '@hubot help blarf')
+      .then(delay)
+      .then(() => {
+        const messages = helpLines();
+
+        expect(messages).to.include("hubot slackapp blarf: <source> - Parse a blarf from the Slack app's paste format.");
+        expect(messages).to.include('hubot verbatim blarf: <source> - Insert a blarf exactly as given.');
+        expect(messages).to.include('hubot buffer blarf - Insert a blarf from the current contents of your buffer.');
+      });
+    });
+
+    it('accepts custom help text', function() {
+      usesDatabase(this);
+      hubotHelp(room.robot, '*');
+
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        add: {
+          helpText: [
+            'hubot blarf 1 - First line',
+            'hubot blarf 2 - Second line'
+          ]
+        }
+      });
+
+      return room.user.say('me', '@hubot help blarf')
+      .then(delay)
+      .then(() => {
+        const messages = helpLines();
+
+        expect(messages).to.include('hubot blarf 1 - First line');
+        expect(messages).to.include('hubot blarf 2 - Second line');
+      });
+    });
   });
 
   describe('set', function() {

@@ -3,6 +3,7 @@
 // Dynamically generate message handlers to interact with a document set
 // based on a spec.
 
+const util = require('util');
 const preprocessors = require('./preprocessor');
 
 exports.generate = function(robot, documentSet, spec) {
@@ -47,11 +48,22 @@ function errorHandler(msg) {
 }
 
 function addCommands(robot, documentSet, spec, feature) {
+  if (feature.helpText) {
+    robot.commands.push(...feature.helpText);
+  }
+
   const preprocessorNames = Object.keys(preprocessors);
   for (let i = 0; i < preprocessorNames.length; i++) {
     const preprocessorName = preprocessorNames[i];
     const preprocessor = preprocessors[preprocessorName];
     const argumentPattern = preprocessor.argument ? ':\\s*([^]+)' : '';
+
+    if (feature.helpText === undefined) {
+      robot.commands.push(
+        `hubot ${preprocessorName} ${spec.name}${preprocessor.argument ? ': <source>' : ''} - ` +
+        util.format(preprocessor.defaultHelpText, spec.name)
+      );
+    }
 
     // "slackapp quote: ..."
     const pattern = new RegExp(`${preprocessorName}\\s+${spec.name}${argumentPattern}`);
