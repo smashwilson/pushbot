@@ -990,9 +990,38 @@ describe('createDocumentSet', function() {
       });
     });
 
-    it('generates default help text');
+    it('generates default help text', function() {
+      return loadHelp()
+      .then(() => createDocumentSet(room.robot, 'blarf', {count: true}))
+      .then(() => room.user.say('me', '@hubot help blarfcount'))
+      .then(delay)
+      .then(() => {
+        const messages = helpLines();
 
-    it('accepts custom help text');
+        expect(messages).to.include('hubot blarfcount - Total number of blarfs.');
+        expect(messages).to.include('hubot blarfcount <query> - Number of blarfs matching <query>.');
+      });
+    });
+
+    it('accepts custom help text', function() {
+      return loadHelp()
+      .then(() => createDocumentSet(room.robot, 'blarf', {
+        count: {
+          helpText: [
+            'hubot blarfcount 1 - line one',
+            'hubot blarfcount 2 - line two'
+          ]
+        }
+      }))
+      .then(() => room.user.say('me', '@hubot help blarfcount'))
+      .then(delay)
+      .then(() => {
+        const messages = helpLines();
+
+        expect(messages).to.include('hubot blarfcount 1 - line one');
+        expect(messages).to.include('hubot blarfcount 2 - line two');
+      });
+    });
   });
 
   describe('stats', function() {

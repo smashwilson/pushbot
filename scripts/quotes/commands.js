@@ -208,6 +208,15 @@ function aboutQueryCommand(robot, documentSet, spec, feature) {
 }
 
 function countCommand(robot, documentSet, spec, feature) {
+  if (feature.helpText) {
+    robot.commands.push(...feature.helpText);
+  } else {
+    robot.commands.push(
+      `hubot ${spec.name}count - Total number of ${spec.plural}.`,
+      `hubot ${spec.name}count <query> - Number of ${spec.plural} matching <query>.`
+    );
+  }
+
   const pattern = new RegExp(`${spec.name}count(\\s+[^]+)?`, 'i');
 
   robot.respond(pattern, msg => {
