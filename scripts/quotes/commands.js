@@ -124,7 +124,20 @@ function setCommand(robot, documentSet, spec, feature) {
 function queryCommand(robot, documentSet, spec, feature) {
   const pattern = new RegExp(`${spec.name}(\\s+[^]+)?`);
 
+  if (feature.helpText) {
+    robot.commands.push(...feature.helpText);
+  }
+
   if (feature.userOriented) {
+    if (!feature.helpText) {
+      robot.commands.push(
+        `hubot ${spec.name} - Return one of your ${spec.plural} at random.`,
+        `hubot ${spec.name} @<user> - Return one of <user>'s ${spec.plural} at random.`,
+        `hubot ${spec.name} <query> - Return one of your ${spec.plural} that matches <query>.`,
+        `hubot ${spec.name} @<user> <query> - Return one of <user>'s ${spec.plural} that matches <query>.`
+      );
+    }
+
     robot.respond(pattern, msg => {
       const requester = msg.message.user.name;
       const input = (msg.match[1] || '').trim();
@@ -149,6 +162,13 @@ function queryCommand(robot, documentSet, spec, feature) {
         .catch(errorHandler(msg));
     });
   } else {
+    if (!feature.helpText) {
+      robot.commands.push(
+        `hubot ${spec.name} - Return a ${spec.name} at random.`,
+        `hubot ${spec.name} <query> - Return a ${spec.name} that matches <query>.`
+      );
+    }
+
     robot.respond(pattern, msg => {
       if (!feature.role.verify(robot, msg)) return;
 

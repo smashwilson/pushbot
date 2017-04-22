@@ -851,9 +851,38 @@ describe('createDocumentSet', function() {
       });
     });
 
-    it('generates default help text');
+    it('generates default help text', function() {
+      return loadHelp()
+      .then(() => createDocumentSet(room.robot, 'blarf', {query: true}))
+      .then(() => room.user.say('me', '@hubot help blarf'))
+      .then(delay)
+      .then(() => {
+        const messages = helpLines();
 
-    it('accepts custom help text');
+        expect(messages).to.include('hubot blarf - Return a blarf at random.');
+        expect(messages).to.include('hubot blarf <query> - Return a blarf that matches <query>.');
+      });
+    });
+
+    it('accepts custom help text', function() {
+      return loadHelp()
+      .then(() => createDocumentSet(room.robot, 'blarf', {
+        query: {
+          helpText: [
+            'hubot blarf 1 - line one',
+            'hubot blarf 2 - line two'
+          ]
+        }
+      }))
+      .then(() => room.user.say('me', '@hubot help blarf'))
+      .then(delay)
+      .then(() => {
+        const messages = helpLines();
+
+        expect(messages).to.include('hubot blarf 1 - line one');
+        expect(messages).to.include('hubot blarf 2 - line two');
+      });
+    });
   });
 
   describe('count', function() {
