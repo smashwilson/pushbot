@@ -94,6 +94,15 @@ function addCommands(robot, documentSet, spec, feature) {
 }
 
 function setCommand(robot, documentSet, spec, feature) {
+  if (feature.helpText) {
+    robot.commands.push(...feature.helpText);
+  } else {
+    robot.commands.push(
+      `hubot set${spec.name} <user>: <source> - Set user's ${spec.name} to <source>.`,
+      `hubot set${spec.name}: <source> - Set your own ${spec.name} to <source>.`
+    );
+  }
+
   const pattern = new RegExp(`set${spec.name}(?:\\s+@?([^:]+))?:\\s*([^]+)`);
   robot.respond(pattern, msg => {
     const submitter = msg.message.user.name;

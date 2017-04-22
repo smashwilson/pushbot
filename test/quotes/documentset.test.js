@@ -61,6 +61,12 @@ describe('createDocumentSet', function() {
     room.robot.brain.data.users = userMap;
   };
 
+  function loadHelp() {
+    hubotHelp(room.robot, '*');
+
+    return new Promise(resolve => setTimeout(resolve, 200));
+  }
+
   function helpLines() {
     return room.messages
       .filter(pair => pair[0] === 'hubot')
@@ -425,11 +431,10 @@ describe('createDocumentSet', function() {
 
     it('generates default help text', function() {
       usesDatabase(this);
-      hubotHelp(room.robot, '*');
 
-      documentSet = createDocumentSet(room.robot, 'blarf', {add: true});
-
-      return room.user.say('me', '@hubot help blarf')
+      return loadHelp()
+      .then(() => createDocumentSet(room.robot, 'blarf', {add: true}))
+      .then(() => room.user.say('me', '@hubot help blarf'))
       .then(delay)
       .then(() => {
         const messages = helpLines();
@@ -442,18 +447,17 @@ describe('createDocumentSet', function() {
 
     it('accepts custom help text', function() {
       usesDatabase(this);
-      hubotHelp(room.robot, '*');
 
-      documentSet = createDocumentSet(room.robot, 'blarf', {
+      return loadHelp()
+      .then(() => createDocumentSet(room.robot, 'blarf', {
         add: {
           helpText: [
             'hubot blarf 1 - First line',
             'hubot blarf 2 - Second line'
           ]
         }
-      });
-
-      return room.user.say('me', '@hubot help blarf')
+      }))
+      .then(() => room.user.say('me', '@hubot help blarf'))
       .then(delay)
       .then(() => {
         const messages = helpLines();
@@ -623,9 +627,42 @@ describe('createDocumentSet', function() {
       .then(count => expect(count).to.equal(1));
     });
 
-    it('generates default help text');
+    it('generates default help text', function() {
+      usesDatabase(this);
 
-    it('accepts custom help text');
+      return loadHelp()
+      .then(() => createDocumentSet(room.robot, 'blarf', {set: true}))
+      .then(() => room.user.say('me', '@hubot help'))
+      .then(delay)
+      .then(() => {
+        const messages = helpLines();
+
+        expect(messages).to.include("hubot setblarf <user>: <source> - Set user's blarf to <source>.");
+        expect(messages).to.include('hubot setblarf: <source> - Set your own blarf to <source>.');
+      });
+    });
+
+    it('accepts custom help text', function() {
+      usesDatabase(this);
+
+      return loadHelp()
+      .then(() => createDocumentSet(room.robot, 'blarf', {
+        set: {
+          helpText: [
+            'hubot setblarf 1 - First line',
+            'hubot setblarf 2 - Second line'
+          ]
+        }
+      }))
+      .then(() => room.user.say('me', '@hubot help setblarf'))
+      .then(delay)
+      .then(() => {
+        const messages = helpLines();
+
+        expect(messages).to.include('hubot setblarf 1 - First line');
+        expect(messages).to.include('hubot setblarf 2 - Second line');
+      });
+    });
   });
 
   describe('query', function() {
