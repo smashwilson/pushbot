@@ -1,10 +1,11 @@
 // Accept text as-is from a command's input. Derive no speaker metadata.
 
 const createMentionDetector = require('./mentions');
+const Line = require('../../models/line');
 
 module.exports = function(robot, text) {
   const mentions = createMentionDetector(robot).scan(text);
-  const attributes = Array.from(mentions, value => ({kind: 'mention', value}));
+  const lines = text.split(/\r?\n/).map(body => new Line(null, null, body));
 
-  return {body: text, attributes};
+  return {lines, speakers: [], mentions};
 };

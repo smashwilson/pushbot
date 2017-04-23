@@ -52,6 +52,22 @@ function addCommands(robot, documentSet, spec, feature) {
     robot.commands.push(...feature.helpText);
   }
 
+  if (!feature.formatter) {
+    feature.formatter = (lines, speakers, mentions) => ({
+      body: lines
+        .map(line => {
+          if (line.isRaw()) {
+            return line.text;
+          } else {
+            return `[${line.timestamp.format('h:mm A D MMM YYYY')}] ${line.speaker}: ${line.text}`;
+          }
+        })
+        .join('\n'),
+      speakers,
+      mentions
+    });
+  }
+
   const preprocessorNames = Object.keys(preprocessors);
   for (let i = 0; i < preprocessorNames.length; i++) {
     const preprocessorName = preprocessorNames[i];
@@ -73,9 +89,17 @@ function addCommands(robot, documentSet, spec, feature) {
       const submitter = msg.message.user.name;
       let body, attributes;
       try {
-        const result = preprocessor.call(robot, msg);
-        body = result.body;
-        attributes = result.attributes;
+        const processed = preprocessor.call(robot, msg);
+        const formatted = feature.formatter(processed.lines, processed.speakers, processed.mentions);
+
+        body = formatted.body;
+        attributes = [];
+        for (const value of formatted.speakers) {
+          attributes.push({kind: 'speaker', value});
+        }
+        for (const value of formatted.mentions) {
+          attributes.push({kind: 'mention', value});
+        }
       } catch (e) {
         msg.reply(`http://www.sadtrombone.com/\n\`\`\`\n${e.stack}\n\`\`\`\n`);
         return

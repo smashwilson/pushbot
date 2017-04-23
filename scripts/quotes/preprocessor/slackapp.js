@@ -2,6 +2,7 @@
 
 const moment = require('moment');
 const createMentionDetector = require('./mentions');
+const Line = require('../../models/line');
 
 // RegExp snippets for re-use
 const TS = '\\[(\\d{1,2}:\\d{2}( [aApP][mM])?)\\]'; // [11:22 AM] *or* [16:00]
@@ -30,17 +31,17 @@ module.exports = function(robot, text) {
 
   const lines = text.split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
-    let line = lines[i];
+    let body = lines[i];
 
-    if (rxWs.test(line)) {
+    if (rxWs.test(body)) {
       continue;
     }
 
-    if (rxNewMessagesLine.test(line)) {
+    if (rxNewMessagesLine.test(body)) {
       continue;
     }
 
-    const nickMatch = rxNickLine.exec(line);
+    const nickMatch = rxNickLine.exec(body);
     if (nickMatch) {
       nick = nickMatch[1].replace(/APP$/, '');
       ts = parseTs(nickMatch[2]);
@@ -48,7 +49,7 @@ module.exports = function(robot, text) {
       continue;
     }
 
-    const tsMatch = rxTsLine.exec(line);
+    const tsMatch = rxTsLine.exec(body);
     if (tsMatch) {
       ampm = tsMatch[2] || ampm || '';
       ts = parseTs(tsMatch[1] + ampm);
@@ -59,19 +60,16 @@ module.exports = function(robot, text) {
       throw new Error('Expected nick and timestamp line first.');
     }
 
-    line = line.replace(/\s*\(edited\)$/, '');
+    body = body.replace(/\s*\(edited\)$/, '');
 
-    for (const mention of mentionDetector.scan(line)) {
+    for (const mention of mentionDetector.scan(body)) {
       mentions.add(mention);
     }
 
-    result.push(`[${ts.format('h:mm A D MMM YYYY')}] ${nick}: ${line}`);
     speakers.add(nick);
+
+    result.push(new Line(ts, nick, body));
   }
 
-  const attributes = [];
-  attributes.push(...Array.from(speakers, value => ({kind: 'speaker', value})));
-  attributes.push(...Array.from(mentions, value => ({kind: 'mention', value})));
-
-  return {body: result.join('\n'), attributes};
+  return {lines: result, speakers, mentions};
 };

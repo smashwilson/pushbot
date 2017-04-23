@@ -8,7 +8,7 @@ module.exports = function (robot, msg) {
   const detector = createMentionDetector(robot);
   const lines = buffer.commit();
 
-  const processed = [];
+  const result = [];
   const speakers = new Set();
   const mentions = new Set();
 
@@ -19,19 +19,12 @@ module.exports = function (robot, msg) {
       mentions.add(mention);
     }
 
-    if (line.isRaw()) {
-      processed.push(line.text);
-    } else {
-      const ts = moment(line.timestamp).format('h:mm A D MMM YYYY');
+    if (!line.isRaw()) {
       speakers.add(line.speaker);
-
-      processed.push(`[${ts}] ${line.speaker}: ${line.text}`);
     }
+
+    result.push(line);
   }
 
-  const attributes = [];
-  attributes.push(...Array.from(speakers, value => ({kind: 'speaker', value})));
-  attributes.push(...Array.from(mentions, value => ({kind: 'mention', value})));
-
-  return {body: processed.join('\n'), attributes};
+  return {lines: result, speakers, mentions};
 };

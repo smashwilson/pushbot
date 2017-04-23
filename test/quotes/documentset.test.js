@@ -409,7 +409,36 @@ describe('createDocumentSet', function() {
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
     });
 
-    it('can be configured with a document formatter');
+    it('can be configured with a document formatter', function() {
+      usesDatabase(this);
+
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        add: {
+          formatter: (lines, speakers, mentions) => {
+            return {
+              body: lines.map(line => `[${line.speaker}] ${line.text}`).join(', '),
+              speakers, mentions
+            };
+          }
+        }
+      });
+
+      const source = 'person-one [2:00 PM] \n' +
+        'one one one' +
+        '\n' +
+        '[2:01]  \n' +
+        'two two two\n' +
+        '\n' +
+        'person-two [9:09 AM] \n' +
+        'three three three';
+
+      const expected = '[person-one] one one one, [person-one] two two two, [person-two] three three three';
+
+      return room.user.say('me', `@hubot slackapp blarf: ${source}`)
+      .then(delay)
+      .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
+      .then(doc => expect(doc.getBody()).to.equal(expected));
+    });
 
     it('validates a required role', function() {
       documentSet = createDocumentSet(room.robot, 'blarf',
