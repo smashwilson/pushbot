@@ -182,6 +182,8 @@ function queryCommand(robot, documentSet, spec, feature) {
 }
 
 function attributeQuery(robot, documentSet, spec, feature, patternBase, attrKind) {
+  robot.commands.push(...feature.helpText);
+
   const pattern = new RegExp(`${patternBase}\\s+(\\S+)(\\s+[^]+)?`, 'i');
 
   robot.respond(pattern, msg => {
@@ -200,10 +202,26 @@ function attributeQuery(robot, documentSet, spec, feature, patternBase, attrKind
 }
 
 function byQueryCommand(robot, documentSet, spec, feature) {
+  if (!feature.helpText) {
+    feature.helpText = [
+      `hubot ${spec.name}by @<user> - Random ${spec.name} in which <user> speaks.`,
+      `hubot ${spec.name}by @<user1+user2...> - A ${spec.name} spoken by all users.`,
+      `hubot ${spec.name}by @<user> <query> - A ${spec.name} by <user> that matches <query>.`
+    ];
+  }
+
   attributeQuery(robot, documentSet, spec, feature, `${spec.name}by`, 'speaker');
 }
 
 function aboutQueryCommand(robot, documentSet, spec, feature) {
+  if (!feature.helpText) {
+    feature.helpText = [
+      `hubot ${spec.name}about @<user> - Random ${spec.name} that mentions <user>.`,
+      `hubot ${spec.name}about @<user1+user2...> - A ${spec.name} that mentions by all users.`,
+      `hubot ${spec.name}about @<user> <query> - A ${spec.name} mentioning <user> that matches <query>.`
+    ];
+  }
+
   attributeQuery(robot, documentSet, spec, feature, `${spec.name}about`, 'mention');
 }
 

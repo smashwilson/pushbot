@@ -1085,7 +1085,7 @@ describe('createDocumentSet', function() {
         });
       });
 
-      it('returns a random document with multiple ${attributeName}s', function() {
+      it(`returns a random document with multiple ${attributeName}s`, function() {
         usesDatabase(this);
 
         return populate(true, [
@@ -1105,7 +1105,7 @@ describe('createDocumentSet', function() {
         });
       });
 
-      it('returns a random document with multiple ${attributeName}s matching a query', function() {
+      it(`returns a random document with multiple ${attributeName}s matching a query`, function() {
         usesDatabase(this);
 
         return populate(true, [
@@ -1157,9 +1157,36 @@ describe('createDocumentSet', function() {
         });
       });
 
-      it('generates default help text');
+      it('generates default help text', function() {
+        return loadHelp()
+        .then(() => createDocumentSet(room.robot, 'blarf', {[commandName]: true}))
+        .then(() => room.user.say('me', `@hubot help blarf${commandName}`))
+        .then(delay)
+        .then(() => {
+          const messages = helpLines().filter(line => line.startsWith(`hubot blarf${commandName}`));
+          expect(messages).to.have.length(3);
+        });
+      });
 
-      it('accepts custom help text');
+      it('accepts custom help text', function() {
+        return loadHelp()
+        .then(() => createDocumentSet(room.robot, 'blarf', {
+          [commandName]: {
+            helpText: [
+              `hubot blarf${commandName} 1 - line one`,
+              `hubot blarf${commandName} 2 - line two`
+            ]
+          }
+        }))
+        .then(() => room.user.say('me', `@hubot help blarf${commandName}`))
+        .then(delay)
+        .then(() => {
+          const messages = helpLines();
+
+          expect(messages).to.include(`hubot blarf${commandName} 1 - line one`);
+          expect(messages).to.include(`hubot blarf${commandName} 2 - line two`);
+        });
+      });
     };
   };
 
