@@ -1025,7 +1025,50 @@ describe('createDocumentSet', function() {
   });
 
   describe('stats', function() {
-    it('creates "blarfstats"');
+    function populate(commandOpts, docs) {
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        stats: commandOpts
+      });
+
+      return Promise.all(docs.map(doc => {
+        const attributes = [];
+        for (const kind in doc.attrs) {
+          for (const value of doc.attrs[kind]) {
+            attributes.push({kind, value});
+          }
+        }
+
+        return documentSet.add('me', doc.body, attributes);
+      }));
+    }
+
+    it('summarizes all known speaker and mention credits', function() {
+      usesDatabase(this);
+
+      return populate(true, [
+        {body: '0', attrs: {speaker: ['person-one', 'person-two'], mention: ['person-two']}},
+        {body: '1', attrs: {speaker: ['person-one'], mention: ['person-three']}},
+        {body: '2', attrs: {speaker: ['person-two'], mention: ['person-one', 'person-two']}},
+        {body: '3', attrs: {speaker: ['person-one'], mention: ['person-three']}},
+      ])
+      .then(() => room.user.say('me', '@hubot blarfstats'))
+      .then(delay)
+      .then(() => {
+        const expected = '```\n' +
+          'Username     | Spoke | Mentioned\n' +
+          '--------------------------------\n' +
+          'person-one   | 3     | 1\n' +
+          'person-two   | 2     | 2\n' +
+          'person-three | 0     | 2\n' +
+          '```\n';
+
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarfstats'],
+          ['hubot', expected]
+        ]);
+      });
+    });
+
   });
 
   function generateAttributeQueryTests(commandName, attributeName) {

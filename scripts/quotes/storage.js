@@ -28,7 +28,7 @@ class Storage {
         created TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         updated TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         submitter TEXT,
-        body TEXT
+        body TEXT NOT NULL
       )
     `, values)
     .then(() => this.db.none(`
@@ -37,7 +37,7 @@ class Storage {
         document_id INTEGER REFERENCES $<documentTable:name>
           ON DELETE CASCADE,
         kind TEXT NOT NULL,
-        value TEXT
+        value TEXT NOT NULL
       )
     `, values))
     .then(() => {
@@ -187,6 +187,26 @@ class Storage {
     `;
 
     return this.db.one(sql, parameters);
+  }
+
+  attributeStats(documentSet, attributeKinds) {
+    const attributeTableName = documentSet.attributeTableName();
+    const parameters = [attributeTableName, ...attributeKinds];
+
+    const kinds = [];
+    for (let i = 2; i <= parameters.length; i++) {
+      kinds.push(`$${i}`);
+    }
+
+    const sql = `
+      SELECT kind, value, COUNT(*) AS count
+      FROM $1:name
+      WHERE kind IN (${kinds.join(', ')})
+      GROUP BY kind, value
+      HAVING COUNT(*) > 0
+    `;
+
+    return this.db.any(sql, parameters);
   }
 
   deleteDocumentsMatching(documentSet, attributes) {

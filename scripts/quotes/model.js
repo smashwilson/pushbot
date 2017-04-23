@@ -35,6 +35,30 @@ class DocumentSet {
     .then(row => parseInt(row.count));
   }
 
+  getUserStats(attributeKinds) {
+    return this.connected
+    .then(() => this.storage.attributeStats(this, attributeKinds))
+    .then(rows => {
+      const statsByUsername = new Map();
+      for (const row of rows) {
+        let stat = statsByUsername.get(row.value);
+        if (stat === undefined) {
+          stat = new UserStatistic(row.value);
+          statsByUsername.set(row.value, stat);
+        }
+
+        const count = parseInt(row.count);
+        stat.record(row.kind, count);
+      }
+
+      const builder = new UserStatisticTableBuilder();
+      for (const stat of statsByUsername.values()) {
+        builder.append(stat);
+      }
+      return builder.build();
+    });
+  }
+
   deleteMatching(attributes) {
     return this.connected
     .then(() => this.storage.deleteDocumentsMatching(this, attributes));
@@ -93,9 +117,93 @@ class Attribute {
   constructor(doc, result) {
     this.doc = doc;
 
-    this.id = doc.id;
-    this.kind = doc.kind;
-    this.value = doc.value;
+    this.id = result.id;
+    this.kind = result.kind;
+    this.value = result.value;
+  }
+}
+
+const padded = (str, length) => str + ' '.repeat(Math.max(length - str.length, 0));
+
+class UserStatistic {
+  constructor(username) {
+    this.username = username;
+    this.spokenCount = 0;
+    this.mentionCount = 0;
+    this.rank = 0;
+  }
+
+  record(kind, count) {
+    if (kind === 'speaker') {
+      this.spokenCount = count;
+    } else if (kind === 'mention') {
+      this.mentionCount = count;
+    }
+  }
+
+  getUsername(width = 0) {
+    return padded(this.username, width);
+  }
+
+  getSpokenCount(width = 0) {
+    return padded(this.spokenCount.toString(), width);
+  }
+
+  getMentionCount(width = 0) {
+    return padded(this.mentionCount.toString(), width);
+  }
+}
+
+class UserStatisticTableBuilder {
+  constructor() {
+    this.stats = [];
+
+    this.longestUsername = 0;
+    this.longestSpoken = 0;
+    this.longestMention = 0;
+  }
+
+  append(stat) {
+    this.stats.push(stat);
+
+    if (stat.username.length > this.longestUsername) {
+      this.longestUsername = stat.username.length;
+    }
+
+    if (stat.spokenCount.toString().length > this.longestSpoken) {
+      this.longestSpoken = stat.spokenCount.toString().length;
+    }
+
+    if (stat.mentionCount.toString().length > this.longestMention) {
+      this.longestMention = stat.mentionCount.toString().length;
+    }
+  }
+
+  build() {
+    this.stats.sort((a, b) => b.spokenCount - a.spokenCount);
+    for (let i = 0; i < this.stats.length; i++) {
+      this.stats[i].rank = i + 1;
+    }
+
+    return new UserStatisticTable(this.stats, this.longestUsername, this.longestSpoken, this.longestMention);
+  }
+}
+
+class UserStatisticTable {
+  constructor(stats, longestUsername, longestSpoken, longestMention) {
+    this.stats = stats;
+
+    this.longestUsername = longestUsername;
+    this.longestSpoken = longestSpoken;
+    this.longestMention = longestMention;
+  }
+
+  getStats() {
+    return this.stats;
+  }
+
+  pad(header, length) {
+    return padded(header, length);
   }
 }
 

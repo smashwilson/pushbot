@@ -256,7 +256,50 @@ function countCommand(robot, documentSet, spec, feature) {
 }
 
 function statsCommand(robot, documentSet, spec, feature) {
-  //
+  if (feature.helpText) {
+    robot.commands.push(...feature.helpText);
+  } else {
+    robot.commands.push(
+      `hubot ${spec.name}stats - See who has the most ${spec.plural}.`,
+      `hubot ${spec.name}stats @<user> - See the number of ${spec.plural} attributed to <user>.`
+    );
+  }
+
+  const pattern = new RegExp(`${spec.name}stats(?:\\s+@?(\\S+))?`, 'i');
+  robot.respond(pattern, msg => {
+    if (!feature.role.verify(robot, msg)) return;
+
+    const target = msg.match[1] || '';
+    const hasTarget = target.trim().length > 0;
+
+    documentSet.getUserStats(['speaker', 'mention'])
+    .then(table => {
+      let output = '```\n';
+
+      const usernameHeader = 'Username';
+      const usernameColumnWidth = Math.max(table.longestUsername, usernameHeader.length) + 1;
+
+      const spokeHeader = 'Spoke';
+      const spokeColumnWidth = Math.max(table.longestSpoken, spokeHeader.length) + 1;
+
+      const mentionHeader = 'Mentioned';
+      const mentionColumnWidth = Math.max(table.longestMention, mentionHeader.length) + 1;
+
+      output += `${table.pad(usernameHeader, usernameColumnWidth)}| `;
+      output += `${table.pad(spokeHeader, spokeColumnWidth)}| `;
+      output += `${mentionHeader}\n`;
+      output += ('-'.repeat(usernameColumnWidth + spokeColumnWidth + mentionColumnWidth + 3)) + '\n';
+
+      for (const stat of table.getStats()) {
+        output += `${stat.getUsername(usernameColumnWidth)}| `;
+        output += `${stat.getSpokenCount(spokeColumnWidth)}| `;
+        output += `${stat.getMentionCount()}\n`;
+      }
+
+      output += '```\n';
+      msg.send(output);
+    });
+  });
 }
 
 function kovCommands(robot, documentSet, spec, feature) {
