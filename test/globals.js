@@ -1,13 +1,16 @@
 // Required first.
 
 const pg = require('pg-promise')();
+const hubotHelp = require('hubot-help');
 
 global.expect = require('chai').expect;
 global.database = process.env.DATABASE_URL ? pg(process.env.DATABASE_URL) : null;
 
 global.delay = function(timeoutMs) {
-  const timeout = timeoutMs || (database ? 100 : 10);
-  return new Promise(resolve => setTimeout(resolve, timeout));
+  return function() {
+    const timeout = timeoutMs || (database ? 100 : 10);
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  };
 }
 
 global.usesDatabase = function(context, timeoutMs) {
@@ -17,6 +20,12 @@ global.usesDatabase = function(context, timeoutMs) {
   } else {
     context.skip();
   }
+}
+
+global.loadHelp = function(robot) {
+  hubotHelp(robot, '*');
+
+  return new Promise(resolve => setTimeout(resolve, 200));
 }
 
 Promise.prototype.tap = function(chunk) {

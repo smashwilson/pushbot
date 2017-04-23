@@ -61,12 +61,6 @@ describe('createDocumentSet', function() {
     room.robot.brain.data.users = userMap;
   };
 
-  function loadHelp() {
-    hubotHelp(room.robot, '*');
-
-    return new Promise(resolve => setTimeout(resolve, 200));
-  }
-
   function helpLines() {
     return room.messages
       .filter(pair => pair[0] === 'hubot')
@@ -91,7 +85,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.eql([
           ['me', `@hubot slackapp blarf: ${blarfToAdd}`],
@@ -121,7 +115,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
-      .then(delay)
+      .then(delay())
       .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
     });
@@ -148,7 +142,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
-      .then(delay)
+      .then(delay())
       .then(() => documentSet.randomMatching({mention: ['person-two', 'person-three']}, ''))
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
     });
@@ -175,7 +169,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.eql([
           ['me', `@hubot slackapp blarf: ${blarfToAdd}`],
@@ -208,7 +202,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.eql([
           ['me', `@hubot slackapp blarf: ${blarfToAdd}`],
@@ -241,7 +235,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', `@hubot slackapp blarf: ${blarfToAdd}`))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.eql([
           ['me', `@hubot slackapp blarf: ${blarfToAdd}`],
@@ -265,7 +259,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', `@hubot slackapp blarf: ${malformedBlarf}`))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.have.length(2);
         expect(room.messages[0]).to.deep.equal(['me', `@hubot slackapp blarf: ${malformedBlarf}`]);
@@ -283,7 +277,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', `@hubot verbatim blarf: ${verbatimBlarf}`))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', `@hubot verbatim blarf: ${verbatimBlarf}`],
@@ -307,7 +301,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', `@hubot verbatim blarf: ${verbatimBlarf}`))
-      .then(delay)
+      .then(delay())
       .then(() => documentSet.randomMatching({mention: ['person-two', 'person-four']}, ''))
       .then(doc => expect(doc.getBody()).to.equal(verbatimBlarf));
     });
@@ -336,7 +330,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', '@hubot buffer blarf'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot buffer blarf'],
@@ -373,7 +367,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', '@hubot buffer blarf'))
-      .then(delay)
+      .then(delay())
       .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
     });
@@ -404,7 +398,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', '@hubot buffer blarf'))
-      .then(delay)
+      .then(delay())
       .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf));
     });
@@ -435,7 +429,7 @@ describe('createDocumentSet', function() {
       const expected = '[person-one] one one one, [person-one] two two two, [person-two] three three three';
 
       return room.user.say('me', `@hubot slackapp blarf: ${source}`)
-      .then(delay)
+      .then(delay())
       .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
       .then(doc => expect(doc.getBody()).to.equal(expected));
     });
@@ -461,10 +455,10 @@ describe('createDocumentSet', function() {
     it('generates default help text', function() {
       usesDatabase(this);
 
-      return loadHelp()
+      return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {add: true}))
       .then(() => room.user.say('me', '@hubot help blarf'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         const messages = helpLines();
 
@@ -477,7 +471,7 @@ describe('createDocumentSet', function() {
     it('accepts custom help text', function() {
       usesDatabase(this);
 
-      return loadHelp()
+      return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {
         add: {
           helpText: [
@@ -487,7 +481,7 @@ describe('createDocumentSet', function() {
         }
       }))
       .then(() => room.user.say('me', '@hubot help blarf'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         const messages = helpLines();
 
@@ -504,7 +498,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', '@hubot setblarf: something embarassing'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot setblarf: something embarassing'],
@@ -522,7 +516,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', '@hubot setblarf @other: something embarassing'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot setblarf @other: something embarassing'],
@@ -540,7 +534,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.add('admin', 'blah', [{kind: 'subject', value: 'me'}])
       .then(() => room.user.say('me', '@hubot setblarf: something better'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot setblarf: something better'],
@@ -564,7 +558,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.add('admin', 'blah', [{kind: 'subject', value: 'other'}])
       .then(() => room.user.say('me', '@hubot setblarf other: something better'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot setblarf other: something better'],
@@ -590,9 +584,9 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('you', '@hubot setblarf: nice try'))
-      .then(delay)
+      .then(delay())
       .then(() => room.user.say('you', '@hubot setblarf me: this works'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['you', '@hubot setblarf: nice try'],
@@ -617,9 +611,9 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('you', '@hubot setblarf me: nice try'))
-      .then(delay)
+      .then(delay())
       .then(() => room.user.say('you', '@hubot setblarf: this works'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['you', '@hubot setblarf me: nice try'],
@@ -644,7 +638,7 @@ describe('createDocumentSet', function() {
 
       return documentSet.whenConnected()
       .then(() => room.user.say('me', '@hubot setblarf me: this works'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot setblarf me: this works'],
@@ -659,10 +653,10 @@ describe('createDocumentSet', function() {
     it('generates default help text', function() {
       usesDatabase(this);
 
-      return loadHelp()
+      return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {set: true}))
       .then(() => room.user.say('me', '@hubot help'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         const messages = helpLines();
 
@@ -674,7 +668,7 @@ describe('createDocumentSet', function() {
     it('accepts custom help text', function() {
       usesDatabase(this);
 
-      return loadHelp()
+      return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {
         set: {
           helpText: [
@@ -684,7 +678,7 @@ describe('createDocumentSet', function() {
         }
       }))
       .then(() => room.user.say('me', '@hubot help setblarf'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         const messages = helpLines();
 
@@ -720,7 +714,7 @@ describe('createDocumentSet', function() {
 
       return populate(true, ['one', 'two', 'three'])
       .then(() => room.user.say('me', '@hubot blarf'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.have.length(2);
         expect(room.messages[0]).to.deep.equal(['me', '@hubot blarf']);
@@ -739,7 +733,7 @@ describe('createDocumentSet', function() {
         'aaa nope', 'aaa nope', 'aaa nope', 'aaa nope', 'aaa nope', 'aaa nope', 'aaa nope', 'aaa nope'
       ])
       .then(() => room.user.say('me', '@hubot blarf aaa 222'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarf aaa 222'],
@@ -755,7 +749,7 @@ describe('createDocumentSet', function() {
         'aaa+bbb', 'nope', 'nope', 'nope', 'nope', 'nope', 'nope', 'nope', 'nope', 'nope', 'nope'
       ])
       .then(() => room.user.say('me', '@hubot blarf \\+'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarf \\+'],
@@ -772,7 +766,7 @@ describe('createDocumentSet', function() {
         'correct aaa bbb'
       ])
       .then(() => room.user.say('me', '@hubot blarf "aaa bbb"'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarf "aaa bbb"'],
@@ -789,7 +783,7 @@ describe('createDocumentSet', function() {
         'correct aaa bbb'
       ])
       .then(() => room.user.say('me', "@hubot blarf 'aaa bbb'"))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', "@hubot blarf 'aaa bbb'"],
@@ -805,7 +799,7 @@ describe('createDocumentSet', function() {
         `correct aaa"bbb'ccc`, 'wrong aaabbbccc', 'wrong aaabbbccc', 'wrong aaabbbccc', 'wrong aaabbbccc'
       ])
       .then(() => room.user.say('me', `@hubot blarf aaa\\"bbb\\'ccc`))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', `@hubot blarf aaa\\"bbb\\'ccc`],
@@ -819,7 +813,7 @@ describe('createDocumentSet', function() {
 
       return populate({ role: OnlyMe }, ['aaa'])
       .then(() => room.user.say('me', '@hubot blarf'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarf'],
@@ -833,7 +827,7 @@ describe('createDocumentSet', function() {
 
       return populate({ role: OnlyMe }, ['aaa'])
       .then(() => room.user.say('you', '@hubot blarf'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['you', '@hubot blarf'],
@@ -851,7 +845,7 @@ describe('createDocumentSet', function() {
         {body: 'wrong 2', subject: 'other'}
       ])
       .then(() => room.user.say('me', '@hubot blarf @you'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarf @you'],
@@ -871,7 +865,7 @@ describe('createDocumentSet', function() {
         {body: 'wrong 4', subject: 'person-four'},
       ])
       .then(() => room.user.say('me', '@hubot blarf'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarf'],
@@ -881,10 +875,10 @@ describe('createDocumentSet', function() {
     });
 
     it('generates default help text', function() {
-      return loadHelp()
+      return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {query: true}))
       .then(() => room.user.say('me', '@hubot help blarf'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         const messages = helpLines();
 
@@ -894,7 +888,7 @@ describe('createDocumentSet', function() {
     });
 
     it('accepts custom help text', function() {
-      return loadHelp()
+      return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {
         query: {
           helpText: [
@@ -904,7 +898,7 @@ describe('createDocumentSet', function() {
         }
       }))
       .then(() => room.user.say('me', '@hubot help blarf'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         const messages = helpLines();
 
@@ -930,7 +924,7 @@ describe('createDocumentSet', function() {
 
       return populate(true, ['111', '222', '333', '444', '555'])
       .then(() => room.user.say('me', '@hubot blarfcount'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarfcount'],
@@ -942,7 +936,7 @@ describe('createDocumentSet', function() {
     it('uses a singular noun for single results', function() {
       return populate(true, ['111'])
       .then(() => room.user.say('me', '@hubot blarfcount'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarfcount'],
@@ -956,7 +950,7 @@ describe('createDocumentSet', function() {
 
       return populate(true, ['aaa zzz 1', 'aaa zzz 2', 'aaa bbb 0', 'bbb zzz 0', 'xxx yyy 0'])
       .then(() => room.user.say('me', '@hubot blarfcount zzz aaa'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarfcount zzz aaa'],
@@ -970,7 +964,7 @@ describe('createDocumentSet', function() {
 
       return populate(true, ['aaa zzz 1', 'aaa zzz 2', 'aaa bbb 0', 'bbb zzz 0', 'xxx yyy 0', 'zzz aaa 0'])
       .then(() => room.user.say('me', '@hubot blarfcount "aaa zzz"'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarfcount "aaa zzz"'],
@@ -982,7 +976,7 @@ describe('createDocumentSet', function() {
     it('uses a singular noun for single results matching a query', function() {
       return populate(true, ['111', '222'])
       .then(() => room.user.say('me', '@hubot blarfcount 11'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarfcount 11'],
@@ -996,7 +990,7 @@ describe('createDocumentSet', function() {
 
       return populate({ role: OnlyMe }, ['aaa zzz 1', 'aaa zzz 2', 'aaa zzz 3', 'bbb zzz 0', 'xxx yyy 0'])
       .then(() => room.user.say('me', '@hubot blarfcount aaa zzz'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarfcount aaa zzz'],
@@ -1010,7 +1004,7 @@ describe('createDocumentSet', function() {
 
       return populate({ role: OnlyMe }, ['aaa zzz 1', 'aaa zzz 2'])
       .then(() => room.user.say('you', '@hubot blarfcount aaa zzz'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['you', '@hubot blarfcount aaa zzz'],
@@ -1020,10 +1014,10 @@ describe('createDocumentSet', function() {
     });
 
     it('generates default help text', function() {
-      return loadHelp()
+      return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {count: true}))
       .then(() => room.user.say('me', '@hubot help blarfcount'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         const messages = helpLines();
 
@@ -1033,7 +1027,7 @@ describe('createDocumentSet', function() {
     });
 
     it('accepts custom help text', function() {
-      return loadHelp()
+      return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {
         count: {
           helpText: [
@@ -1043,7 +1037,7 @@ describe('createDocumentSet', function() {
         }
       }))
       .then(() => room.user.say('me', '@hubot help blarfcount'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         const messages = helpLines();
 
@@ -1081,7 +1075,7 @@ describe('createDocumentSet', function() {
         {body: '3', attrs: {speaker: ['person-one'], mention: ['person-three']}},
       ])
       .then(() => room.user.say('me', '@hubot blarfstats'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         const expected = '```\n' +
           'Username     | Spoke | Mentioned\n' +
@@ -1108,7 +1102,7 @@ describe('createDocumentSet', function() {
         {body: '3', attrs: {speaker: ['person-one'], mention: []}},
       ])
       .then(() => room.user.say('me', '@hubot blarfstats @person-two'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarfstats @person-two'],
@@ -1120,10 +1114,10 @@ describe('createDocumentSet', function() {
     it('generates default help text', function() {
       usesDatabase(this);
 
-      return loadHelp()
+      return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {stats: true}))
       .then(() => room.user.say('me', '@hubot help blarfstats'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         const messages = helpLines();
 
@@ -1135,7 +1129,7 @@ describe('createDocumentSet', function() {
     it('accepts custom help text', function() {
       usesDatabase(this);
 
-      return loadHelp()
+      return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {
         stats: {
           helpText: [
@@ -1145,7 +1139,7 @@ describe('createDocumentSet', function() {
         }
       }))
       .then(() => room.user.say('me', '@hubot help blarfstats'))
-      .then(delay)
+      .then(delay())
       .then(() => {
         const messages = helpLines();
 
@@ -1181,7 +1175,7 @@ describe('createDocumentSet', function() {
           {body: 'no 3', attrs: ['qqq']},
         ])
         .then(() => room.user.say('me', `@hubot blarf${commandName} aaa`))
-        .then(delay)
+        .then(delay())
         .then(() => {
           expect(room.messages).to.have.length(2);
           expect(room.messages[0]).to.deep.equal(['me', `@hubot blarf${commandName} aaa`]);
@@ -1203,7 +1197,7 @@ describe('createDocumentSet', function() {
           {body: 'no 4', attrs: ['aaa']},
         ])
         .then(() => room.user.say('me', `@hubot blarf${commandName} @aaa yes`))
-        .then(delay)
+        .then(delay())
         .then(() => {
           expect(room.messages).to.deep.equal([
             ['me', `@hubot blarf${commandName} @aaa yes`],
@@ -1223,7 +1217,7 @@ describe('createDocumentSet', function() {
           {body: 'no 4', attrs: ['aaa']},
         ])
         .then(() => room.user.say('me', `@hubot blarf${commandName} @ccc+yyy`))
-        .then(delay)
+        .then(delay())
         .then(() => {
           expect(room.messages).to.deep.equal([
             ['me', `@hubot blarf${commandName} @ccc+yyy`],
@@ -1243,7 +1237,7 @@ describe('createDocumentSet', function() {
           {body: 'yes 1', attrs: ['aaa', 'bbb']},
         ])
         .then(() => room.user.say('me', `@hubot blarf${commandName} @aaa+bbb yes`))
-        .then(delay)
+        .then(delay())
         .then(() => {
           expect(room.messages).to.deep.equal([
             ['me', `@hubot blarf${commandName} @aaa+bbb yes`],
@@ -1259,7 +1253,7 @@ describe('createDocumentSet', function() {
           {body: 'yes 1', attrs: ['aaa', 'bbb']}
         ])
         .then(() => room.user.say('me', `@hubot blarf${commandName} bbb`))
-        .then(delay)
+        .then(delay())
         .then(() => {
           expect(room.messages).to.deep.equal([
             ['me', `@hubot blarf${commandName} bbb`],
@@ -1275,7 +1269,7 @@ describe('createDocumentSet', function() {
           {body: 'yes 1', attrs: ['aaa', 'bbb']}
         ])
         .then(() => room.user.say('you', `@hubot blarf${commandName} bbb`))
-        .then(delay)
+        .then(delay())
         .then(() => {
           expect(room.messages).to.deep.equal([
             ['you', `@hubot blarf${commandName} bbb`],
@@ -1285,10 +1279,10 @@ describe('createDocumentSet', function() {
       });
 
       it('generates default help text', function() {
-        return loadHelp()
+        return loadHelp(room.robot)
         .then(() => createDocumentSet(room.robot, 'blarf', {[commandName]: true}))
         .then(() => room.user.say('me', `@hubot help blarf${commandName}`))
-        .then(delay)
+        .then(delay())
         .then(() => {
           const messages = helpLines().filter(line => line.startsWith(`hubot blarf${commandName}`));
           expect(messages).to.have.length(3);
@@ -1296,7 +1290,7 @@ describe('createDocumentSet', function() {
       });
 
       it('accepts custom help text', function() {
-        return loadHelp()
+        return loadHelp(room.robot)
         .then(() => createDocumentSet(room.robot, 'blarf', {
           [commandName]: {
             helpText: [
@@ -1306,7 +1300,7 @@ describe('createDocumentSet', function() {
           }
         }))
         .then(() => room.user.say('me', `@hubot help blarf${commandName}`))
-        .then(delay)
+        .then(delay())
         .then(() => {
           const messages = helpLines();
 
