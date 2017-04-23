@@ -1069,6 +1069,61 @@ describe('createDocumentSet', function() {
       });
     });
 
+    it("summarizes a user's speaker and mention counts", function() {
+      usesDatabase(this);
+
+      return populate(true, [
+        {body: '0', attrs: {speaker: ['person-one'], mention: ['person-two']}},
+        {body: '1', attrs: {speaker: ['person-one'], mention: ['person-three']}},
+        {body: '2', attrs: {speaker: ['person-two'], mention: ['person-one', 'person-two']}},
+        {body: '3', attrs: {speaker: ['person-one'], mention: []}},
+      ])
+      .then(() => room.user.say('me', '@hubot blarfstats @person-two'))
+      .then(delay)
+      .then(() => {
+        expect(room.messages).to.deep.equal([
+          ['me', '@hubot blarfstats @person-two'],
+          ['hubot', 'person-two is **#2**, having spoken in **1** blarf and being mentioned in **2**.']
+        ]);
+      });
+    });
+
+    it('generates default help text', function() {
+      usesDatabase(this);
+
+      return loadHelp()
+      .then(() => createDocumentSet(room.robot, 'blarf', {stats: true}))
+      .then(() => room.user.say('me', '@hubot help blarfstats'))
+      .then(delay)
+      .then(() => {
+        const messages = helpLines();
+
+        expect(messages).to.include('hubot blarfstats - See who has the most blarfs.');
+        expect(messages).to.include('hubot blarfstats @<user> - See the number of blarfs attributed to <user>.');
+      });
+    });
+
+    it('accepts custom help text', function() {
+      usesDatabase(this);
+
+      return loadHelp()
+      .then(() => createDocumentSet(room.robot, 'blarf', {
+        stats: {
+          helpText: [
+            'hubot blarfstats 1 - First line',
+            'hubot blarfstats 2 - Second line'
+          ]
+        }
+      }))
+      .then(() => room.user.say('me', '@hubot help blarfstats'))
+      .then(delay)
+      .then(() => {
+        const messages = helpLines();
+
+        expect(messages).to.include('hubot blarfstats 1 - First line');
+        expect(messages).to.include('hubot blarfstats 2 - Second line');
+      });
+    });
   });
 
   function generateAttributeQueryTests(commandName, attributeName) {

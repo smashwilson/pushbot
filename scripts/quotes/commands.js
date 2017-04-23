@@ -274,30 +274,43 @@ function statsCommand(robot, documentSet, spec, feature) {
 
     documentSet.getUserStats(['speaker', 'mention'])
     .then(table => {
-      let output = '```\n';
+      if (hasTarget) {
+        const stat = table.getStats().find(stat => stat.getUsername() === target);
+        if (stat === undefined) {
+          msg.send(`${target} has no ${spec.plural} at all. The shame!`);
+          return;
+        }
 
-      const usernameHeader = 'Username';
-      const usernameColumnWidth = Math.max(table.longestUsername, usernameHeader.length) + 1;
+        const plural = countStr => `**${countStr}** ${countStr === '1' ? spec.name : spec.plural}`;
 
-      const spokeHeader = 'Spoke';
-      const spokeColumnWidth = Math.max(table.longestSpoken, spokeHeader.length) + 1;
+        msg.send(`${target} is **#${stat.getRank()}**, having spoken in ${plural(stat.getSpokenCount())} ` +
+          `and being mentioned in **${stat.getMentionCount()}**.`);
+      } else {
+        let output = '```\n';
 
-      const mentionHeader = 'Mentioned';
-      const mentionColumnWidth = Math.max(table.longestMention, mentionHeader.length) + 1;
+        const usernameHeader = 'Username';
+        const usernameColumnWidth = Math.max(table.longestUsername, usernameHeader.length) + 1;
 
-      output += `${table.pad(usernameHeader, usernameColumnWidth)}| `;
-      output += `${table.pad(spokeHeader, spokeColumnWidth)}| `;
-      output += `${mentionHeader}\n`;
-      output += ('-'.repeat(usernameColumnWidth + spokeColumnWidth + mentionColumnWidth + 3)) + '\n';
+        const spokeHeader = 'Spoke';
+        const spokeColumnWidth = Math.max(table.longestSpoken, spokeHeader.length) + 1;
 
-      for (const stat of table.getStats()) {
-        output += `${stat.getUsername(usernameColumnWidth)}| `;
-        output += `${stat.getSpokenCount(spokeColumnWidth)}| `;
-        output += `${stat.getMentionCount()}\n`;
+        const mentionHeader = 'Mentioned';
+        const mentionColumnWidth = Math.max(table.longestMention, mentionHeader.length) + 1;
+
+        output += `${table.pad(usernameHeader, usernameColumnWidth)}| `;
+        output += `${table.pad(spokeHeader, spokeColumnWidth)}| `;
+        output += `${mentionHeader}\n`;
+        output += ('-'.repeat(usernameColumnWidth + spokeColumnWidth + mentionColumnWidth + 3)) + '\n';
+
+        for (const stat of table.getStats()) {
+          output += `${stat.getUsername(usernameColumnWidth)}| `;
+          output += `${stat.getSpokenCount(spokeColumnWidth)}| `;
+          output += `${stat.getMentionCount()}\n`;
+        }
+
+        output += '```\n';
+        msg.send(output);
       }
-
-      output += '```\n';
-      msg.send(output);
     });
   });
 }

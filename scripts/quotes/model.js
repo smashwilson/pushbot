@@ -152,6 +152,10 @@ class UserStatistic {
   getMentionCount(width = 0) {
     return padded(this.mentionCount.toString(), width);
   }
+
+  getRank() {
+    return this.rank;
+  }
 }
 
 class UserStatisticTableBuilder {
