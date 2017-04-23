@@ -50,6 +50,8 @@ module.exports = function (robot) {
         robot.brain.mergeData(data);
         robot.brain.setAutoSave(true);
         robot.logger.debug(`Loaded ${count} rows into the brain.`);
+
+        robot.emit('brainReady');
       })
   }
 
