@@ -184,7 +184,13 @@ class UserStatisticTableBuilder {
   }
 
   build() {
-    this.stats.sort((a, b) => b.spokenCount - a.spokenCount);
+    this.stats.sort((a, b) => {
+      if (a.spokenCount !== b.spokenCount) {
+        return b.spokenCount - a.spokenCount;
+      } else {
+        return b.mentionCount - a.mentionCount;
+      }
+    });
     for (let i = 0; i < this.stats.length; i++) {
       this.stats[i].rank = i + 1;
     }
