@@ -2,7 +2,7 @@
 //   Maintain arbitrary sets of username => text mappings.
 
 const {createDocumentSet} = require('./documentset');
-const {MapMaker} = require('./roles');
+const {Admin, MapMaker} = require('./roles');
 
 const mappings = new Map();
 
@@ -46,7 +46,9 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/setupmapping\s+(\S+)([^]+)?/, msg => {
+  robot.respond(/createmapping\s+(\S+)([^]+)?/, msg => {
+    if (!Admin.verify(robot, msg)) { return; }
+
     const name = msg.match[1];
     const argList = msg.match[2];
 
@@ -57,8 +59,26 @@ module.exports = function(robot) {
       options.nullBody = nullBodyMatch[1];
     }
 
-    createMapping(name, options);
+    try {
+      createMapping(name, options);
+      msg.reply(`mapping ${name} has been created. :sparkles:`);
+    } catch (e) {
+      msg.send(e.message);
+    }
+  });
 
-    msg.reply(`Mapping ${name} has been created. :sparkles:`);
+  robot.respond(/destroymapping\s+(\S+)/, msg => {
+    if (!Admin.verify(robot, msg)) { return; }
+
+    const name = msg.match[1];
+    const data = mappings.get(name);
+    if (!data) {
+      msg.reply(`mapping ${name} does not exist.`);
+      return;
+    }
+
+    return data.documentSet.destroy()
+    .then(() => mappings.delete(name))
+    .then(() => msg.reply(`mapping ${name} has been destroyed. :fire:`));
   });
 }
