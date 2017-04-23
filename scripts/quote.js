@@ -1,7 +1,7 @@
 // Description:
 //   Quotefile central dispatch.
 
-const {createDocumentSet} = require('./quotes');
+const {createDocumentSet} = require('./documentset');
 const {Admin, QuotePontiff, PoetLaureate} = require('./roles');
 
 const limFormatter = (lines, speakers, mentions) => {

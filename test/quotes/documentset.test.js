@@ -7,7 +7,7 @@ const Helper = require('hubot-test-helper');
 const helper = new Helper([]);
 const hubotHelp = require('hubot-help');
 
-const {createDocumentSet} = require('../../scripts/quotes');
+const {createDocumentSet} = require('../../scripts/documentset');
 
 const OnlyMe = {
   verify: (robot, msg) => {
