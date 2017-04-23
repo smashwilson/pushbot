@@ -11,6 +11,8 @@
 #   hubot buffer show - Show the current contents of your buffer, annotated with indices.
 #   hubot buffer clear - Empty your buffer.
 
+Line = require './models/line'
+
 MAX_CACHE_SIZE = 200
 
 caches = {}
@@ -58,13 +60,6 @@ class Cache
     results
 
   earliest: -> @lines.slice(-1)[0]
-
-class Line
-  constructor: (@timestamp, @speaker, @text) ->
-
-  isRaw: -> !@speaker?
-
-  toString: -> if @isRaw() then @text else "#{@speaker}: #{@text}"
 
 class ExactPattern
   constructor: (@source) ->
