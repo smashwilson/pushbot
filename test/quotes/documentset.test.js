@@ -1291,8 +1291,4 @@ describe('createDocumentSet', function() {
   describe('by', generateAttributeQueryTests('by', 'speaker'));
 
   describe('about', generateAttributeQueryTests('about', 'mention'));
-
-  describe('kov', function() {
-    it('creates "blarfkov"');
-  });
 });
