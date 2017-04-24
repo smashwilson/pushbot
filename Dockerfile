@@ -1,5 +1,5 @@
 FROM node:7.9-alpine
-MAINTAINER Ash Wilson <smashwilson@gmail.com>
+LABEL maintainer "Ash Wilson <smashwilson@gmail.com>"
 
 RUN npm install -g coffee-script
 RUN adduser -s /bin/false -D -H pushbot
