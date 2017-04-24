@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -euo pipefail
+source bin/ci/common.sh
+
+if [ -n "${DOCKER_USERNAME:-}" ] || [ -n "${DOCKER_PASSWORD:-}" ]; then
+  printf "Docker credentials not found. Skipping image push."
+  exit 0
+fi
+
+printf "Logging in to quay.io."
+docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} quay.io
+
+printf "Pushing Docker image."
+docker push "${BRANCH_TAG}"

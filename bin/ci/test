@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -euo pipefail
+source bin/ci/common.sh
+
+printf "Running npm tests."
+npm test
+
+printf "Attempting to build Docker image %s." "${BRANCH_TAG}"
+docker build \
+  --tag "${IMAGE_TAG}" \
+  --label party.pushbot.branch=$(git symbolic-ref --short HEAD) \
+  --label party.pushbot.commit=$(git rev-parse HEAD) \
+  .
