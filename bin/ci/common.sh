@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export IMAGE_BASE="quay.io/smashwilson/pushbot"
 
