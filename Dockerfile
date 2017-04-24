@@ -1,9 +1,8 @@
-FROM node:4.1.1-slim
+FROM node:7.9-alpine
 MAINTAINER Ash Wilson <smashwilson@gmail.com>
 
-RUN apt-get update && apt-get install -y git
 RUN npm install -g coffee-script
-RUN useradd pushbot
+RUN adduser -s /bin/false -D -H pushbot
 RUN mkdir -p /usr/src/app
 
 WORKDIR /usr/src/app
