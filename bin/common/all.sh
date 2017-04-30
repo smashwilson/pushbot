@@ -1,4 +1,4 @@
 #!/bin/bash
 
-source bin/ci/image.sh
-source bin/ci/wait.sh
+source bin/common/image.sh
+source bin/common/wait.sh

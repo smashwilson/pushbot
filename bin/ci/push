@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -euo pipefail
-source bin/ci/common.sh
+source bin/common/all.sh
 
 if [ -n "${DOCKER_USERNAME:-}" ] || [ -n "${DOCKER_PASSWORD:-}" ]; then
   printf "Docker credentials not found. Skipping image push."
