@@ -11,5 +11,5 @@ fi
 printf "Logging in to quay.io.\n"
 docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}" quay.io
 
-printf "Pushing Docker image %s.\n" "${BRANCH_TAG}"
-docker push "${BRANCH_TAG}"
+printf "Pushing Docker image %s.\n" "${IMAGE_TAG}"
+docker push "${IMAGE_TAG}"
