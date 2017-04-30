@@ -27,6 +27,11 @@ module.exports = function (robot) {
 
   robot.logger.debug('Brain connected to database at DATABASE_URL.');
 
+  // For hubot-markov
+  robot.getDatabase = function() {
+    return robot.postgres;
+  }
+
   const loadAll = function () {
     const data = {}
 
