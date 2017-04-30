@@ -12,4 +12,4 @@ ADD . /usr/src/app
 RUN chown -R pushbot:pushbot /usr/src/app
 
 USER pushbot
-ENTRYPOINT ["/usr/src/app/node_modules/.bin/hubot", "-a", "slack"]
+ENTRYPOINT /usr/src/app/bin/container/entrypoint.sh
