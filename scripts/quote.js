@@ -61,7 +61,7 @@ module.exports = function(robot) {
     set: {
       roleForSelf: Admin,
       userOriented: true,
-      helpText: ["hubot settitle <title> - Set anyone's title but your own."]
+      helpText: ["hubot settitle <user>: <title> - Set anyone's title but your own."]
     },
     query: {
       userOriented: true,
@@ -69,6 +69,7 @@ module.exports = function(robot) {
         'hubot title - See what the #~s hive mind has decided you are.',
         'hubot title @<user> - See what the #~s hive mind has designated <user>.'
       ]
-    }
+    },
+    nullBody: 'No title yet. Care to set it?'
   });
 }
