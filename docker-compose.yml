@@ -1,21 +1,23 @@
-version: '2'
+version: '3'
 services:
-  redis:
-    image: redis
+  postgres:
+    image: postgres:9.6
+    environment:
+      POSTGRES_USER: pushbot
+      POSTGRES_PASSWORD: shhh
+    ports:
+    - '5432:5432'
+    user: postgres
   pushbot:
     build: .
     volumes:
     - ".:/usr/src/app/"
     environment:
-      REDISTOGO_URL: redis://redis/
+      DATABASE_URL: postgres://pushbot:shhh@postgres/pushbot
       HUBOT_SLACK_TOKEN:
       HUBOT_MARKOV_LEARN_MIN:
       HUBOT_MARKOV_GENERATE_MAX:
-      HUBOT_QUOTEFILE_PATH:
       HUBOT_AUTH_ADMIN:
-      HUBOT_BETRAY_IMMUNE:
-      HUBOT_MAPPING_DATAROOT:
       HUBOT_WEATHER_APIKEY:
-      HUBOT_LISTS_ROOT:
     depends_on:
-    - redis
+    - postgres
