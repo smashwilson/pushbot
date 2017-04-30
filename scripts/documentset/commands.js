@@ -82,7 +82,7 @@ function addCommands(robot, documentSet, spec, feature) {
     }
 
     // "slackapp quote: ..."
-    const pattern = new RegExp(`${preprocessorName}\\s+${spec.name}${argumentPattern}`);
+    const pattern = new RegExp(`${preprocessorName}\\s+${spec.name}${argumentPattern}\\s*$`);
     robot.respond(pattern, msg => {
       if (!feature.role.verify(robot, msg)) return;
 
@@ -127,7 +127,7 @@ function setCommand(robot, documentSet, spec, feature) {
     );
   }
 
-  const pattern = new RegExp(`set${spec.name}(?:\\s+@?([^:]+))?:\\s*([^]+)`);
+  const pattern = new RegExp(`set${spec.name}(?:\\s+@?([^:]+))?:\\s*([^]+)$`);
   robot.respond(pattern, msg => {
     const submitter = msg.message.user.name;
     const target = (msg.match[1] || submitter).trim();
@@ -146,7 +146,7 @@ function setCommand(robot, documentSet, spec, feature) {
 }
 
 function queryCommand(robot, documentSet, spec, feature) {
-  const pattern = new RegExp(`${spec.name}(\\s+[^]+)?`);
+  const pattern = new RegExp(`${spec.name}(\\s+[^]+)?$`);
 
   if (feature.helpText) {
     robot.commands.push(...feature.helpText);
@@ -208,7 +208,7 @@ function queryCommand(robot, documentSet, spec, feature) {
 function attributeQuery(robot, documentSet, spec, feature, patternBase, attrKind) {
   robot.commands.push(...feature.helpText);
 
-  const pattern = new RegExp(`${patternBase}\\s+(\\S+)(\\s+[^]+)?`, 'i');
+  const pattern = new RegExp(`${patternBase}\\s+(\\S+)(\\s+[^]+)?$`, 'i');
 
   robot.respond(pattern, msg => {
     if (!feature.role.verify(robot, msg)) return;
@@ -259,7 +259,7 @@ function countCommand(robot, documentSet, spec, feature) {
     );
   }
 
-  const pattern = new RegExp(`${spec.name}count(\\s+[^]+)?`, 'i');
+  const pattern = new RegExp(`${spec.name}count(\\s+[^]+)?$`, 'i');
 
   robot.respond(pattern, msg => {
     if (!feature.role.verify(robot, msg)) return;
@@ -289,7 +289,7 @@ function statsCommand(robot, documentSet, spec, feature) {
     );
   }
 
-  const pattern = new RegExp(`${spec.name}stats(?:\\s+@?(\\S+))?`, 'i');
+  const pattern = new RegExp(`${spec.name}stats(?:\\s+@?(\\S+))?$`, 'i');
   robot.respond(pattern, msg => {
     if (!feature.role.verify(robot, msg)) return;
 
