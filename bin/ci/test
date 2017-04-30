@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -euo pipefail
-source bin/ci/common.sh
+source bin/common/all.sh
 
 printf "Waiting for PostgreSQL to become available.\n"
 wait_for_postgres
