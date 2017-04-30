@@ -10,11 +10,9 @@ services:
 - postgresql
 env:
   global:
-    DATABASE_URL: postgres://postgres@localhost/travis?ssl=false
-    EXPRESS_PORT: 60000
-    EXPRESS_BIND_ADDRESS: 127.0.0.1
-    DOCKER_USERNAME: smashwilson
-    secure: PNCC+XXy/MekvaeBCmIoJfUn9S8aGfV0ncKxOTI8K8X4UAGHRVem7TpfgGOyNGWO08Z5AJeqmt3n2pXBD47BBkSJuE568pDLb+Hy8hni6a7BShRGIqxXxl6omNCbloNM0VJU8vqSWzSbsVwYTnKo/e/71/GLi7IeZFPyU3rMVrg=
+  - DATABASE_URL=postgres://postgres@localhost/travis?ssl=false
+  - DOCKER_USERNAME=smashwilson
+  - secure: PNCC+XXy/MekvaeBCmIoJfUn9S8aGfV0ncKxOTI8K8X4UAGHRVem7TpfgGOyNGWO08Z5AJeqmt3n2pXBD47BBkSJuE568pDLb+Hy8hni6a7BShRGIqxXxl6omNCbloNM0VJU8vqSWzSbsVwYTnKo/e/71/GLi7IeZFPyU3rMVrg=
 script:
 - bin/ci/test
 after_success:
