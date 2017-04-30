@@ -3,10 +3,13 @@
 set -euo pipefail
 source bin/ci/common.sh
 
-printf "Running npm tests."
+printf "Waiting for PostgreSQL to become available.\n"
+wait_for_postgres
+
+printf "Running npm tests.\n"
 npm test
 
-printf "Attempting to build Docker image %s." "${BRANCH_TAG}"
+printf "Attempting to build Docker image %s.\n" "${BRANCH_TAG}"
 docker build \
   --tag "${IMAGE_TAG}" \
   --label party.pushbot.branch=$(git symbolic-ref --short HEAD) \
