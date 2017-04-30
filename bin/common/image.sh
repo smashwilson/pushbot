@@ -9,8 +9,10 @@ if [ "${TRAVIS_PULL_REQUEST:-}" = "false" ]; then
   else
     BRANCH="${TRAVIS_BRANCH:-}"
   fi
-else
+elif [ -n "${TRAVIS_PULL_REQUEST:-}" ]; then
   BRANCH="pr${TRAVIS_PULL_REQUEST}"
+else
+  BRANCH="local"
 fi
 
 export IMAGE_TAG="${IMAGE_BASE}:${BRANCH}"
