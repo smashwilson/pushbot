@@ -3,6 +3,9 @@
 set -euo pipefail
 source bin/common/all.sh
 
-wait_for_postgres
+[ -n "${DATABASE_URL:-}" ] && wait_for_postgres
 
-exec /usr/src/app/node_modules/.bin/hubot --alias '!' -a slack
+ADAPTER=
+[ -n "${HUBOT_SLACK_TOKEN:-}" ] && ADAPTER='-a slack'
+
+exec /usr/src/app/node_modules/.bin/hubot --alias '!' ${ADAPTER}
