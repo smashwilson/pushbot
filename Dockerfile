@@ -1,6 +1,8 @@
 FROM node:7.9-alpine
 LABEL maintainer "Ash Wilson <smashwilson@gmail.com>"
 
+ENV NPM_CONFIG_LOGLEVEL warn
+
 RUN apk add --no-cache bash postgresql-client
 RUN npm install -g coffee-script
 RUN adduser -s /bin/false -D -H pushbot
