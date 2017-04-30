@@ -1,6 +1,7 @@
 FROM node:7.9-alpine
 LABEL maintainer "Ash Wilson <smashwilson@gmail.com>"
 
+RUN apk add --no-cache bash postgresql-client
 RUN npm install -g coffee-script
 RUN adduser -s /bin/false -D -H pushbot
 RUN mkdir -p /usr/src/app
