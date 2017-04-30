@@ -3,7 +3,7 @@
 set -euo pipefail
 source bin/common/all.sh
 
-if [ -n "${DOCKER_USERNAME:-}" ] || [ -n "${DOCKER_PASSWORD:-}" ]; then
+if [ -z "${DOCKER_USERNAME:-}" ] || [ -z "${DOCKER_PASSWORD:-}" ]; then
   printf "Docker credentials not found. Skipping image push.\n"
   exit 0
 fi
