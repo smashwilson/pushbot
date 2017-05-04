@@ -15,6 +15,7 @@
 #   hubot sin - return a sin, courtesy of Jack Chick
 #   hubot pokemonsay <string> - Translate string into Pokemon Unown Slack emojis.
 #   hubot femshep - Express your rage in a healthy fashion
+#   hubot nope - Just nope the f out of there
 #
 # Configuration:
 #
@@ -265,6 +266,9 @@ module.exports = (robot) ->
       "http://media.tumblr.com/tumblr_lsxdm7yONC1qbplir.gif"
       "http://i.imgur.com/vJL0E6t.gif"
     ]
+
+  robot.respond /nope\s*$/i, (msg) ->
+    msg.send "http://www.reactiongifs.com/wp-content/uploads/2013/06/nope.gif"
 
   robot.hear /robot\s+body/i, (msg) ->
     msg.send atRandom [
