@@ -276,5 +276,8 @@ module.exports = (robot) ->
       "https://68.media.tumblr.com/d6d9c3286d944ef1bdbf3e41e2f99d48/tumblr_omhzugCO4R1tpri36o1_500.png"
     ]
 
+  robot.hear /bee[s]?\s/i, (msg) ->
+    msg.send "https://media.giphy.com/media/dcubXtnbck0RG/giphy.gif"
+
   robot.hear /\b(?:tit downwards|breasted boobily)\b/i, (msg) ->
     msg.send "http://imgur.com/TRAPYBX"
