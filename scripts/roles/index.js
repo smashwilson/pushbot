@@ -8,7 +8,7 @@ class Role {
   verify(robot, msg) {
     if (!robot.auth.hasRole(msg.message.user, this.name)) {
       msg.reply([
-        `You can't do that! You're not a *${this.name}*.`
+        `You can't do that! You're not a *${this.name}*.`,
         `Ask an admin to run \`${robot.name} grant ${msg.message.user.name} the ${this.name} role\`.`
       ].join('\n'));
       return false;
