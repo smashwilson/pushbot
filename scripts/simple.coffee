@@ -16,7 +16,8 @@
 #   hubot pokemonsay <string> - Translate string into Pokemon Unown Slack emojis.
 #   hubot femshep - Express your rage in a healthy fashion
 #   hubot nope - Just nope the f out of there
-#
+#   hubot fine - Show just how fine it is
+
 # Configuration:
 #
 #   HUBOT_BETRAY_IMMUNE - comma-separated list of users who are immune to betrayal.
@@ -269,6 +270,9 @@ module.exports = (robot) ->
 
   robot.respond /nope\s*$/i, (msg) ->
     msg.send "http://www.reactiongifs.com/wp-content/uploads/2013/06/nope.gif"
+
+  robot.respond /fine/i, (msg) ->
+    msg.send ":fire::thisisfine::fire:"
 
   robot.hear /robot\s+body/i, (msg) ->
     msg.send atRandom [
