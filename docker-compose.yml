@@ -21,5 +21,7 @@ services:
       HUBOT_MARKOV_GENERATE_MAX:
       HUBOT_AUTH_ADMIN:
       HUBOT_WEATHER_APIKEY:
+    ports:
+    - '8080:8080'
     depends_on:
     - postgres
