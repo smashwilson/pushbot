@@ -15,7 +15,9 @@
 #   hubot sin - return a sin, courtesy of Jack Chick
 #   hubot pokemonsay <string> - Translate string into Pokemon Unown Slack emojis.
 #   hubot femshep - Express your rage in a healthy fashion
-#
+#   hubot nope - Just nope the f out of there
+#   hubot fine - Show just how fine it is
+
 # Configuration:
 #
 #   HUBOT_BETRAY_IMMUNE - comma-separated list of users who are immune to betrayal.
@@ -261,4 +263,25 @@ module.exports = (robot) ->
     msg.send unown_string
 
   robot.respond /femshep/i, (msg) ->
-    msg.send "http://media.tumblr.com/tumblr_lsxdm7yONC1qbplir.gif"
+    msg.send atRandom [
+      "http://media.tumblr.com/tumblr_lsxdm7yONC1qbplir.gif"
+      "http://i.imgur.com/vJL0E6t.gif"
+    ]
+
+  robot.respond /nope\s*$/i, (msg) ->
+    msg.send "http://www.reactiongifs.com/wp-content/uploads/2013/06/nope.gif"
+
+  robot.respond /fine/i, (msg) ->
+    msg.send ":fire::thisisfine::fire:"
+
+  robot.hear /robot\s+body/i, (msg) ->
+    msg.send atRandom [
+      "http://img.sharetv.com/shows/episodes/standard/345637.jpg"
+      "https://68.media.tumblr.com/d6d9c3286d944ef1bdbf3e41e2f99d48/tumblr_omhzugCO4R1tpri36o1_500.png"
+    ]
+
+  robot.hear /\bbee+[s]?\b/i, (msg) ->
+    msg.send "https://media.giphy.com/media/dcubXtnbck0RG/giphy.gif"
+
+  robot.hear /\b(?:tit downwards|breasted boobily)\b/i, (msg) ->
+    msg.send "http://imgur.com/TRAPYBX"
