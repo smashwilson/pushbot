@@ -25,7 +25,7 @@ module.exports = (robot) ->
     robot.brain.userForId user.id, newUser
 
   reloadUsers = ->
-    return unless robot.adapter.client?
+    return unless robot.adapter.client?.rtm?.dataStore?
 
     count = 0
     for id, user of robot.adapter.client.rtm.dataStore.users

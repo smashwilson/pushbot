@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -euo pipefail
+source bin/common/all.sh
+
+printf "Waiting for PostgreSQL to become available.\n"
+wait_for_postgres
+
+printf "Running npm tests.\n"
+npm test
+
+printf "Attempting to build Docker image %s.\n" "${IMAGE_TAG}"
+docker build \
+  --tag "${IMAGE_TAG}" \
+  --label party.pushbot.commit=$(git rev-parse HEAD) \
+  .

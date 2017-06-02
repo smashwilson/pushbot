@@ -27,3 +27,6 @@ export HUBOT_WEATHER_APIKEY=
 # lims
 
 export HUBOT_LISTS_ROOT=botdata/
+
+# debugging
+# export HUBOT_LOG_LEVEL=debug

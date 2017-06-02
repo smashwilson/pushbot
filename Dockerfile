@@ -1,9 +1,11 @@
-FROM node:4.1.1-slim
-MAINTAINER Ash Wilson <smashwilson@gmail.com>
+FROM node:7.9-alpine
+LABEL maintainer "Ash Wilson <smashwilson@gmail.com>"
 
-RUN apt-get update && apt-get install -y git
+ENV NPM_CONFIG_LOGLEVEL warn
+
+RUN apk add --no-cache bash postgresql-client
 RUN npm install -g coffee-script
-RUN useradd pushbot
+RUN adduser -s /bin/false -D -H pushbot
 RUN mkdir -p /usr/src/app
 
 WORKDIR /usr/src/app
@@ -13,4 +15,4 @@ ADD . /usr/src/app
 RUN chown -R pushbot:pushbot /usr/src/app
 
 USER pushbot
-ENTRYPOINT ["/usr/src/app/node_modules/.bin/hubot", "-a", "slack"]
+ENTRYPOINT /usr/src/app/bin/container/entrypoint.sh

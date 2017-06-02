@@ -1,0 +1,19 @@
+dist: trusty
+sudo: required
+language: node_js
+node_js:
+- node
+addons:
+  postgresql: '9.6'
+services:
+- docker
+- postgresql
+env:
+  global:
+  - DATABASE_URL=postgres://postgres@localhost/travis
+script:
+- bin/ci/test
+after_success:
+- bin/ci/push
+notifications:
+  email: false
