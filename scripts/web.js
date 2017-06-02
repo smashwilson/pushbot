@@ -6,14 +6,16 @@ const request = require('request');
 
 const PORT = 8080;
 const MAGICAL_WEAK_SPOT_TOKEN = process.env.MAGICAL_WEAK_SPOT_TOKEN || 'ni';
-const PRIOR_IP_ADDRESSES = (process.env.PRIOR_IP_ADDRESSES || '')
+const PRIOR_ADDRESSES = (process.env.PRIOR_ADDRESSES || '')
   .split(/,/)
   .filter(address => address.length > 0);
+const PRIOR_SCHEME = process.env.PRIOR_SCHEME || 'https';
+const PRIOR_PORT = parseInt(process.env.PRIOR_PORT || '443');
 
 module.exports = function (robot) {
   const app = express();
 
-  let accepting = PRIOR_IP_ADDRESSES.length === 0;
+  let accepting = PRIOR_ADDRESSES.length === 0;
   let killed = false;
 
   robot.receiveMiddleware((context, next, done) => {
@@ -28,7 +30,6 @@ module.exports = function (robot) {
   const subsystems = {
     slack: false,
     database: false,
-    stonith: PRIOR_IP_ADDRESSES.length === 0
   };
 
   robot.on('connected', () => {
@@ -42,10 +43,10 @@ module.exports = function (robot) {
   });
 
   Promise.all(
-    PRIOR_IP_ADDRESSES.map(addr => new Promise(resolve => {
+    PRIOR_ADDRESSES.map(addr => new Promise(resolve => {
       robot.logger.debug(`Terminating prior instance at ${addr}.`);
       request({
-        url: `https://${addr}:${PORT}/magical-weak-spot`,
+        url: `${PRIOR_SCHEME}://${addr}:${PRIOR_PORT}/magical-weak-spot`,
         method: 'DELETE',
         agentOptions: {
           checkServerIdentity(servername, cert) {
