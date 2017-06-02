@@ -12,6 +12,67 @@ const PRIOR_ADDRESSES = (process.env.PRIOR_ADDRESSES || '')
 const PRIOR_SCHEME = process.env.PRIOR_SCHEME || 'https';
 const PRIOR_PORT = parseInt(process.env.PRIOR_PORT || '443');
 
+class Status {
+  constructor() {
+    this.database = 'pending';
+    this.stonith = 'pending';
+
+    this.killed = false;
+
+    this.databasePromise = new Promise((resolve, reject) => {
+      this.databaseCallbacks = {resolve, reject};
+    });
+
+    this.stonithPromise = new Promise((resolve, reject) => {
+      this.stonithCallbacks = {resolve, reject};
+    });
+  }
+
+  databaseReady() {
+    this.database = 'ok';
+    this.databaseCallbacks.resolve();
+  }
+
+  databaseFailed() {
+    this.database = 'error';
+    this.databaseCallbacks.reject();
+  }
+
+  stonithReady() {
+    this.stonith = 'ok';
+    this.stonithCallbacks.resolve();
+  }
+
+  stonithFailed() {
+    this.stonith = 'failed';
+    this.stonithCallbacks.reject();
+  }
+
+  onlinePromise() {
+    return Promise.all([this.databasePromise, this.stonithPromise]);
+  }
+
+  kill() {
+    this.killed = true;
+  }
+
+  summarize() {
+    let overall = 'pending';
+
+    if (this.killed) {
+      overall = 'killed';
+    } else if (this.database === 'ok' && this.stonith === 'ok') {
+      overall = 'ok';
+    }
+
+    return {
+      database: this.database,
+      stonith: this.stonith,
+      status: overall
+    };
+  }
+}
+
 module.exports = function (robot) {
   const app = express();
 
@@ -27,20 +88,31 @@ module.exports = function (robot) {
     next(done);
   });
 
-  const subsystems = {
-    slack: false,
-    database: false,
+  const status = new Status();
+
+  status.onlinePromise().then(() => {
+    accepting = true;
+    robot.logger.debug('All system operational.')
+  }, err => {
+    robot.logger.error(`Oh no unable to launch properly:\n${err}`);
+    process.exit(1);
+  });
+
+  const databaseCheck = () => {
+    robot.postgres.any('SELECT 1;').then(() => {
+      status.databaseReady();
+      robot.logger.debug('Connected to database.');
+    }, err => {
+      status.databaseFailed();
+      robot.logger.error(`Unable to connect to database:\n${err}`);
+    });
   };
 
-  robot.on('connected', () => {
-    robot.logger.debug('Connected to Slack.');
-    subsystems.slack = true;
-
-    robot.getDatabase().none('SELECT 1;').then(() => {
-      subsystems.database = true;
-      robot.logger.debug('Connected to database.');
-    });
-  });
+  if (robot.postgres) {
+    databaseCheck();
+  } else {
+    robot.on('database-up', databaseCheck);
+  }
 
   Promise.all(
     PRIOR_ADDRESSES.map(addr => new Promise(resolve => {
@@ -67,8 +139,12 @@ module.exports = function (robot) {
         headers: {'x-token': MAGICAL_WEAK_SPOT_TOKEN},
         timeout: 30
       }, (error, response, body) => {
-        if (error || response.statusCode !== 200) {
-          robot.logger.error(`Unable to terminate pre-existing bot at ${addr}:\n${body}`);
+        if (error) {
+          robot.logger.warning(`Error when trying to terminate pre-existing bot at ${addr}:\n${error}`);
+        }
+
+        if (response && response.statusCode !== 200) {
+          robot.logger.warning(`Unable to terminate pre-existing bot at ${addr}:\n${body}`);
         }
 
         resolve();
@@ -76,27 +152,14 @@ module.exports = function (robot) {
     }))
   ).then(() => {
     robot.logger.debug('All prior instances terminated.');
-    subsystems.stonith = true;
+    status.stonithReady();
+  }, err => {
+    robot.logger.error(`Unable to terminate prior instances.\n${err}`);
+    status.stonithFailed();
   });
 
   app.get('/healthz', (req, res) => {
-    const result = {};
-
-    let allOk = true;
-    for (const subsystem of Object.keys(subsystems)) {
-      allOk = allOk && subsystems[subsystem];
-      result[subsystem] = subsystems[subsystem] ? 'ok' : 'pending';
-    }
-
-    if (killed) {
-      result.status = 'killed';
-    } else if (allOk) {
-      result.status = 'ok';
-    } else {
-      result.status = 'pending';
-    }
-
-    res.json(result);
+    res.json(status.summarize());
   });
 
   app.delete('/magical-weak-spot', (req, res) => {
@@ -109,7 +172,7 @@ module.exports = function (robot) {
     }
 
     accepting = false;
-    killed = true;
+    status.kill();
 
     robot.logger.info('Magical weak spot triggered. Entering quiet mode.');
     res.send('ok');
