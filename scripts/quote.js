@@ -5,7 +5,7 @@ const {createDocumentSet} = require('./documentset');
 const {Admin, QuotePontiff, PoetLaureate} = require('./roles');
 
 const limFormatter = (lines, speakers, mentions) => {
-  const body = lines.map(line => `> ${line.text}`).join('\n');
+  let body = lines.map(line => `> ${line.text}`).join('\n');
 
   const atSpeakers = Array.from(speakers, speaker => '@' + speaker);
 
