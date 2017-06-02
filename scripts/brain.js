@@ -32,6 +32,8 @@ module.exports = function (robot) {
     return robot.postgres;
   }
 
+  robot.emit('database-up');
+
   const loadAll = function () {
     const data = {}
 
