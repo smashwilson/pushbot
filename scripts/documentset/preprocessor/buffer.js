@@ -1,6 +1,5 @@
 // Accept the current contents of the user's buffer.
 
-const moment = require('moment');
 const createMentionDetector = require('./mentions');
 
 module.exports = function (robot, msg) {
