@@ -53,13 +53,13 @@ function addCommands(robot, documentSet, spec, feature) {
   }
 
   if (!feature.formatter) {
-    feature.formatter = (lines, speakers, mentions) => ({
+    feature.formatter = (lines, speakers, mentions, userTz) => ({
       body: lines
         .map(line => {
           if (line.isRaw()) {
             return line.text;
           } else {
-            return `[${line.timestamp.format('h:mm A D MMM YYYY')}] ${line.speaker}: ${line.text}`;
+            return `[${line.timestamp.tz('America/New_York').format('h:mm A D MMM YYYY')}] ${line.speaker}: ${line.text}`;
           }
         })
         .join('\n'),
