@@ -12,7 +12,7 @@
 #   hubot buffer clear - Empty your buffer.
 
 Line = require './models/line'
-moment = require 'moment'
+moment = require 'moment-timezone'
 
 MAX_CACHE_SIZE = 200
 
@@ -28,7 +28,7 @@ class Cache
     caches[roomName] ?= new Cache(roomName)
 
   append: (msg) ->
-    now = moment()
+    now = moment.tz()
     ls = (new Line(now, msg.message.user.name, line) for line in msg.message.text.split /\n/)
     ls.reverse()
 

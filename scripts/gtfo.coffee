@@ -6,7 +6,8 @@
 #   hubot gtfo - how soon can i gtfo?
 
 
-moment = require 'moment'
+moment = require 'moment-timezone'
+moment.tz.setDefault 'America/New_York'
 
 module.exports = (robot) ->
 
@@ -21,13 +22,16 @@ module.exports = (robot) ->
       # Look up your existing gtfo time.
       timeStr = robot.brain.data.gtfo[msg.message.user.id]
 
+    # Use Slack metadata to discover your current timezone.
+    userTz = msg.message.user.tz || 'America/New_York'
+
     if timeStr
       if timeStr.match /\d\d:\d\d/
-        time = moment(timeStr, 'HH:mm')
+        time = moment.tz(timeStr, 'HH:mm', userTz)
       else if timeStr.match /\d{4}/
-        time = moment(timeStr, 'HHmm')
+        time = moment.tz(timeStr, 'HHmm', userTz)
       else if timeStr.match /\d?\d:\d\d[aApP]/
-        time = moment(timeStr, 'hh:mma')
+        time = moment.tz(timeStr, 'hh:mma', userTz)
       else
         msg.reply "I only understand 16:00 (24-hour) or 4:00p (12-hour) formats."
         return
@@ -38,4 +42,4 @@ module.exports = (robot) ->
       msg.reply "I have no idea when you're leaving!"
       return
 
-    msg.reply "You are scheduled to GT the FO in #{moment.preciseDiff moment(), time}."
+    msg.reply "You are scheduled to GT the FO in #{moment.preciseDiff moment.tz(userTz), time}."
