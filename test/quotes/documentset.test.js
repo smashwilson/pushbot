@@ -1,7 +1,7 @@
 // Unit tests for the manipulations of arbitrary DocumentSets.
 
 const path = require('path');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 const Helper = require('hubot-test-helper');
 const helper = new Helper([]);
@@ -313,7 +313,7 @@ describe('createDocumentSet', function() {
 
       room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee');
 
-      const ts = hhmm => moment(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm');
+      const ts = hhmm => moment.tz(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm', 'America/New_York');
       const makeLine = obj => {
         obj.isRaw = () => false;
         return obj;
@@ -350,7 +350,7 @@ describe('createDocumentSet', function() {
 
       room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee');
 
-      const ts = hhmm => moment(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm');
+      const ts = hhmm => moment.tz(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm', 'America/New_York');
       const makeLine = obj => {
         obj.isRaw = () => false;
         return obj;
@@ -379,7 +379,7 @@ describe('createDocumentSet', function() {
 
       room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee');
 
-      const ts = hhmm => moment(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm');
+      const ts = hhmm => moment.tz(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm', 'America/New_York');
       const makeLine = obj => {
         obj.isRaw = () => false;
         return obj;
