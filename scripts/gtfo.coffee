@@ -7,6 +7,8 @@
 
 
 moment = require 'moment-timezone'
+require 'moment-precise-range-plugin'
+
 moment.tz.setDefault 'America/New_York'
 
 module.exports = (robot) ->
