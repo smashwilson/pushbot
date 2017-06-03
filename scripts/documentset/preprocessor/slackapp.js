@@ -1,6 +1,6 @@
 // Accept text copied and pasted from the Slack thick-client.
 
-const moment = require('moment');
+const moment = require('moment-timezone');
 const createMentionDetector = require('./mentions');
 const Line = require('../../models/line');
 
@@ -14,7 +14,7 @@ const rxTsLine = new RegExp(`^\\s*${TS}\\s*$`);
 const rxNewMessagesLine = new RegExp(`^\\s*new messages\\s*$`);
 
 function parseTs(ts) {
-  const parsed = moment(ts, ['h:mm a', 'H:mm'], true);
+  const parsed = moment.tz(ts, ['h:mm a', 'H:mm'], true, 'America/New_York');
   if (!parsed.isValid()) {
     throw new Error(`Invalid date: ${ts}`);
   }
