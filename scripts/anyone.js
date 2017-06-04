@@ -31,15 +31,14 @@ module.exports = function (robot) {
   })
 
   robot.respond(/anyone\s+here\s*$/, msg => {
-    const choices = allUserNames(user => user.presence === 'active')
+    const choices = allUserNames(user => user.slack.presence === 'active')
     msg.send(msg.random(choices))
   })
 
   robot.respond(/anyone\s+(?:but\s+me\s+here|here\s+but\s+me)\s*$/, msg => {
     const me = msg.message.user.name
     const choices = allUserNames(user => {
-      robot.logger.debug(`Considering user: ${require('util').inspect(user)}`)
-      return user.presence === 'active' && user.name !== me
+      return user.slack.presence === 'active' && user.name !== me
     })
     robot.logger.debug(`!anyone here but me choices: ${choices.join(' ')}`)
     if (choices.length > 0) {
