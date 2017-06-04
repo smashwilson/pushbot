@@ -40,7 +40,6 @@ module.exports = function (robot) {
     const choices = allUserNames(user => {
       return user.slack.presence === 'active' && user.name !== me
     })
-    robot.logger.debug(`!anyone here but me choices: ${choices.join(' ')}`)
     if (choices.length > 0) {
       msg.send(msg.random(choices))
     }
