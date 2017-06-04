@@ -285,7 +285,7 @@ function statsCommand(robot, documentSet, spec, feature) {
   } else {
     robot.commands.push(
       `hubot ${spec.name}stats - See who has the most ${spec.plural}.`,
-      `hubot ${spec.name}stats @<user> - See the number of ${spec.plural} attributed to <user>.`
+      `hubot ${spec.name}stats <user> - See the number of ${spec.plural} attributed to <user>.`
     );
   }
 
@@ -305,10 +305,10 @@ function statsCommand(robot, documentSet, spec, feature) {
           return;
         }
 
-        const plural = countStr => `**${countStr}** ${countStr === '1' ? spec.name : spec.plural}`;
+        const plural = countStr => `*${countStr}* ${countStr === '1' ? spec.name : spec.plural}`;
 
-        msg.send(`${target} is **#${stat.getRank()}**, having spoken in ${plural(stat.getSpokenCount())} ` +
-          `and being mentioned in **${stat.getMentionCount()}**.`);
+        msg.send(`${target} is *#${stat.getRank()}*, having spoken in ${plural(stat.getSpokenCount())} ` +
+          `and being mentioned in *${stat.getMentionCount()}*.`);
       } else {
         let output = '```\n';
 
