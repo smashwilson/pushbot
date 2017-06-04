@@ -40,7 +40,7 @@ module.exports = function (robot) {
     const choices = allUserNames(user => {
       return user.presence === 'active' && user.name !== me
     })
-    if (choices.length > 1) {
+    if (choices.length > 0) {
       msg.send(msg.random(choices))
     }
   })
