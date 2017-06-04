@@ -9,7 +9,7 @@ class Line {
 
   static deserialize (object) {
     return new Line(
-      moment.tz.unix(object.timestamp, 'America/New_York'),
+      moment.unix(object.timestamp).tz('America/New_York'),
       object.speaker,
       object.text
     )
