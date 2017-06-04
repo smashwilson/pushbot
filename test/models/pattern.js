@@ -72,10 +72,22 @@ describe('Pattern', function () {
   })
 
   describe('matches', function () {
-    let room
+    let room, cache
 
-    beforeEach(function () {
+    beforeEach(async function () {
       room = helper.createRoom()
+
+      cache = Cache.forChannel(room.robot, 'C12345678')
+      const lines = [
+        'aaa 000', 'bbb 000', 'ccc 000', 'ddd 000', 'eee 000',
+        'aaa 111', 'bbb 111', 'ccc 111', 'ddd 111', 'eee 111'
+      ]
+      for (const line of lines) {
+        cache.append({message: {
+          text: line,
+          user: {name: 'someone'}
+        }})
+      }
     })
 
     afterEach(function () {
@@ -83,9 +95,36 @@ describe('Pattern', function () {
       Cache.clear()
     })
 
-    it('the most recent exact')
-    it('the most recent regular expression match')
-    it('captures between patterns')
-    it('returns an empty array if no matches are found')
+    it('the most recent exact', function () {
+      const pattern = Pattern.parse('"ccc"')[0]
+      const matches = pattern.matchesIn(cache)
+
+      expect(matches).to.have.length(1)
+      expect(matches[0].text).to.equal('ccc 111')
+    })
+
+    it('the most recent regular expression match', function () {
+      const pattern = Pattern.parse('/b+/')[0]
+      const matches = pattern.matchesIn(cache)
+
+      expect(matches).to.have.length(1)
+      expect(matches[0].text).to.equal('bbb 111')
+    })
+
+    it('captures between patterns', function () {
+      const pattern = Pattern.parse('"111" ... "ccc"')[0]
+      const matches = pattern.matchesIn(cache)
+
+      expect(matches).to.have.length(2)
+      expect(matches[0].text).to.equal('bbb 111')
+      expect(matches[1].text).to.equal('ccc 111')
+    })
+
+    it('returns an empty array if no matches are found', function () {
+      const pattern = Pattern.parse('"nope"')[0]
+      const matches = pattern.matchesIn(cache)
+
+      expect(matches).to.have.length(0)
+    })
   })
 })
