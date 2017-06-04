@@ -1122,7 +1122,7 @@ describe('createDocumentSet', function() {
         const messages = helpLines();
 
         expect(messages).to.include('hubot blarfstats - See who has the most blarfs.');
-        expect(messages).to.include('hubot blarfstats @<user> - See the number of blarfs attributed to <user>.');
+        expect(messages).to.include('hubot blarfstats <user> - See the number of blarfs attributed to <user>.');
       });
     });
 
