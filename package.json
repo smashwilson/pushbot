@@ -58,7 +58,7 @@
     "mocha": "^3.2.0"
   },
   "scripts": {
-    "lint": "eslint lib/**",
+    "lint": "eslint scripts/**.js test/**.js",
     "test": "mocha --compilers coffee:coffee-script --require test/globals.js --colors --recursive"
   }
 }
