@@ -11,9 +11,16 @@ services:
 env:
   global:
   - DATABASE_URL=postgres://postgres@localhost/travis
+before_install:
+- curl -s https://raw.githubusercontent.com/smashwilson/azurefire-infra/service-bunp/service/ci.sh -o ci.sh
+- chmod +x ci.sh
 script:
 - bin/ci/test
-after_success:
-- bin/ci/push
+- ci.sh build
+after_success: ci.sh after_success
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: ci.sh deploy
 notifications:
   email: false
