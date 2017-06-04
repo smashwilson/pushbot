@@ -59,6 +59,6 @@
   },
   "scripts": {
     "lint": "eslint scripts/**.js test/**.js",
-    "test": "mocha --compilers coffee:coffee-script --require test/globals.js --colors --recursive"
+    "test": "npm run lint && mocha --compilers coffee:coffee-script --require test/globals.js --colors --recursive"
   }
 }
