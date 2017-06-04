@@ -4,5 +4,8 @@
         "standard",
         "promise"
     ],
+    "env": {
+      "node": true
+    },
     "root": true
 }
