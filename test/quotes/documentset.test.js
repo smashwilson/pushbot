@@ -1106,7 +1106,7 @@ describe('createDocumentSet', function() {
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarfstats @person-two'],
-          ['hubot', 'person-two is **#2**, having spoken in **1** blarf and being mentioned in **2**.']
+          ['hubot', 'person-two is *#2*, having spoken in *1* blarf and being mentioned in *2*.']
         ]);
       });
     });
@@ -1122,7 +1122,7 @@ describe('createDocumentSet', function() {
         const messages = helpLines();
 
         expect(messages).to.include('hubot blarfstats - See who has the most blarfs.');
-        expect(messages).to.include('hubot blarfstats @<user> - See the number of blarfs attributed to <user>.');
+        expect(messages).to.include('hubot blarfstats <user> - See the number of blarfs attributed to <user>.');
       });
     });
 
