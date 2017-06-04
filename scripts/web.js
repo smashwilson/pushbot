@@ -77,7 +77,6 @@ module.exports = function (robot) {
   const app = express()
 
   let accepting = PRIOR_ADDRESSES.length === 0
-  let killed = false
 
   robot.receiveMiddleware((context, next, done) => {
     if (!accepting) {

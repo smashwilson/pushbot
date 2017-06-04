@@ -87,6 +87,8 @@ module.exports = function (robot) {
       yield upsertBatch(batch)
       count += batch.length
     }
+
+    robot.logger.debug(`Brain: Persisted ${count} rows to the database.`)
   })
 
   robot.brain.setAutoSave(false)
