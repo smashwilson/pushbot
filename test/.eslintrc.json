@@ -1,0 +1,13 @@
+{
+  "env": {
+    "node": true,
+    "mocha": true
+  },
+  "globals": {
+    "expect": true,
+    "database": true,
+    "delay": true,
+    "usesDatabase": true,
+    "loadHelp": true    
+  }
+}

@@ -46,12 +46,19 @@
   },
   "devDependencies": {
     "chai": "^3.5.0",
+    "eslint": "^3.19.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-node": "^5.0.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
     "fs-promise": "^2.0.2",
     "hubot-test-helper": "^1.5.1",
     "json-stable-stringify": "^1.0.1",
     "mocha": "^3.2.0"
   },
   "scripts": {
-    "test": "mocha --compilers coffee:coffee-script --require test/globals.js --colors --recursive"
+    "lint": "eslint scripts/**.js test/**.js",
+    "test": "npm run lint && mocha --compilers coffee:coffee-script --require test/globals.js --colors --recursive"
   }
 }
