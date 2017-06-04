@@ -1106,7 +1106,7 @@ describe('createDocumentSet', function() {
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot blarfstats @person-two'],
-          ['hubot', 'person-two is **#2**, having spoken in **1** blarf and being mentioned in **2**.']
+          ['hubot', 'person-two is *#2*, having spoken in *1* blarf and being mentioned in *2*.']
         ]);
       });
     });
