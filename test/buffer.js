@@ -2,6 +2,7 @@ const Helper = require('hubot-test-helper')
 const helper = new Helper('../scripts/buffer.js')
 
 const Cache = require('../scripts/models/cache')
+const Buffer = require('../scripts/models/buffer')
 
 describe('!buffer', function () {
   let room, dm
@@ -13,7 +14,9 @@ describe('!buffer', function () {
   afterEach(function () {
     room.destroy()
     dm && dm.destroy()
+
     Cache.clear()
+    Buffer.clear()
   })
 
   it('accumulates spoken text into the channel cache', async function () {
@@ -60,9 +63,52 @@ describe('!buffer', function () {
   })
 
   describe('add', function () {
-    it('appends matching lines from the cache to the buffer')
-    it('reports if any pattern matches no lines')
-    it('reports problems parsing the patterns')
+    let buffer
+
+    beforeEach(async function () {
+      await room.user.say('me', 'aaa')
+      await room.user.say('me', 'bbb')
+      await room.user.say('me', 'ccc')
+      await room.user.say('me', 'ddd')
+      await room.user.say('me', 'eee')
+      await delay()
+
+      buffer = Buffer.forUser(room.robot, 'me')
+    })
+
+    it('appends matching lines from the cache to the buffer', async function () {
+      await room.user.say('me', '@hubot buffer add "bb" ... "dd"')
+      await delay()
+
+      expect(room.messages[room.messages.length - 1][1]).to.equal(
+        '@me Added 3 lines to your buffer.'
+      )
+      expect(buffer.contents.map(each => each.text)).to.deep.equal([
+        'bbb', 'ccc', 'ddd'
+      ])
+    })
+
+    it('reports if any pattern matches no lines', async function () {
+      await room.user.say('me', '@hubot buffer add "dd" "zzz" "a" .. "b"')
+      await delay()
+
+      expect(room.messages[room.messages.length - 1][1]).to.equal(
+        '@me No lines were matched by the pattern "zzz".\n' +
+        'The earliest line I have is "me: aaa".'
+      )
+      expect(buffer.contents).to.have.length(0)
+    })
+
+    it('reports problems parsing the patterns', async function () {
+      await room.user.say('me', '@hubot buffer add oops')
+      await delay()
+
+      expect(room.messages[room.messages.length - 1][1]).to.equal(
+        '@me :no_entry_sign: You need to quote patterns with \' or " for this command.\n' +
+        'Call `/dm hubot buffer help` for a pattern syntax refresher.'
+      )
+      expect(buffer.contents).to.have.length(0)
+    })
   })
 
   describe('remove', function () {

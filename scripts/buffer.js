@@ -105,7 +105,6 @@ module.exports = function (robot) {
       msg.reply(`Added ${plural('line', lines)} to your buffer.`)
       showIfDirect(msg, buffer)
     } catch (e) {
-      robot.logger.error(e)
       msg.reply(
         `:no_entry_sign: ${e.message}\n` +
         `Call \`/dm ${robot.name} buffer help\` for a pattern syntax refresher.`
