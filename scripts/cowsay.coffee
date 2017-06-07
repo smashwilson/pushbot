@@ -9,7 +9,7 @@ module.exports = (robot) ->
     if msg.match[2].trim().length > 0
       message = msg.match[2]
     else
-      message = robot.mostRecent(msg)
+      message = robot.mostRecent(msg)?.text
 
     msg
       .http("http://cowsay.morecode.org/say")

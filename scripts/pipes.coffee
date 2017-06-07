@@ -62,7 +62,7 @@ module.exports = (robot) ->
   ]
 
   robot.respond /elcor\s*([^]*)/i, (msg) ->
-    message = if msg.match[1].trim().length > 0 then msg.match[1] else robot.mostRecent(msg)
+    message = if msg.match[1].trim().length > 0 then msg.match[1] else robot.mostRecent(msg)?.text
 
     adjectives = EMOTIONS
 
@@ -73,7 +73,7 @@ module.exports = (robot) ->
     msg.send output.join("\n")
 
   robot.respond /hk47\s*([^]*)/i, (msg) ->
-    message = if msg.match[1].trim().length > 0 then msg.match[1] else robot.mostRecent(msg)
+    message = if msg.match[1].trim().length > 0 then msg.match[1] else robot.mostRecent(msg)?.text
 
     adjectives = [
       "Translation"
