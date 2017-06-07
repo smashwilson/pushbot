@@ -282,7 +282,11 @@ module.exports = (robot) ->
     ]
 
   robot.hear /\bbee+[s]?\b/i, (msg) ->
-    msg.send "https://media.giphy.com/media/dcubXtnbck0RG/giphy.gif"
+    msg.send atRandom [
+      "https://media.giphy.com/media/dcubXtnbck0RG/giphy.gif"
+      "http://i.imgur.com/hnGNH.gif"
+      "http://i.imgur.com/tZ3yQMb.gif"
+     ]
 
   robot.hear /\b(?:tit downwards|breasted boobily)\b/i, (msg) ->
     msg.send "http://imgur.com/TRAPYBX"
