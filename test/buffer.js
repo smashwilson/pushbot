@@ -190,6 +190,22 @@ describe.only('!buffer', function () {
   })
 
   describe('clear', function () {
-    it('removes all buffer entries')
+    it('removes all buffer entries', async function () {
+      await room.user.say('me', 'aaa')
+      await room.user.say('me', 'bbb')
+      await room.user.say('me', '@hubot buffer add "aa" "bb"')
+      await delay()
+
+      const buffer = Buffer.forUser(room.robot, 'me')
+      expect(buffer.contents).to.have.length(2)
+
+      await room.user.say('me', '@hubot buffer clear')
+      await delay()
+
+      expect(room.messages[room.messages.length - 1][1]).to.equal(
+        '@me Buffer forgotten.'
+      )
+      expect(buffer.contents).to.have.length(0)
+    })
   })
 })
