@@ -319,9 +319,11 @@ describe('createDocumentSet', function () {
       }
 
       const buffer = room.robot.bufferForUserId('me')
-      buffer.append(makeLine({timestamp: ts('9:30'), speaker: 'person-one', text: 'one one one'}))
-      buffer.append(makeLine({timestamp: ts('9:31'), speaker: 'person-two', text: 'two two two'}))
-      buffer.append(makeLine({timestamp: ts('9:32'), speaker: 'person-three', text: 'three three three'}))
+      buffer.append([
+        makeLine({timestamp: ts('9:30'), speaker: 'person-one', text: 'one one one'}),
+        makeLine({timestamp: ts('9:31'), speaker: 'person-two', text: 'two two two'}),
+        makeLine({timestamp: ts('9:32'), speaker: 'person-three', text: 'three three three'})
+      ])
 
       const expectedBlarf = '[9:30 AM 1 Apr 2017] person-one: one one one\n' +
         '[9:31 AM 1 Apr 2017] person-two: two two two\n' +
@@ -356,9 +358,11 @@ describe('createDocumentSet', function () {
       }
 
       const buffer = room.robot.bufferForUserId('me')
-      buffer.append(makeLine({timestamp: ts('10:00'), speaker: 'person-one', text: 'person-four: one one one'}))
-      buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-two', text: 'two two two'}))
-      buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-one', text: 'three three three @person-one'}))
+      buffer.append([
+        makeLine({timestamp: ts('10:00'), speaker: 'person-one', text: 'person-four: one one one'}),
+        makeLine({timestamp: ts('10:01'), speaker: 'person-two', text: 'two two two'}),
+        makeLine({timestamp: ts('10:01'), speaker: 'person-one', text: 'three three three @person-one'})
+      ])
 
       const expectedBlarf = '[10:00 AM 1 Apr 2017] person-one: person-four: one one one\n' +
         '[10:01 AM 1 Apr 2017] person-two: two two two\n' +
@@ -385,9 +389,11 @@ describe('createDocumentSet', function () {
       }
 
       const buffer = room.robot.bufferForUserId('me')
-      buffer.append(makeLine({timestamp: ts('10:00'), speaker: 'person-one', text: 'one one one @person-two'}))
-      buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-two', text: 'two two two'}))
-      buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-one', text: 'three three three person-three'}))
+      buffer.append([
+        makeLine({timestamp: ts('10:00'), speaker: 'person-one', text: 'one one one @person-two'}),
+        makeLine({timestamp: ts('10:01'), speaker: 'person-two', text: 'two two two'}),
+        makeLine({timestamp: ts('10:01'), speaker: 'person-one', text: 'three three three person-three'})
+      ])
 
       const expectedBlarf = '[10:00 AM 1 Apr 2017] person-one: one one one @person-two\n' +
         '[10:01 AM 1 Apr 2017] person-two: two two two\n' +
