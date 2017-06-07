@@ -4,7 +4,7 @@ const helper = new Helper('../scripts/buffer.js')
 const Cache = require('../scripts/models/cache')
 const Buffer = require('../scripts/models/buffer')
 
-describe('!buffer', function () {
+describe.only('!buffer', function () {
   let room, dm
 
   beforeEach(function () {
@@ -158,8 +158,35 @@ describe('!buffer', function () {
   })
 
   describe('show', function () {
-    it('reports an empty buffer')
-    it('reports buffer contents and indices')
+    beforeEach(async function () {
+      await room.user.say('me', 'aaa')
+      await room.user.say('me', 'bbb')
+      await room.user.say('me', 'ccc')
+      await room.user.say('me', 'ddd')
+      await room.user.say('me', 'eee')
+    })
+
+    it('reports an empty buffer', async function () {
+      await room.user.say('me', '@hubot buffer show')
+      await delay()
+
+      expect(room.messages[room.messages.length - 1][1]).to.equal(
+        'Your buffer is currently empty.'
+      )
+    })
+
+    it('reports buffer contents and indices', async function () {
+      await room.user.say('me', '@hubot buffer add "bbb" ... "ddd"')
+      await delay()
+      await room.user.say('me', '@hubot buffer show')
+      await delay()
+
+      expect(room.messages[room.messages.length - 1][1]).to.equal(
+        '_(0)_ me: bbb\n' +
+        '_(1)_ me: ccc\n' +
+        '_(2)_ me: ddd'
+      )
+    })
   })
 
   describe('clear', function () {
