@@ -318,7 +318,7 @@ describe('createDocumentSet', function () {
         return obj
       }
 
-      const buffer = room.robot.bufferForUserName('me')
+      const buffer = room.robot.bufferForUserId('me')
       buffer.append(makeLine({timestamp: ts('9:30'), speaker: 'person-one', text: 'one one one'}))
       buffer.append(makeLine({timestamp: ts('9:31'), speaker: 'person-two', text: 'two two two'}))
       buffer.append(makeLine({timestamp: ts('9:32'), speaker: 'person-three', text: 'three three three'}))
@@ -355,7 +355,7 @@ describe('createDocumentSet', function () {
         return obj
       }
 
-      const buffer = room.robot.bufferForUserName('me')
+      const buffer = room.robot.bufferForUserId('me')
       buffer.append(makeLine({timestamp: ts('10:00'), speaker: 'person-one', text: 'person-four: one one one'}))
       buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-two', text: 'two two two'}))
       buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-one', text: 'three three three @person-one'}))
@@ -384,7 +384,7 @@ describe('createDocumentSet', function () {
         return obj
       }
 
-      const buffer = room.robot.bufferForUserName('me')
+      const buffer = room.robot.bufferForUserId('me')
       buffer.append(makeLine({timestamp: ts('10:00'), speaker: 'person-one', text: 'one one one @person-two'}))
       buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-two', text: 'two two two'}))
       buffer.append(makeLine({timestamp: ts('10:01'), speaker: 'person-one', text: 'three three three person-three'}))
