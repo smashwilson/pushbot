@@ -123,13 +123,14 @@ module.exports = function (robot) {
     }
     if (invalid.length > 1) {
       msg.reply(`:no_entry_sign: ${invalid.join(', ')} are not valid buffer indices.`)
+      return
     }
 
     indices.sort()
     indices.reverse()
 
     for (let i = 0; i < indices.length; i++) {
-      buffer.remove(i)
+      buffer.remove(indices[i])
     }
 
     const suffix = indices.length === 1 ? 'y' : 'ies'

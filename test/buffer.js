@@ -112,8 +112,49 @@ describe('!buffer', function () {
   })
 
   describe('remove', function () {
-    it('removes buffer entries by index')
-    it('reports an error for invalid indices')
+    let buffer
+
+    beforeEach(async function () {
+      await room.user.say('me', 'aaa 000')
+      await room.user.say('me', 'bbb 000') // 0
+      await room.user.say('me', 'ccc 000') // 1
+      await room.user.say('me', 'ddd 000') // 2
+      await room.user.say('me', 'eee 000') // 3
+      await room.user.say('me', 'aaa 111') // 4
+      await room.user.say('me', 'bbb 111') // 5
+      await room.user.say('me', 'ccc 111') // 6
+      await room.user.say('me', 'ddd 111') // 7
+      await room.user.say('me', 'eee 111')
+      await room.user.say('me', '@hubot buffer add "bbb 000" ... "ddd 111"')
+      await delay()
+
+      buffer = Buffer.forUser(room.robot, 'me')
+    })
+
+    it('removes buffer entries by index', async function () {
+      await room.user.say('me', '@hubot buffer remove 6 2 4 1')
+      await delay()
+
+      expect(room.messages[room.messages.length - 1][1]).to.equal(
+        '@me Removed 4 buffer entries.'
+      )
+      expect(buffer.contents.map(each => each.text)).to.deep.equal([
+        'bbb 000', 'eee 000', 'bbb 111', 'ddd 111'
+      ])
+    })
+
+    it('reports an error for invalid indices', async function () {
+      await room.user.say('me', '@hubot buffer remove 10 2 12 3')
+      await delay()
+
+      expect(room.messages[room.messages.length - 1][1]).to.equal(
+        '@me :no_entry_sign: 10, 12 are not valid buffer indices.'
+      )
+      expect(buffer.contents.map(each => each.text)).to.deep.equal([
+        'bbb 000', 'ccc 000', 'ddd 000', 'eee 000',
+        'aaa 111', 'bbb 111', 'ccc 111', 'ddd 111'
+      ])
+    })
   })
 
   describe('show', function () {
