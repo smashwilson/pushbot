@@ -4,7 +4,7 @@ const helper = new Helper('../scripts/buffer.js')
 const Cache = require('../scripts/models/cache')
 const Buffer = require('../scripts/models/buffer')
 
-describe.only('!buffer', function () {
+describe('!buffer', function () {
   let room, dm
 
   beforeEach(function () {
