@@ -310,7 +310,7 @@ describe('createDocumentSet', function () {
 
       documentSet = createDocumentSet(room.robot, 'blarf', {add: true})
 
-      room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee')
+      room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.js')
 
       const ts = hhmm => moment.tz(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm', 'America/New_York')
       const makeLine = obj => {
@@ -347,7 +347,7 @@ describe('createDocumentSet', function () {
 
       documentSet = createDocumentSet(room.robot, 'blarf', {add: true})
 
-      room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee')
+      room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.js')
 
       const ts = hhmm => moment.tz(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm', 'America/New_York')
       const makeLine = obj => {
@@ -376,7 +376,7 @@ describe('createDocumentSet', function () {
 
       documentSet = createDocumentSet(room.robot, 'blarf', {add: true})
 
-      room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.coffee')
+      room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.js')
 
       const ts = hhmm => moment.tz(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm', 'America/New_York')
       const makeLine = obj => {
