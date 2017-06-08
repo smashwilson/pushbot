@@ -6,7 +6,7 @@
 #   hubot blockquote - Nest input within a blockquote
 
 inputFrom = (msg) ->
-  message = if msg.match[1].trim().length > 0 then msg.match[1] else robot.mostRecent(msg)
+  message = if msg.match[1].trim().length > 0 then msg.match[1] else robot.mostRecent(msg)?.text
   return '' unless message?
   message.replace /^\s*/, ""
 

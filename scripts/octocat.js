@@ -7,7 +7,7 @@ const request = require('request')
 
 module.exports = function (robot) {
   robot.respond(/octosay( me)?\s*([^]*)/i, msg => {
-    const message = msg.match[2].trim().length > 0 ? msg.match[2] : robot.mostRecent(msg)
+    const message = msg.match[2].trim().length > 0 ? msg.match[2] : robot.mostRecent(msg).text
 
     request({
       uri: 'https://api.github.com/octocat',
