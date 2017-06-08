@@ -7,7 +7,7 @@ describe('Cache', function () {
   let room
 
   beforeEach(function () {
-    room = helper.createRoom()
+    room = helper.createRoom({httpd: false})
   })
 
   afterEach(function () {

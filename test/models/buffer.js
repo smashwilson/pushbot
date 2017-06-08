@@ -10,7 +10,7 @@ describe('Buffer', function () {
   let room, buffer
 
   beforeEach(function () {
-    room = helper.createRoom()
+    room = helper.createRoom({httpd: false})
     buffer = Buffer.forUser(room.robot, 'U123')
   })
 

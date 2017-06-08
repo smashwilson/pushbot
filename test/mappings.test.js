@@ -5,7 +5,7 @@ describe('mappings', function () {
   let room
 
   beforeEach(function () {
-    room = helper.createRoom()
+    room = helper.createRoom({httpd: false})
 
     room.robot.postgres = global.database
 

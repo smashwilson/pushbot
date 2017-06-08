@@ -75,7 +75,7 @@ describe('Pattern', function () {
     let room, cache
 
     beforeEach(async function () {
-      room = helper.createRoom()
+      room = helper.createRoom({httpd: false})
 
       cache = Cache.forChannel(room.robot, 'C12345678')
       const lines = [
