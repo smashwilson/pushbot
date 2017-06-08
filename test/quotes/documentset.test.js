@@ -7,6 +7,7 @@ const Helper = require('hubot-test-helper')
 const helper = new Helper([])
 
 const {createDocumentSet} = require('../../scripts/documentset')
+const Line = require('../../scripts/models/line')
 
 const OnlyMe = {
   verify: (robot, msg) => {
@@ -313,16 +314,11 @@ describe('createDocumentSet', function () {
       room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.js')
 
       const ts = hhmm => moment.tz(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm', 'America/New_York')
-      const makeLine = obj => {
-        obj.isRaw = () => false
-        return obj
-      }
-
       const buffer = room.robot.bufferForUserId('me')
       buffer.append([
-        makeLine({timestamp: ts('9:30'), speaker: 'person-one', text: 'one one one'}),
-        makeLine({timestamp: ts('9:31'), speaker: 'person-two', text: 'two two two'}),
-        makeLine({timestamp: ts('9:32'), speaker: 'person-three', text: 'three three three'})
+        new Line(ts('9:30'), 'person-one', 'one one one'),
+        new Line(ts('9:31'), 'person-two', 'two two two'),
+        new Line(ts('9:32'), 'person-three', 'three three three')
       ])
 
       const expectedBlarf = '[9:30 AM 1 Apr 2017] person-one: one one one\n' +
@@ -352,16 +348,11 @@ describe('createDocumentSet', function () {
       room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.js')
 
       const ts = hhmm => moment.tz(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm', 'America/New_York')
-      const makeLine = obj => {
-        obj.isRaw = () => false
-        return obj
-      }
-
       const buffer = room.robot.bufferForUserId('me')
       buffer.append([
-        makeLine({timestamp: ts('10:00'), speaker: 'person-one', text: 'person-four: one one one'}),
-        makeLine({timestamp: ts('10:01'), speaker: 'person-two', text: 'two two two'}),
-        makeLine({timestamp: ts('10:01'), speaker: 'person-one', text: 'three three three @person-one'})
+        new Line(ts('10:00'), 'person-one', 'person-four: one one one'),
+        new Line(ts('10:01'), 'person-two', 'two two two'),
+        new Line(ts('10:01'), 'person-one', 'three three three @person-one')
       ])
 
       const expectedBlarf = '[10:00 AM 1 Apr 2017] person-one: person-four: one one one\n' +
@@ -383,16 +374,11 @@ describe('createDocumentSet', function () {
       room.robot.loadFile(path.join(__dirname, '..', '..', 'scripts'), 'buffer.js')
 
       const ts = hhmm => moment.tz(`2017-04-01 ${hhmm}`, 'YYYY-MM-DD HH:mm', 'America/New_York')
-      const makeLine = obj => {
-        obj.isRaw = () => false
-        return obj
-      }
-
       const buffer = room.robot.bufferForUserId('me')
       buffer.append([
-        makeLine({timestamp: ts('10:00'), speaker: 'person-one', text: 'one one one @person-two'}),
-        makeLine({timestamp: ts('10:01'), speaker: 'person-two', text: 'two two two'}),
-        makeLine({timestamp: ts('10:01'), speaker: 'person-one', text: 'three three three person-three'})
+        new Line(ts('10:00'), 'person-one', 'one one one @person-two'),
+        new Line(ts('10:01'), 'person-two', 'two two two'),
+        new Line(ts('10:01'), 'person-one', 'three three three person-three')
       ])
 
       const expectedBlarf = '[10:00 AM 1 Apr 2017] person-one: one one one @person-two\n' +
