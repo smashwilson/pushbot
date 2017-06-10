@@ -1,8 +1,14 @@
 // Description:
 //   Entrypoint for the web API.
 
+const fs = require('fs')
+const path = require('path')
 const express = require('express')
 const request = require('request')
+const graphqlHTTP = require('express-graphql')
+const {buildSchema} = require('graphql')
+
+const root = require('./api/root')
 
 const PORT = 8080
 const MAGICAL_WEAK_SPOT_TOKEN = process.env.MAGICAL_WEAK_SPOT_TOKEN || 'ni'
@@ -180,4 +186,13 @@ module.exports = function (robot) {
   app.listen(PORT, () => {
     robot.logger.debug(`Web API is listening on port ${PORT}.`)
   })
+
+  const schemaPath = path.join(__dirname, 'api', 'schema.graphql')
+  const schema = buildSchema(fs.readFileSync(schemaPath, {encoding: 'utf8'}))
+
+  app.use('/graphql', graphqlHTTP({
+    schema,
+    rootValue: root,
+    graphiql: true
+  }))
 }
