@@ -4,6 +4,7 @@
 const fs = require('fs')
 const path = require('path')
 const express = require('express')
+const cookieSession = require('cookie-session')
 const request = require('request')
 const graphqlHTTP = require('express-graphql')
 const {buildSchema} = require('graphql')
@@ -20,6 +21,7 @@ const PRIOR_ADDRESSES = (process.env.PRIOR_ADDRESSES || '')
 const PRIOR_SCHEME = process.env.PRIOR_SCHEME || 'https'
 const PRIOR_PORT = parseInt(process.env.PRIOR_PORT || '443')
 
+const SESSION_SECRET = process.env.SESSION_SECRET
 const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID
 const SLACK_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET
 const SLACK_TEAM_ID = process.env.SLACK_TEAM_ID
@@ -87,7 +89,96 @@ class Status {
 }
 
 module.exports = function (robot) {
+  // Passport
+
+  if (PASSPORT_DEV_ID) {
+    robot.logger.warning(`Hosting API with dev ID: ${PASSPORT_DEV_ID}`)
+  }
+
+  passport.use(new SlackStrategy({
+    clientID: SLACK_CLIENT_ID,
+    clientSecret: SLACK_CLIENT_SECRET,
+    scope: ['identity.basic']
+  }, (accessToken, refreshToken, profile, done) => {
+    robot.logger.debug(`Log-in attempt with profile: ${JSON.stringify(profile)}.`)
+
+    if (profile.team.id !== SLACK_TEAM_ID) {
+      robot.logger.debug(`Incorrect team: ${profile.team.id}.`)
+      return done(null, false, {
+        message: `Please log in with the correct team.`
+      })
+    }
+
+    const uid = PASSPORT_DEV_ID || profile.id
+    const existing = robot.brain.users()[uid]
+    if (!existing) {
+      robot.logger.debug(`No user with id ${uid}.`)
+      return done(null, false, {
+        message: "Senpai @pushbot hasn't noticed you yet."
+      })
+    }
+
+    robot.logger.info(`User authenticated: ${existing.id} ${existing.name}`)
+    done(null, existing)
+  }))
+
+  passport.serializeUser((user, done) => done(null, user.id))
+  passport.deserializeUser((id, done) => done(null, robot.brain.users()[id]))
+
+  // Express app
+
   const app = express()
+
+  app.use(cookieSession({
+    secret: SESSION_SECRET,
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000
+    }
+  }))
+  app.use(passport.initialize())
+  app.use(passport.session())
+
+  app.get('/wat', (req, res) => {
+    res.json({
+      session: req.session,
+      user: req.user
+    })
+  })
+
+  app.get('/auth/slack',
+    passport.authenticate('slack')
+  )
+
+  app.get('/auth/slack/callback',
+    passport.authenticate('slack'),
+    (req, res) => {
+      req.session.save()
+      res.json(req.user)
+    }
+  )
+
+  function ensureAuthenticated (req, res, next) {
+    if (req.isAuthenticated()) {
+      robot.logger.debug('Request authenticated')
+      return next()
+    }
+
+    robot.logger.debug('Request not authenticated')
+    res.redirect('/auth/slack')
+  }
+
+  // GraphQL
+
+  const schemaPath = path.join(__dirname, 'api', 'schema.graphql')
+  const schema = buildSchema(fs.readFileSync(schemaPath, {encoding: 'utf8'}))
+
+  app.use('/graphql', ensureAuthenticated, graphqlHTTP({
+    schema,
+    rootValue: root,
+    graphiql: true
+  }))
+
+  // Stonith
 
   let accepting = PRIOR_ADDRESSES.length === 0
 
@@ -193,73 +284,6 @@ module.exports = function (robot) {
     robot.logger.info('Magical weak spot triggered. Entering quiet mode.')
     res.send('ok')
   })
-
-  // Passport
-
-  if (PASSPORT_DEV_ID) {
-    robot.logger.warning(`Hosting API with dev ID: ${PASSPORT_DEV_ID}`)
-  }
-
-  passport.use(new SlackStrategy({
-    clientID: SLACK_CLIENT_ID,
-    clientSecret: SLACK_CLIENT_SECRET,
-    scope: ['identity.basic']
-  }, (accessToken, refreshToken, profile, done) => {
-    robot.logger.debug(`Log-in attempt with profile: ${JSON.stringify(profile)}.`)
-
-    if (profile.team.id !== SLACK_TEAM_ID) {
-      robot.logger.debug(`Incorrect team: ${profile.team.id}.`)
-      return done(null, false, {
-        message: `Please log in with the correct team.`
-      })
-    }
-
-    const uid = PASSPORT_DEV_ID || profile.id
-    const existing = robot.brain.users()[uid]
-    if (!existing) {
-      robot.logger.debug(`No user with id ${uid}.`)
-      return done(null, false, {
-        message: "Senpai @pushbot hasn't noticed you yet."
-      })
-    }
-
-    robot.logger.info(`User authenticated: ${existing.id} ${existing.name}`)
-    done(null, existing)
-  }))
-
-  passport.serializeUser((user, done) => done(null, user.id))
-  passport.deserializeUser((id, done) => done(null, robot.brain.userForId(id)))
-
-  app.use(passport.initialize())
-  app.use(passport.session())
-
-  app.get('/auth/slack',
-    passport.authenticate('slack')
-  )
-
-  app.get('/auth/slack/callback',
-    passport.authenticate('slack'),
-    (req, res) => res.json(req.user)
-  )
-
-  function ensureAuthenticated (req, res, next) {
-    if (req.isAuthenticated()) {
-      return next()
-    }
-
-    res.redirect('/auth/slack')
-  }
-
-  // GraphQL
-
-  const schemaPath = path.join(__dirname, 'api', 'schema.graphql')
-  const schema = buildSchema(fs.readFileSync(schemaPath, {encoding: 'utf8'}))
-
-  app.use('/graphql', ensureAuthenticated, graphqlHTTP({
-    schema,
-    rootValue: root,
-    graphiql: true
-  }))
 
   app.listen(PORT, () => {
     robot.logger.debug(`Web API is listening on port ${PORT}.`)
