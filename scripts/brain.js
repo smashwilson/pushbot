@@ -69,7 +69,6 @@ module.exports = function (robot) {
 
   const upsertAll = Promise.coroutine(function * (data) {
     let batch = []
-    let count = 0
 
     for (let type in data) {
       for (let key in data[type]) {
@@ -77,7 +76,6 @@ module.exports = function (robot) {
 
         if (batch.length >= batchSize) {
           yield upsertBatch(batch)
-          count += batch.length
           batch = []
         }
       }
@@ -85,10 +83,7 @@ module.exports = function (robot) {
 
     if (batch.length > 0) {
       yield upsertBatch(batch)
-      count += batch.length
     }
-
-    robot.logger.debug(`Brain: Persisted ${count} rows to the database.`)
   })
 
   robot.brain.setAutoSave(false)
