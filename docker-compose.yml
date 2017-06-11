@@ -15,6 +15,10 @@ services:
     environment:
       DATABASE_URL: postgres://pushbot:shhh@postgres/pushbot
       HUBOT_SLACK_TOKEN:
+      SLACK_CLIENT_ID:
+      SLACK_CLIENT_SECRET:
+      SLACK_TEAM_NAME:
+      PASSPORT_DEV_ID:
       HUBOT_MARKOV_STORAGE: postgres
       HUBOT_MARKOV_STORAGE_URL: postgres://pushbot:shhh@postgres/pushbot
       HUBOT_MARKOV_LEARN_MIN:
