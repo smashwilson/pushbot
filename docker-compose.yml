@@ -17,7 +17,7 @@ services:
       HUBOT_SLACK_TOKEN:
       SLACK_CLIENT_ID:
       SLACK_CLIENT_SECRET:
-      SLACK_TEAM_NAME:
+      SLACK_TEAM_ID:
       PASSPORT_DEV_ID:
       HUBOT_MARKOV_STORAGE: postgres
       HUBOT_MARKOV_STORAGE_URL: postgres://pushbot:shhh@postgres/pushbot

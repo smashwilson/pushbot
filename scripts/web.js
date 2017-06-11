@@ -22,7 +22,7 @@ const PRIOR_PORT = parseInt(process.env.PRIOR_PORT || '443')
 
 const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID
 const SLACK_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET
-const SLACK_TEAM_NAME = process.env.SLACK_TEAM_NAME
+const SLACK_TEAM_ID = process.env.SLACK_TEAM_ID
 const PASSPORT_DEV_ID = process.env.PASSPORT_DEV_ID
 
 class Status {
@@ -207,10 +207,10 @@ module.exports = function (robot) {
   }, (accessToken, refreshToken, profile, done) => {
     robot.logger.debug(`Log-in attempt with profile: ${JSON.stringify(profile)}.`)
 
-    if (profile.team.name !== SLACK_TEAM_NAME) {
-      robot.logger.debug(`Incorrect team: ${profile.team.name}.`)
+    if (profile.team.id !== SLACK_TEAM_ID) {
+      robot.logger.debug(`Incorrect team: ${profile.team.id}.`)
       return done(null, false, {
-        message: `Please log in with the ${SLACK_TEAM_NAME} team.`
+        message: `Please log in with the correct team.`
       })
     }
 
