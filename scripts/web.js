@@ -158,7 +158,7 @@ module.exports = function (robot) {
     passport.authenticate('slack'),
     (req, res) => {
       req.session.save()
-      res.json(req.user)
+      res.redirect('/graphql')
     }
   )
 
