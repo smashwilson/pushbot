@@ -61,5 +61,10 @@ exports.createDocumentSet = function createDocumentSet (robot, name, commands) {
 
   generate(robot, documentSet, spec)
 
+  if (!robot.documentSets) {
+    robot.documentSets = {}
+  }
+  robot.documentSets[name] = documentSet
+
   return documentSet
 }

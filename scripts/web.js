@@ -138,6 +138,11 @@ module.exports = function (robot) {
   app.use(passport.initialize())
   app.use(passport.session())
 
+  app.use((req, res, next) => {
+    req.robot = robot
+    return next()
+  })
+
   app.get('/wat', (req, res) => {
     res.json({
       session: req.session,

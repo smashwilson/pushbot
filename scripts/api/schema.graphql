@@ -43,10 +43,8 @@ input Criteria {
 }
 
 type Document {
+  found: Boolean!
   text: String!
-  subject: String
-  speakers: [String!]!
-  mentions: [String!]!
 }
 
 type DocumentSet {
@@ -55,7 +53,8 @@ type DocumentSet {
   random(criteria: Criteria!): Document
   by(speakers: [String!]!): Document
   about(mentions: [String!]!): Document
-  for(subject: String!): Document
+  subject(subject: String!): Document
+  mine: Document
 
   rank(speaker: String!): Int!
   count(criteria: Criteria!): Int!
@@ -63,5 +62,7 @@ type DocumentSet {
 
 type Query {
   me: User!
+
+  documentSets: [String!]!
   documents(set: String!): DocumentSet
 }

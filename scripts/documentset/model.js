@@ -99,6 +99,10 @@ class Document {
   getBody () {
     return this.body
   }
+
+  wasFound () {
+    return true
+  }
 }
 
 // A Document to be returned from queries that return no results.
@@ -109,6 +113,10 @@ class NullDocument {
 
   getBody () {
     return this.body
+  }
+
+  wasFound () {
+    return false
   }
 }
 
