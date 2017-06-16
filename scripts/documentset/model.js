@@ -2,219 +2,227 @@
 
 // A queryable collection of related documents.
 class DocumentSet {
-  constructor(storage, name, nullBody) {
-    this.storage = storage;
-    this.name = name;
+  constructor (storage, name, nullBody) {
+    this.storage = storage
+    this.name = name
 
-    this.nullDocument = new NullDocument(nullBody);
+    this.nullDocument = new NullDocument(nullBody)
 
-    this.connected = this.storage.connectDocumentSet(this);
+    this.connected = this.storage.connectDocumentSet(this)
   }
 
-  add(submitter, body, attributes) {
+  add (submitter, body, attributes) {
     return this.connected
     .then(() => this.storage.insertDocument(this, submitter, body, attributes))
-    .then(result => new Document(this, result));
+    .then(result => new Document(this, result))
   }
 
-  randomMatching(attributes, query) {
+  randomMatching (attributes, query) {
     return this.connected
     .then(() => this.storage.randomDocumentMatching(this, attributes, query))
     .then(row => {
       if (!row) {
-        return this.nullDocument;
+        return this.nullDocument
       }
 
-      return new Document(this, row);
-    });
+      return new Document(this, row)
+    })
   }
 
-  countMatching(attributes, query) {
+  countMatching (attributes, query) {
     return this.connected
     .then(() => this.storage.countDocumentsMatching(this, attributes, query))
-    .then(row => parseInt(row.count));
+    .then(row => parseInt(row.count))
   }
 
-  getUserStats(attributeKinds) {
+  getUserStats (attributeKinds) {
     return this.connected
     .then(() => this.storage.attributeStats(this, attributeKinds))
     .then(rows => {
-      const statsByUsername = new Map();
+      const statsByUsername = new Map()
       for (const row of rows) {
-        let stat = statsByUsername.get(row.value);
+        let stat = statsByUsername.get(row.value)
         if (stat === undefined) {
-          stat = new UserStatistic(row.value);
-          statsByUsername.set(row.value, stat);
+          stat = new UserStatistic(row.value)
+          statsByUsername.set(row.value, stat)
         }
 
-        const count = parseInt(row.count);
-        stat.record(row.kind, count);
+        const count = parseInt(row.count)
+        stat.record(row.kind, count)
       }
 
-      const builder = new UserStatisticTableBuilder();
+      const builder = new UserStatisticTableBuilder()
       for (const stat of statsByUsername.values()) {
-        builder.append(stat);
+        builder.append(stat)
       }
-      return builder.build();
-    });
+      return builder.build()
+    })
   }
 
-  deleteMatching(attributes) {
+  deleteMatching (attributes) {
     return this.connected
-    .then(() => this.storage.deleteDocumentsMatching(this, attributes));
+    .then(() => this.storage.deleteDocumentsMatching(this, attributes))
   }
 
-  destroy() {
+  destroy () {
     return this.connected
-    .then(() => this.storage.destroyDocumentSet(this));
+    .then(() => this.storage.destroyDocumentSet(this))
   }
 
-  whenConnected() {
-    return this.connected;
+  whenConnected () {
+    return this.connected
   }
 
-  documentTableName() {
-    return `${this.name}_documents`;
+  documentTableName () {
+    return `${this.name}_documents`
   }
 
-  attributeTableName() {
-    return `${this.name}_attributes`;
+  attributeTableName () {
+    return `${this.name}_attributes`
   }
 }
 
 // An individual document contained within a DocumentSet.
 class Document {
-  constructor(set, result) {
-    this.set = set;
+  constructor (set, result) {
+    this.set = set
 
-    this.id = result.id;
-    this.created = result.created;
-    this.updated = result.updated;
-    this.submitter = result.submitter;
-    this.body = result.body;
+    this.id = result.id
+    this.created = result.created
+    this.updated = result.updated
+    this.submitter = result.submitter
+    this.body = result.body
 
-    this.attributes = (result.attributes || []).map(row => new Attribute(this, row));
+    this.attributes = (result.attributes || []).map(row => new Attribute(this, row))
   }
 
-  getBody() {
-    return this.body;
+  getBody () {
+    return this.body
+  }
+
+  wasFound () {
+    return true
   }
 }
 
 // A Document to be returned from queries that return no results.
 class NullDocument {
-  constructor(body) {
-    this.body = body;
+  constructor (body) {
+    this.body = body
   }
 
-  getBody() {
-    return this.body;
+  getBody () {
+    return this.body
+  }
+
+  wasFound () {
+    return false
   }
 }
 
 // Queryable document metadata.
 class Attribute {
-  constructor(doc, result) {
-    this.doc = doc;
+  constructor (doc, result) {
+    this.doc = doc
 
-    this.id = result.id;
-    this.kind = result.kind;
-    this.value = result.value;
+    this.id = result.id
+    this.kind = result.kind
+    this.value = result.value
   }
 }
 
-const padded = (str, length) => str + ' '.repeat(Math.max(length - str.length, 0));
+const padded = (str, length) => str + ' '.repeat(Math.max(length - str.length, 0))
 
 class UserStatistic {
-  constructor(username) {
-    this.username = username;
-    this.spokenCount = 0;
-    this.mentionCount = 0;
-    this.rank = 0;
+  constructor (username) {
+    this.username = username
+    this.spokenCount = 0
+    this.mentionCount = 0
+    this.rank = 0
   }
 
-  record(kind, count) {
+  record (kind, count) {
     if (kind === 'speaker') {
-      this.spokenCount = count;
+      this.spokenCount = count
     } else if (kind === 'mention') {
-      this.mentionCount = count;
+      this.mentionCount = count
     }
   }
 
-  getUsername(width = 0) {
-    return padded(this.username, width);
+  getUsername (width = 0) {
+    return padded(this.username, width)
   }
 
-  getSpokenCount(width = 0) {
-    return padded(this.spokenCount.toString(), width);
+  getSpokenCount (width = 0) {
+    return padded(this.spokenCount.toString(), width)
   }
 
-  getMentionCount(width = 0) {
-    return padded(this.mentionCount.toString(), width);
+  getMentionCount (width = 0) {
+    return padded(this.mentionCount.toString(), width)
   }
 
-  getRank() {
-    return this.rank;
+  getRank () {
+    return this.rank
   }
 }
 
 class UserStatisticTableBuilder {
-  constructor() {
-    this.stats = [];
+  constructor () {
+    this.stats = []
 
-    this.longestUsername = 0;
-    this.longestSpoken = 0;
-    this.longestMention = 0;
+    this.longestUsername = 0
+    this.longestSpoken = 0
+    this.longestMention = 0
   }
 
-  append(stat) {
-    this.stats.push(stat);
+  append (stat) {
+    this.stats.push(stat)
 
     if (stat.username.length > this.longestUsername) {
-      this.longestUsername = stat.username.length;
+      this.longestUsername = stat.username.length
     }
 
     if (stat.spokenCount.toString().length > this.longestSpoken) {
-      this.longestSpoken = stat.spokenCount.toString().length;
+      this.longestSpoken = stat.spokenCount.toString().length
     }
 
     if (stat.mentionCount.toString().length > this.longestMention) {
-      this.longestMention = stat.mentionCount.toString().length;
+      this.longestMention = stat.mentionCount.toString().length
     }
   }
 
-  build() {
+  build () {
     this.stats.sort((a, b) => {
       if (a.spokenCount !== b.spokenCount) {
-        return b.spokenCount - a.spokenCount;
+        return b.spokenCount - a.spokenCount
       } else {
-        return b.mentionCount - a.mentionCount;
+        return b.mentionCount - a.mentionCount
       }
-    });
+    })
     for (let i = 0; i < this.stats.length; i++) {
-      this.stats[i].rank = i + 1;
+      this.stats[i].rank = i + 1
     }
 
-    return new UserStatisticTable(this.stats, this.longestUsername, this.longestSpoken, this.longestMention);
+    return new UserStatisticTable(this.stats, this.longestUsername, this.longestSpoken, this.longestMention)
   }
 }
 
 class UserStatisticTable {
-  constructor(stats, longestUsername, longestSpoken, longestMention) {
-    this.stats = stats;
+  constructor (stats, longestUsername, longestSpoken, longestMention) {
+    this.stats = stats
 
-    this.longestUsername = longestUsername;
-    this.longestSpoken = longestSpoken;
-    this.longestMention = longestMention;
+    this.longestUsername = longestUsername
+    this.longestSpoken = longestSpoken
+    this.longestMention = longestMention
   }
 
-  getStats() {
-    return this.stats;
+  getStats () {
+    return this.stats
   }
 
-  pad(header, length) {
-    return padded(header, length);
+  pad (header, length) {
+    return padded(header, length)
   }
 }
 
-exports.DocumentSet = DocumentSet;
+exports.DocumentSet = DocumentSet

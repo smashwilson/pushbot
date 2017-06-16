@@ -1,44 +1,44 @@
-'use strict';
+'use strict'
 
 // Entry point for the database-backed "quotefile" management API.
 
-const {DocumentSet} = require('./model');
-const Storage = require('./storage');
-const {generate} = require('./commands');
-const {Anyone} = require('../roles');
+const {DocumentSet} = require('./model')
+const Storage = require('./storage')
+const {generate} = require('./commands')
+const {Anyone} = require('../roles')
 
-function populateCommand(name, command, alwaysUserOriented = false) {
+function populateCommand (name, command, alwaysUserOriented = false) {
   if (command === undefined || command === null || command === false) {
-    return null;
+    return null
   }
 
-  const populated = Object.assign({}, command === true ? {} : command);
+  const populated = Object.assign({}, command === true ? {} : command)
 
   if (populated.role === undefined) {
-    populated.role = Anyone;
+    populated.role = Anyone
   }
 
   if (alwaysUserOriented || command.userOriented) {
     if (populated.roleForSelf === undefined) {
-      populated.roleForSelf = populated.role;
+      populated.roleForSelf = populated.role
     }
 
     if (populated.roleForOther === undefined) {
-      populated.roleForOther = populated.role;
+      populated.roleForOther = populated.role
     }
 
     if (populated.defaultToSelf === undefined) {
-      populated.defaultToSelf = false;
+      populated.defaultToSelf = false
     }
   }
 
-  return populated;
+  return populated
 }
 
 // Initialize commands related to a set of documents based on a spec.
-exports.createDocumentSet = function createDocumentSet(robot, name, commands) {
-  const plural = commands.plural || `${name}s`;
-  const nullBody = commands.nullBody || `I don't know any ${plural} that contain that!`;
+exports.createDocumentSet = function createDocumentSet (robot, name, commands) {
+  const plural = commands.plural || `${name}s`
+  const nullBody = commands.nullBody || `I don't know any ${plural} that contain that!`
 
   const spec = {
     name,
@@ -54,12 +54,17 @@ exports.createDocumentSet = function createDocumentSet(robot, name, commands) {
       about: populateCommand(name, commands.about),
       kov: populateCommand(name, commands.kov)
     }
-  };
+  }
 
-  const storage = new Storage({db: robot.postgres});
-  const documentSet = new DocumentSet(storage, spec.name, spec.nullBody);
+  const storage = new Storage({db: robot.postgres})
+  const documentSet = new DocumentSet(storage, spec.name, spec.nullBody)
 
-  generate(robot, documentSet, spec);
+  generate(robot, documentSet, spec)
 
-  return documentSet;
+  if (!robot.documentSets) {
+    robot.documentSets = {}
+  }
+  robot.documentSets[name] = documentSet
+
+  return documentSet
 }
