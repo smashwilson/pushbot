@@ -11,6 +11,8 @@ const pg = require('pg-promise')({
 const databaseUrl = process.env.DATABASE_URL
 const batchSize = parseInt(process.env.BATCH_SIZE || '1000')
 
+const columnSet = new pg.helpers.ColumnSet(['type', 'key', 'value:json'], { table: 'brain' })
+
 module.exports = function (robot) {
   if (!databaseUrl) {
     robot.logger.info('Transient brain: no DATABASE_URL specified.')
@@ -18,11 +20,6 @@ module.exports = function (robot) {
   }
 
   const db = robot.postgres = pg(databaseUrl)
-  const columnSet = new pg.helpers.ColumnSet([
-    'type',
-    'key',
-    { name: 'value', mod: ':json' }
-  ], { table: 'brain' })
 
   robot.logger.debug('Brain connected to database at DATABASE_URL.')
 
