@@ -1,3 +1,7 @@
+const UserResolver = require('./user')
+
 module.exports = {
-  hello: () => `At the tone, the time will be ${Date.now()}.`
+  me (args, req) {
+    return new UserResolver(req.user)
+  }
 }

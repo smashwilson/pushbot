@@ -1,3 +1,67 @@
+type Role {
+  name: String!
+}
+
+type Avatar {
+  image24: String
+  image32: String
+  image48: String
+  image72: String
+  image192: String
+  image512: String
+  image1024: String
+  imageOriginal: String
+}
+
+type Status {
+  message: String
+  emoji: String
+}
+
+enum Presence {
+  UNKNOWN
+  ACTIVE
+  AWAY
+}
+
+type User {
+  id: ID!
+  name: String!
+  realName: String
+  timezone: String
+  avatar: Avatar!
+  status: Status!
+  presence: Presence!
+  roles: [Role!]!
+}
+
+input Criteria {
+  query: String
+  subject: String
+  speakers: [String!]
+  mentions: [String!]
+}
+
+type Document {
+  text: String!
+  subject: String
+  speakers: [String!]!
+  mentions: [String!]!
+}
+
+type DocumentSet {
+  name: String!
+
+  random(criteria: Criteria!): Document
+  by(speakers: [String!]!): Document
+  about(mentions: [String!]!): Document
+  for(subject: String!): Document
+
+  rank(speaker: String!): Int!
+  count(criteria: Criteria!): Int!
+}
+
 type Query {
-  hello: String!
+  me: User!
+  documents(set: String!): DocumentSet
 }
