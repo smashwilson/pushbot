@@ -150,13 +150,6 @@ module.exports = function (robot) {
     return next()
   })
 
-  app.get('/wat', (req, res) => {
-    res.json({
-      session: req.session,
-      user: req.user
-    })
-  })
-
   app.get('/auth/slack',
     passport.authenticate('slack')
   )
