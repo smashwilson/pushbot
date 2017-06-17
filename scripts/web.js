@@ -151,6 +151,12 @@ module.exports = function (robot) {
   })
 
   app.get('/auth/slack',
+    (req, res, next) => {
+      if (req.query.backTo) {
+        req.session.backTo = req.query.backTo
+      }
+      return next()
+    },
     passport.authenticate('slack')
   )
 
@@ -158,7 +164,13 @@ module.exports = function (robot) {
     passport.authenticate('slack'),
     (req, res) => {
       req.session.save()
-      res.redirect('/graphql')
+      const backTo = req.session.backTo
+      if (backTo) {
+        delete req.session.backTo
+        res.redirect(`${process.env.WEB_BASE_URL}${backTo}`)
+      } else {
+        res.send('Authenticated successfully')
+      }
     }
   )
 
