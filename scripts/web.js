@@ -9,6 +9,7 @@ const request = require('request')
 const graphqlHTTP = require('express-graphql')
 const {buildSchema} = require('graphql')
 const passport = require('passport')
+const cors = require('cors')
 const SlackStrategy = require('passport-slack').Strategy
 
 const root = require('./api/root')
@@ -26,6 +27,11 @@ const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID
 const SLACK_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET
 const SLACK_TEAM_ID = process.env.SLACK_TEAM_ID
 const PASSPORT_DEV_ID = process.env.PASSPORT_DEV_ID
+
+const CORS_OPTIONS = {
+  origin: process.env.WEB_BASE_URL.replace(/\/$/, ''),
+  credentials: true
+}
 
 class Status {
   constructor () {
@@ -177,7 +183,8 @@ module.exports = function (robot) {
   const schemaPath = path.join(__dirname, 'api', 'schema.graphql')
   const schema = buildSchema(fs.readFileSync(schemaPath, {encoding: 'utf8'}))
 
-  app.use('/graphql', ensureAuthenticated, graphqlHTTP({
+  app.options('/graphql', cors(CORS_OPTIONS))
+  app.use('/graphql', cors(CORS_OPTIONS), ensureAuthenticated, graphqlHTTP({
     schema,
     rootValue: root,
     graphiql: true
