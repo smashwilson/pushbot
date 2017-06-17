@@ -8,6 +8,7 @@
     "bluebird": "^3.4.6",
     "cheerio": "0.22.0",
     "cookie-session": "^2.0.0-beta.2",
+    "cors": "^2.8.3",
     "express": "4.15.3",
     "express-graphql": "^0.6.6",
     "graphql": "^0.10.1",
@@ -63,7 +64,7 @@
     "mocha": "^3.2.0"
   },
   "scripts": {
-    "lint": "eslint scripts/**.js test/**.js",
+    "lint": "eslint scripts/ test/",
     "mocha": "mocha --compilers coffee:coffee-script --require test/globals.js --colors --recursive",
     "test": "npm run lint && npm run mocha"
   }
