@@ -29,7 +29,7 @@ const SLACK_TEAM_ID = process.env.SLACK_TEAM_ID
 const PASSPORT_DEV_ID = process.env.PASSPORT_DEV_ID
 
 const CORS_OPTIONS = {
-  origin: process.env.WEB_BASE_URL.replace(/\/$/, ''),
+  origin: process.env.WEB_BASE_URL,
   credentials: true
 }
 
@@ -175,7 +175,7 @@ module.exports = function (robot) {
     }
 
     robot.logger.debug('Request not authenticated')
-    res.redirect('/auth/slack')
+    res.status(401).send(`Please visit ${process.env.API_BASE_URL}/auth/slack to authenticate.`)
   }
 
   // GraphQL
