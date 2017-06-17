@@ -26,6 +26,8 @@ services:
       HUBOT_MARKOV_GENERATE_MAX:
       HUBOT_AUTH_ADMIN:
       HUBOT_WEATHER_APIKEY:
+      API_BASE_URL: http://localhost:8080
+      WEB_BASE_URL:
     ports:
     - '8080:8080'
     depends_on:
