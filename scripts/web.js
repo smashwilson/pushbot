@@ -104,7 +104,8 @@ module.exports = function (robot) {
   passport.use(new SlackStrategy({
     clientID: SLACK_CLIENT_ID,
     clientSecret: SLACK_CLIENT_SECRET,
-    scope: ['identity.basic']
+    scope: ['identity.basic'],
+    callbackURL: `${process.env.API_BASE_URL}/auth/slack/callback`
   }, (accessToken, refreshToken, profile, done) => {
     robot.logger.debug(`Log-in attempt with profile: ${JSON.stringify(profile)}.`)
 
