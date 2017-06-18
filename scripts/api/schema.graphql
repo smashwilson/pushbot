@@ -95,6 +95,9 @@ type DocumentSet {
   # Documents.
   random(criteria: Criteria!): Document!
 
+  # Paginated view of all Documents matching specified Criteria.
+  all(criteria: Criteria!, first: Int, after: String): DocumentConnection!
+
   # A random Document with a "subject" of the currently authenticated User.
   mine: Document!
 
@@ -107,6 +110,20 @@ type DocumentSet {
   count(criteria: Criteria!): Int!
 }
 
+# Paginated collection of Documents. As specified by:
+# https://facebook.github.io/relay/graphql/connections.htm
+type DocumentConnection {
+  edges: [DocumentEdge!]!
+  pageInfo: PageInfo!
+}
+
+# Paginated Document result. As specified by:
+# https://facebook.github.io/relay/graphql/connections.htm
+type DocumentEdge {
+  cursor: String!
+  node: Document!
+}
+
 # Single entry retrieved from a DocumentSet. A single quote, limerick, title,
 # soultrait, motto, whatever.
 type Document {
@@ -116,6 +133,11 @@ type Document {
 
   # Body of the Document.
   text: String!
+}
+
+type PageInfo {
+  hasPreviousPage: Bool!
+  hasNextPage: Bool!
 }
 
 input Criteria {

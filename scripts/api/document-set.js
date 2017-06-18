@@ -36,6 +36,13 @@ class DocumentSetResolver {
     )
   }
 
+  all ({criteria, first, after}) {
+    return {
+      edges: [],
+      pageInfo: {hasPreviousPage: false, hasNextPage: false}
+    }
+  }
+
   mine (args, req) {
     return this.subject({subject: req.user.name})
   }
