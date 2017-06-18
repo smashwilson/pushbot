@@ -1,8 +1,27 @@
 type Query {
+  # Profile for the currently logged-in user.
+  me: User! @deprecated(reason: "Use users {me} instead")
+
+  # Query known users.
+  users: UserSet!
+
+  # Currently available DocumentSets. These strings are valid arguments for
+  # `#documents(set)`.
+  documentSets: [String!]!
+
+  # Query documents within a named DocumentSet.
+  documents(set: String!): DocumentSet
+}
+
+type UserSet {
+  # Profile for the currently logged-in User.
   me: User!
 
-  documentSets: [String!]!
-  documents(set: String!): DocumentSet
+  # Array of all known Users.
+  all: [User!]!
+
+  # User with a specific name if they exist.
+  withName(name: String!): User
 }
 
 # A single user in the Slack team.

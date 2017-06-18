@@ -46,4 +46,24 @@ class UserResolver {
   }
 }
 
-module.exports = UserResolver
+class UserSetResolver {
+  me (args, req) {
+    return new UserResolver(req.user)
+  }
+
+  all (args, req) {
+    const resolvers = []
+    const userMap = req.robot.brain.users()
+    for (const uid of Object.keys(userMap)) {
+      resolvers.push(new UserResolver(userMap[uid]))
+    }
+    return resolvers
+  }
+
+  withName ({name}, req) {
+    const user = req.robot.brain.userForName(name)
+    return user && new UserResolver(user)
+  }
+}
+
+module.exports = UserSetResolver

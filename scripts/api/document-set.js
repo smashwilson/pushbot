@@ -23,7 +23,7 @@ function responseFrom (document) {
   }
 }
 
-class DocumentResolver {
+class DocumentSetResolver {
   constructor (name, set) {
     this.name = name
     this.set = set
@@ -58,4 +58,4 @@ class DocumentResolver {
   }
 }
 
-module.exports = DocumentResolver
+module.exports = DocumentSetResolver

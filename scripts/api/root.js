@@ -1,9 +1,13 @@
-const UserResolver = require('./user')
-const DocumentResolver = require('./document')
+const UserSetResolver = require('./user-set')
+const DocumentSetResolver = require('./document-set')
 
 module.exports = {
   me (args, req) {
-    return new UserResolver(req.user)
+    return new UserSetResolver().me(args, req)
+  },
+
+  users () {
+    return new UserSetResolver()
   },
 
   documentSets (args, req) {
@@ -14,6 +18,6 @@ module.exports = {
     const sets = req.robot.documentSets || {}
     const documentSet = sets[set]
 
-    return documentSet && new DocumentResolver(set, documentSet)
+    return documentSet && new DocumentSetResolver(set, documentSet)
   }
 }
