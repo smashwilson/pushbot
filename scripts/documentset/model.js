@@ -28,6 +28,20 @@ class DocumentSet {
     return new Document(this, row)
   }
 
+  async allMatching (attributes, query, first = null, cursor = null) {
+    await this.connected
+
+    const {
+      hasPreviousPage, hasNextPage, rows
+    } = await this.storage.allDocumentsMatching(this, attributes, query, first, cursor)
+
+    return {
+      hasPreviousPage,
+      hasNextPage,
+      documents: rows.map(row => new Document(this, row))
+    }
+  }
+
   async countMatching (attributes, query) {
     await this.connected
 

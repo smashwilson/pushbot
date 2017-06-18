@@ -134,6 +134,61 @@ class Storage {
     return this.db.oneOrNone(sql, parameters)
   }
 
+  async allDocumentsMatching (documentSet, attributes, query, first = null, cursor = null) {
+    const documentTableName = documentSet.documentTableName()
+    const attributeTableName = documentSet.attributeTableName()
+
+    const hasAttributes = Object.keys(attributes).length > 0
+    const hasQuery = /\s*\S/.test(query)
+    const hasCursor = cursor !== null
+    const hasFirst = first !== null
+
+    const clauses = []
+    const parameters = [documentTableName, attributeTableName]
+
+    if (hasQuery) {
+      const {clause, parameters: queryParameters} = createQueryClause(query, 'body', parameters.length + 1)
+      clauses.push(clause)
+      parameters.push(...queryParameters)
+    }
+
+    if (hasAttributes) {
+      const {query, parameters: attrParameters} = createAttributeQuery(attributes, 2, parameters.length + 1)
+      clauses.push(`id IN (${query})`)
+      parameters.push(...attrParameters)
+    }
+
+    if (hasCursor) {
+      clauses.push(`id >= $${parameters.length + 1}`)
+      parameters.push(cursor)
+    }
+
+    const where = clauses.length > 0 ? 'WHERE' : ''
+    let limit = ''
+    if (hasFirst) {
+      limit = `LIMIT $${parameters.length + 1}`
+      parameters.push(first + 2)
+    }
+
+    const sql = `
+      SELECT id, created, updated, submitter, body
+      FROM $1:name
+      ${where} ${clauses.join(' AND ')}
+      ORDER BY id
+      ${limit}
+    `
+
+    const results = await this.db.any(sql, parameters)
+    const hasPreviousPage = hasCursor && results.length > 0 && results[0].id !== cursor
+    const hasNextPage = hasFirst && results.length > first + 1
+
+    const lower = hasPreviousPage ? 1 : 0
+    const upper = lower + (first || results.length)
+    const rows = results.slice(lower, upper)
+
+    return {hasPreviousPage, hasNextPage, rows}
+  }
+
   countDocumentsMatching (documentSet, attributes, query) {
     const documentTableName = documentSet.documentTableName()
     const attributeTableName = documentSet.attributeTableName()

@@ -36,10 +36,25 @@ class DocumentSetResolver {
     )
   }
 
-  all ({criteria, first, after}) {
+  async all ({criteria, first, after}) {
+    const attributes = attributesFrom(criteria)
+    const query = criteria.query || ''
+
+    const [{hasPreviousPage, hasNextPage, documents}, count] = await Promise.all([
+      this.set.allMatching(attributes, query, first, after),
+      this.set.countMatching(attributes, query)
+    ])
+
+    const edges = documents.map(doc => {
+      return {
+        cursor: doc.id,
+        node: responseFrom(doc)
+      }
+    })
+
     return {
-      edges: [],
-      pageInfo: {hasPreviousPage: false, hasNextPage: false}
+      edges,
+      pageInfo: {count, hasPreviousPage, hasNextPage}
     }
   }
 
