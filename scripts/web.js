@@ -202,7 +202,15 @@ module.exports = function (robot) {
   app.use('/graphql', cors(CORS_OPTIONS), ensureAuthenticated, graphqlHTTP({
     schema,
     rootValue: root,
-    graphiql: true
+    graphiql: true,
+    formatError: err => {
+      robot.logger.error(`GraphQL exception:\n${err.stack}`)
+      return {
+        message: err.message,
+        locations: err.locations,
+        path: err.path
+      }
+    }
   }))
 
   // Stonith
