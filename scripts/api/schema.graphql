@@ -1,3 +1,21 @@
+type Query {
+  me: User!
+
+  documentSets: [String!]!
+  documents(set: String!): DocumentSet
+}
+
+type User {
+  id: ID!
+  name: String!
+  realName: String
+  timezone: String
+  avatar: Avatar!
+  status: Status!
+  presence: Presence!
+  roles: [Role!]!
+}
+
 type Role {
   name: String!
 }
@@ -24,29 +42,6 @@ enum Presence {
   AWAY
 }
 
-type User {
-  id: ID!
-  name: String!
-  realName: String
-  timezone: String
-  avatar: Avatar!
-  status: Status!
-  presence: Presence!
-  roles: [Role!]!
-}
-
-input Criteria {
-  query: String
-  subject: String
-  speakers: [String!]
-  mentions: [String!]
-}
-
-type Document {
-  found: Boolean!
-  text: String!
-}
-
 type DocumentSet {
   name: String!
 
@@ -60,9 +55,14 @@ type DocumentSet {
   count(criteria: Criteria!): Int!
 }
 
-type Query {
-  me: User!
+type Document {
+  found: Boolean!
+  text: String!
+}
 
-  documentSets: [String!]!
-  documents(set: String!): DocumentSet
+input Criteria {
+  query: String
+  subject: String
+  speakers: [String!]
+  mentions: [String!]
 }
