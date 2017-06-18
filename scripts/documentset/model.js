@@ -11,62 +11,61 @@ class DocumentSet {
     this.connected = this.storage.connectDocumentSet(this)
   }
 
-  add (submitter, body, attributes) {
-    return this.connected
-    .then(() => this.storage.insertDocument(this, submitter, body, attributes))
-    .then(result => new Document(this, result))
+  async add (submitter, body, attributes) {
+    await this.connected
+    const result = await this.storage.insertDocument(this, submitter, body, attributes)
+    return new Document(this, result)
   }
 
-  randomMatching (attributes, query) {
-    return this.connected
-    .then(() => this.storage.randomDocumentMatching(this, attributes, query))
-    .then(row => {
-      if (!row) {
-        return this.nullDocument
+  async randomMatching (attributes, query) {
+    await this.connected
+
+    const row = await this.storage.randomDocumentMatching(this, attributes, query)
+    if (!row) {
+      return this.nullDocument
+    }
+
+    return new Document(this, row)
+  }
+
+  async countMatching (attributes, query) {
+    await this.connected
+
+    const row = await this.storage.countDocumentsMatching(this, attributes, query)
+    return parseInt(row.count)
+  }
+
+  async getUserStats (attributeKinds) {
+    await this.connected
+    const rows = await this.storage.attributeStats(this, attributeKinds)
+
+    const statsByUsername = new Map()
+    for (const row of rows) {
+      let stat = statsByUsername.get(row.value)
+      if (stat === undefined) {
+        stat = new UserStatistic(row.value)
+        statsByUsername.set(row.value, stat)
       }
 
-      return new Document(this, row)
-    })
+      const count = parseInt(row.count)
+      stat.record(row.kind, count)
+    }
+
+    const builder = new UserStatisticTableBuilder()
+    for (const stat of statsByUsername.values()) {
+      builder.append(stat)
+    }
+    return builder.build()
   }
 
-  countMatching (attributes, query) {
-    return this.connected
-    .then(() => this.storage.countDocumentsMatching(this, attributes, query))
-    .then(row => parseInt(row.count))
+  async deleteMatching (attributes) {
+    await this.connected
+    return this.storage.deleteDocumentsMatching(this, attributes)
   }
 
-  getUserStats (attributeKinds) {
-    return this.connected
-    .then(() => this.storage.attributeStats(this, attributeKinds))
-    .then(rows => {
-      const statsByUsername = new Map()
-      for (const row of rows) {
-        let stat = statsByUsername.get(row.value)
-        if (stat === undefined) {
-          stat = new UserStatistic(row.value)
-          statsByUsername.set(row.value, stat)
-        }
-
-        const count = parseInt(row.count)
-        stat.record(row.kind, count)
-      }
-
-      const builder = new UserStatisticTableBuilder()
-      for (const stat of statsByUsername.values()) {
-        builder.append(stat)
-      }
-      return builder.build()
-    })
-  }
-
-  deleteMatching (attributes) {
-    return this.connected
-    .then(() => this.storage.deleteDocumentsMatching(this, attributes))
-  }
-
-  destroy () {
-    return this.connected
-    .then(() => this.storage.destroyDocumentSet(this))
+  async destroy () {
+    await this.connected
+    return this.storage.destroyDocumentSet(this)
   }
 
   whenConnected () {
