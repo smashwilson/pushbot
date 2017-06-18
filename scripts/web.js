@@ -174,6 +174,15 @@ module.exports = function (robot) {
     }
   )
 
+  app.get('/logout', (req, res) => {
+    req.logout()
+    if (req.query.backTo) {
+      res.redirect(`${process.env.WEB_BASE_URL}`)
+    } else {
+      res.send('Logged out successfully')
+    }
+  })
+
   function ensureAuthenticated (req, res, next) {
     if (req.isAuthenticated()) {
       robot.logger.debug('Request authenticated')
