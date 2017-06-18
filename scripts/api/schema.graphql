@@ -5,21 +5,35 @@ type Query {
   documents(set: String!): DocumentSet
 }
 
+# A single user in the Slack team.
 type User {
+  # Unique identifier assigned by Slack.
   id: ID!
+
+  # Username.
   name: String!
+
+  # First and last name.
   realName: String
+
+  # Current timezone, as configured through Slack preferences.
   timezone: String
+
+  # URLs of the user's avatar in various dimensions.
   avatar: Avatar!
+
+  # Most recently set status.
   status: Status!
+
+  # Slack's best guess about whether or not this User is looking at chat.
   presence: Presence!
+
+  # Permissions granted to this user. Used to control permitted chat actions
+  # and web actions.
   roles: [Role!]!
 }
 
-type Role {
-  name: String!
-}
-
+# Graphic this user has chosen to represent themselves.
 type Avatar {
   image24: String
   image32: String
@@ -31,32 +45,57 @@ type Avatar {
   imageOriginal: String
 }
 
+# Most recently reported /status.
 type Status {
   message: String
   emoji: String
 }
 
+# Slack's best guess about whether or not this user is looking at the channel
+# or not.
 enum Presence {
   UNKNOWN
   ACTIVE
   AWAY
 }
 
+# Permission that may be assigned to a User.
+type Role {
+  name: String!
+}
+
+# Collection of Documents that may be queried in a variety of ways. "Documents"
+# include everything from the quote file to limericks to user titles.
 type DocumentSet {
+  # Internal name of this DocumentSet. Use with #documents().
   name: String!
 
-  random(criteria: Criteria!): Document
-  by(speakers: [String!]!): Document
-  about(mentions: [String!]!): Document
-  subject(subject: String!): Document
-  mine: Document
+  # Produce a random Document from the set that matches the specified search
+  # criteria. A null document will be returned if no matches exist. Use
+  # empty Criteria (`random(criteria: {})`) to choose randomly from all
+  # Documents.
+  random(criteria: Criteria!): Document!
 
+  # A random Document with a "subject" of the currently authenticated User.
+  mine: Document!
+
+  # Order all speakers associated with documents in this set and return the
+  # ordinal rank of a chosen speaker.
   rank(speaker: String!): Int!
+
+  # The number of Documents in the DocumentSet that match specific search
+  # criteria. Use empty Criteria (`count(criteria: {})`) to count all documents.
   count(criteria: Criteria!): Int!
 }
 
+# Single entry retrieved from a DocumentSet. A single quote, limerick, title,
+# soultrait, motto, whatever.
 type Document {
+  # False if this Document is a null document, returned when no documents match
+  # search criteria.
   found: Boolean!
+
+  # Body of the Document.
   text: String!
 }
 
