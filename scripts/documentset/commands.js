@@ -85,9 +85,15 @@ function addCommands (robot, documentSet, spec, feature) {
       if (!feature.role.verify(robot, msg)) return
 
       const submitter = msg.message.user.name
-      let body, attributes
+      let body, attributes, processed
       try {
-        const processed = preprocessor.call(robot, msg)
+        processed = preprocessor.call(robot, msg)
+      } catch (err) {
+        msg.reply(`http://sadtrombone.com/\n${err.stack}`)
+        return
+      }
+
+      try {
         const formatted = feature.formatter(processed.lines, processed.speakers, processed.mentions)
 
         body = formatted.body
@@ -181,7 +187,7 @@ function queryCommand (robot, documentSet, spec, feature) {
       if (!role.verify(robot, msg)) return
 
       try {
-        const doc = documentSet.randomMatching({subject: [subject]}, query)
+        const doc = await documentSet.randomMatching({subject: [subject]}, query)
         msg.send(doc.getBody())
       } catch (err) {
         errorHandler(msg, err)
