@@ -136,8 +136,8 @@ type Document {
 }
 
 type PageInfo {
-  hasPreviousPage: Bool!
-  hasNextPage: Bool!
+  hasPreviousPage: Boolean!
+  hasNextPage: Boolean!
 }
 
 input Criteria {
