@@ -37,7 +37,7 @@ class DocumentSetResolver {
   }
 
   mine (args, req) {
-    return this.subject({subject: req.user.name})
+    return this.random({subject: req.user.name})
   }
 
   async rank (speaker) {
