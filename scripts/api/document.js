@@ -36,24 +36,6 @@ class DocumentResolver {
     )
   }
 
-  async by ({speakers}) {
-    return responseFrom(
-      await this.set.randomMatching({speakers}, '')
-    )
-  }
-
-  async about ({mentions}) {
-    return responseFrom(
-      await this.set.randomMatching({mentions}, '')
-    )
-  }
-
-  async subject ({subject}) {
-    return responseFrom(
-      await this.set.randomMatching({subject: [subject]}, '')
-    )
-  }
-
   mine (args, req) {
     return this.subject({subject: req.user.name})
   }
