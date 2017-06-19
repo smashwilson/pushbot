@@ -25,7 +25,9 @@ class DocumentSet {
       return this.nullDocument
     }
 
-    return new Document(this, row)
+    const doc = new Document(this, row)
+    await doc.loadAttributes()
+    return doc
   }
 
   async allMatching (attributes, query, first = null, cursor = null) {
@@ -35,10 +37,27 @@ class DocumentSet {
       hasPreviousPage, hasNextPage, rows
     } = await this.storage.allDocumentsMatching(this, attributes, query, first, cursor)
 
+    const documents = rows.map(row => new Document(this, row))
+    const byId = new Map(documents.map(doc => [doc.id, doc]))
+
+    const attrRows = await this.storage.loadDocumentAttributes(this, documents)
+    for (const row of attrRows) {
+      const doc = byId.get(row.document_id)
+      if (!doc) {
+        continue
+      }
+
+      if (doc.attributes === null) {
+        doc.attributes = []
+      }
+
+      doc.attributes.push(new Attribute(doc, row))
+    }
+
     return {
       hasPreviousPage,
       hasNextPage,
-      documents: rows.map(row => new Document(this, row))
+      documents
     }
   }
 
@@ -106,15 +125,32 @@ class Document {
     this.submitter = result.submitter
     this.body = result.body
 
-    this.attributes = (result.attributes || []).map(row => new Attribute(this, row))
+    if (result.attributes) {
+      this.attributes = result.attributes.map(row => new Attribute(this, row))
+    } else {
+      this.attributes = null
+    }
   }
 
   getBody () {
     return this.body
   }
 
+  getAttributes () {
+    return this.attributes || []
+  }
+
   wasFound () {
     return true
+  }
+
+  async loadAttributes () {
+    if (this.attributes !== null) {
+      return
+    }
+
+    const rows = await this.set.storage.loadDocumentAttributes(this.set, [this])
+    this.attributes = rows.map(row => new Attribute(this, row))
   }
 }
 
@@ -122,10 +158,19 @@ class Document {
 class NullDocument {
   constructor (body) {
     this.body = body
+    this.attributes = []
   }
 
   getBody () {
     return this.body
+  }
+
+  getAttributes () {
+    return []
+  }
+
+  loadAttributes () {
+    return Promise.resolve()
   }
 
   wasFound () {
