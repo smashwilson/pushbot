@@ -133,9 +133,20 @@ type Document {
 
   # Body of the Document.
   text: String!
+
+  # Name of a user associated with a Document in a user-focused DocumentSet, like
+  # a motto or title.
+  subject: String
+
+  # Names of Users who have a speaking role in this Document.
+  speakers: [String!]!
+
+  # Names of Users who are mentioned by this Document.
+  mentions: [String!]!
 }
 
 type PageInfo {
+  count: Int!
   hasPreviousPage: Boolean!
   hasNextPage: Boolean!
 }
