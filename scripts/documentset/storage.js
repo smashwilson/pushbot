@@ -240,6 +240,24 @@ class Storage {
     return this.db.one(sql, parameters)
   }
 
+  loadDocumentAttributes (documentSet, documents) {
+    const attributeTableName = documentSet.attributeTableName()
+    const parameters = {attributeTableName}
+    const ids = documents.map(doc => doc.id)
+
+    if (documents.length === 0) {
+      return []
+    }
+
+    const sql = `
+      SELECT id, kind, value, document_id
+      FROM $<attributeTableName:name>
+      WHERE document_id IN (${ids.join(', ')})
+    `
+
+    return this.db.any(sql, parameters)
+  }
+
   attributeStats (documentSet, attributeKinds) {
     const attributeTableName = documentSet.attributeTableName()
     const parameters = [attributeTableName, ...attributeKinds]
