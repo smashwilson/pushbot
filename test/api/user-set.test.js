@@ -32,12 +32,26 @@ describe('UserSetResolver', function () {
   })
 
   describe('all', function () {
-    it('returns resolvers for all users')
+    it('returns resolvers for all users', function () {
+      const results = resolver.all([], req)
+      expect(results.map(each => each.user)).to.have.deep.members([
+        {id: '1', name: 'self'},
+        {id: '2', name: 'two'},
+        {id: '3', name: 'three'}
+      ])
+    })
   })
 
   describe('withName', function () {
-    it('returns a resolver for a user by name')
-    it('return null if no such user exists')
+    it('returns a resolver for a user by name', function () {
+      const result = resolver.withName({name: 'two'}, req)
+      expect(result.user.id).to.eql('2')
+    })
+
+    it('return null if no such user exists', function () {
+      const result = resolver.withName({name: 'snorgle'}, req)
+      expect(result).to.eql(null)
+    })
   })
 })
 
