@@ -112,17 +112,140 @@ describe('DocumentSetResolver', function () {
   })
 
   describe('all', function () {
-    it('with no documents')
-    it('with "first" less than the document count')
-    it('with "first" equal to the document count')
-    it('with "first" greater than the document count')
-    it('with "after" less than the first document ID')
-    it('with "after" as an intermediate document ID')
-    it('with "after" greater than the last document ID')
-    it('matching a query')
-    it('with a matching subject')
-    it('with all speakers')
-    it('with all mentions')
+    it('with no documents', async function () {
+      const result = await resolver.all({criteria: {}})
+
+      expect(result.edges).to.have.lengthOf(0)
+      expect(result.pageInfo.hasPreviousPage).to.equal(false)
+      expect(result.pageInfo.hasNextPage).to.equal(false)
+    })
+
+    it.only('with "first" less than the document count', async function () {
+      await populate({}, {}, {}, {}, {})
+
+      const result = await resolver.all({criteria: {}, first: 4})
+      expect(result.edges).to.have.lengthOf(4)
+      expect(result.pageInfo.hasPreviousPage).to.equal(false)
+      expect(result.pageInfo.hasNextPage).to.equal(true)
+    })
+
+    it('with "first" equal to the document count', async function () {
+      await populate({}, {}, {}, {}, {})
+
+      const result = await resolver.all({criteria: {}, first: 5})
+      expect(result.edges).to.have.lengthOf(5)
+      expect(result.pageInfo.hasPreviousPage).to.equal(false)
+      expect(result.pageInfo.hasNextPage).to.equal(false)
+    })
+
+    it('with "first" greater than the document count', async function () {
+      await populate({}, {}, {}, {}, {})
+
+      const result = await resolver.all({criteria: {}, first: 10})
+      expect(result.edges).to.have.lengthOf(5)
+      expect(result.pageInfo.hasPreviousPage).to.equal(false)
+      expect(result.pageInfo.hasNextPage).to.equal(false)
+    })
+
+    it('with "after" less than the first document ID', async function () {
+      await populate({}, {}, {}, {}, {})
+
+      const result = await resolver.all({criteria: {}, after: '0'})
+      expect(result.edges).to.have.lengthOf(5)
+      expect(result.pageInfo.hasPreviousPage).to.equal(false)
+      expect(result.pageInfo.hasNextPage).to.equal(false)
+    })
+
+    it('with "after" as an intermediate document ID', async function () {
+      await populate({}, {}, {}, {}, {})
+
+      const result = await resolver.all({criteria: {}, after: '3'})
+      expect(result.edges).to.have.lengthOf(2)
+      expect(result.pageInfo.hasPreviousPage).to.equal(true)
+      expect(result.pageInfo.hasNextPage).to.equal(false)
+    })
+
+    it('with "after" greater than the last document ID', async function () {
+      await populate({}, {}, {}, {}, {})
+
+      const result = await resolver.all({criteria: {}, after: '10'})
+      expect(result.edges).to.have.lengthOf(0)
+      expect(result.pageInfo.hasPreviousPage).to.equal(true)
+      expect(result.pageInfo.hasNextPage).to.equal(false)
+    })
+
+    it('matching a query', async function () {
+      await populate(
+        {}, {},
+        {body: 'aaa 0'}, {body: 'aaa 1'}, {body: '2 aaa'},
+        {}, {}
+      )
+
+      const result = await resolver.all({criteria: {query: 'aaa'}})
+      expect(result.edges).to.have.lengthOf(3)
+      expect(result.edges.map(edge => edge.node.text)).to.have.members([
+        'aaa 0', 'aaa 1', '2 aaa'
+      ])
+      expect(result.pageInfo.hasPreviousPage).to.equal(false)
+      expect(result.pageInfo.hasNextPage).to.equal(false)
+    })
+
+    it('with a matching subject', async function () {
+      await populate(
+        {}, {},
+        {body: 'yes 0', subject: 'me'}, {body: 'yes 1', subject: 'me'},
+        {body: 'no 0', subject: 'other'},
+        {}, {}
+      )
+
+      const result = await resolver.all({criteria: {subject: 'me'}})
+      expect(result.edges).to.have.lengthOf(2)
+      expect(result.edges.map(edge => edge.node.text)).to.have.members([
+        'yes 0', 'yes 1'
+      ])
+      expect(result.pageInfo.hasPreviousPage).to.equal(false)
+      expect(result.pageInfo.hasNextPage).to.equal(false)
+    })
+
+    it('with all speakers', async function () {
+      await populate(
+        {}, {},
+        {body: 'yes 0', speakers: ['me0', 'me1']},
+        {body: 'yes 1', speakers: ['me0', 'me1']},
+        {body: 'no 0', speakers: ['me1']},
+        {body: 'no 1', speakers: ['me1', 'other']},
+        {body: 'no 2', speakers: ['other']},
+        {}, {}
+      )
+
+      const result = await resolver.all({criteria: {speakers: ['me0', 'me1']}})
+      expect(result.edges).to.have.lengthOf(2)
+      expect(result.edges.map(edge => edge.node.text)).to.have.members([
+        'yes 0', 'yes 1'
+      ])
+      expect(result.pageInfo.hasPreviousPage).to.equal(false)
+      expect(result.pageInfo.hasNextPage).to.equal(false)
+    })
+
+    it('with all mentions', async function () {
+      await populate(
+        {}, {},
+        {body: 'yes 0', mentions: ['me0', 'me1']},
+        {body: 'yes 1', mentions: ['me1', 'me0']},
+        {body: 'no 0', mentions: ['me1']},
+        {body: 'no 1', mentions: ['me1', 'other']},
+        {body: 'no 2', mentions: ['other']},
+        {}, {}
+      )
+
+      const result = await resolver.all({criteria: {mentions: ['me0', 'me1']}})
+      expect(result.edges).to.have.lengthOf(2)
+      expect(result.edges.map(edge => edge.node.text)).to.have.members([
+        'yes 0', 'yes 1'
+      ])
+      expect(result.pageInfo.hasPreviousPage).to.equal(false)
+      expect(result.pageInfo.hasNextPage).to.equal(false)
+    })
   })
 
   describe('mine', function () {
