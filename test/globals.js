@@ -2,6 +2,7 @@
 
 const pg = require('pg-promise')()
 const hubotHelp = require('hubot-help')
+require('hubot-test-helper')
 
 global.expect = require('chai').expect
 global.database = process.env.DATABASE_URL ? pg(process.env.DATABASE_URL) : null

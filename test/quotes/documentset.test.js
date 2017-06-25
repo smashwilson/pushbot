@@ -394,7 +394,7 @@ describe('createDocumentSet', function () {
       .then(doc => expect(doc.getBody()).to.equal(expectedBlarf))
     })
 
-    it('can be configured with a document formatter', function () {
+    it('can be configured with a document formatter', async function () {
       usesDatabase(this)
 
       documentSet = createDocumentSet(room.robot, 'blarf', {
@@ -420,10 +420,11 @@ describe('createDocumentSet', function () {
 
       const expected = '[person-one] one one one, [person-one] two two two, [person-two] three three three'
 
-      return room.user.say('me', `@hubot slackapp blarf: ${source}`)
-      .then(delay())
-      .then(() => documentSet.randomMatching({speaker: ['person-one', 'person-two']}, ''))
-      .then(doc => expect(doc.getBody()).to.equal(expected))
+      await room.user.say('me', `@hubot slackapp blarf: ${source}`)
+      await delay()()
+
+      const doc = await documentSet.randomMatching({speaker: ['person-one', 'person-two']}, '')
+      expect(doc.getBody()).to.equal(expected)
     })
 
     it('validates a required role', function () {

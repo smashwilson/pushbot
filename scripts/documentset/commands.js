@@ -40,11 +40,9 @@ exports.generate = function (robot, documentSet, spec) {
   }
 }
 
-function errorHandler (msg) {
-  return function (error) {
-    console.error(error.stack)
-    msg.reply(`:boom: Something went wrong!\n\`\`\`\n${error.stack}\n\`\`\`\n`)
-  }
+function errorHandler (msg, error) {
+  console.error(error.stack)
+  msg.reply(`:boom: Something went wrong!\n\`\`\`\n${error.stack}\n\`\`\`\n`)
 }
 
 function addCommands (robot, documentSet, spec, feature) {
@@ -83,13 +81,19 @@ function addCommands (robot, documentSet, spec, feature) {
 
     // "slackapp quote: ..."
     const pattern = new RegExp(`${preprocessorName}\\s+${spec.name}${argumentPattern}\\s*$`)
-    robot.respond(pattern, msg => {
+    robot.respond(pattern, async msg => {
       if (!feature.role.verify(robot, msg)) return
 
       const submitter = msg.message.user.name
-      let body, attributes
+      let body, attributes, processed
       try {
-        const processed = preprocessor.call(robot, msg)
+        processed = preprocessor.call(robot, msg)
+      } catch (err) {
+        msg.reply(`http://sadtrombone.com/\n${err.stack}`)
+        return
+      }
+
+      try {
         const formatted = feature.formatter(processed.lines, processed.speakers, processed.mentions)
 
         body = formatted.body
@@ -100,19 +104,16 @@ function addCommands (robot, documentSet, spec, feature) {
         for (const value of formatted.mentions) {
           attributes.push({kind: 'mention', value})
         }
-      } catch (e) {
-        msg.reply(`http://www.sadtrombone.com/\n\`\`\`\n${e.stack}\n\`\`\`\n`)
-        return
-      }
 
-      documentSet.add(submitter, body, attributes)
-      .then(doc => preprocessor.echo && msg.send(doc.getBody()))
-      .then(() => documentSet.countMatching([], ''))
-      .then(count => {
+        const doc = await documentSet.add(submitter, body, attributes)
+        preprocessor.echo && msg.send(doc.getBody())
+
+        const count = await documentSet.countMatching([], '')
         const noun = count === 1 ? spec.name : spec.plural
         msg.send(`${count} ${noun} loaded.`)
-      })
-      .catch(errorHandler(msg))
+      } catch (err) {
+        errorHandler(msg, err)
+      }
     })
   }
 }
@@ -128,7 +129,7 @@ function setCommand (robot, documentSet, spec, feature) {
   }
 
   const pattern = new RegExp(`set${spec.name}(?:\\s+@?([^:]+))?:\\s*([^]+)$`)
-  robot.respond(pattern, msg => {
+  robot.respond(pattern, async msg => {
     const submitter = msg.message.user.name
     const target = (msg.match[1] || submitter).trim()
 
@@ -138,10 +139,14 @@ function setCommand (robot, documentSet, spec, feature) {
     const body = msg.match[2].trim()
     const attribute = {kind: 'subject', value: target}
 
-    return documentSet.deleteMatching({subject: [target]})
-    .then(() => documentSet.add(submitter, body, [attribute]))
-    .then(doc => msg.send(`${target}'s ${spec.name} has been set to '${doc.getBody()}'.`))
-    .catch(errorHandler(msg))
+    try {
+      await documentSet.deleteMatching({subject: [target]})
+
+      const doc = await documentSet.add(submitter, body, [attribute])
+      msg.send(`${target}'s ${spec.name} has been set to '${doc.getBody()}'.`)
+    } catch (err) {
+      errorHandler(msg, err)
+    }
   })
 }
 
@@ -162,7 +167,7 @@ function queryCommand (robot, documentSet, spec, feature) {
       )
     }
 
-    robot.respond(pattern, msg => {
+    robot.respond(pattern, async msg => {
       const requester = msg.message.user.name
       const input = (msg.match[1] || '').trim()
 
@@ -181,9 +186,12 @@ function queryCommand (robot, documentSet, spec, feature) {
       const role = requester === subject ? feature.roleForSelf : feature.roleForOther
       if (!role.verify(robot, msg)) return
 
-      documentSet.randomMatching({subject: [subject]}, query)
-        .then(doc => msg.send(doc.getBody()))
-        .catch(errorHandler(msg))
+      try {
+        const doc = await documentSet.randomMatching({subject: [subject]}, query)
+        msg.send(doc.getBody())
+      } catch (err) {
+        errorHandler(msg, err)
+      }
     })
   } else {
     if (!feature.helpText) {
@@ -193,14 +201,17 @@ function queryCommand (robot, documentSet, spec, feature) {
       )
     }
 
-    robot.respond(pattern, msg => {
+    robot.respond(pattern, async msg => {
       if (!feature.role.verify(robot, msg)) return
 
       const query = msg.match[1] || ''
 
-      documentSet.randomMatching({}, query)
-        .then(doc => msg.send(doc.getBody()))
-        .catch(errorHandler(msg))
+      try {
+        const doc = await documentSet.randomMatching({}, query)
+        msg.send(doc.getBody())
+      } catch (err) {
+        errorHandler(msg, err)
+      }
     })
   }
 }
@@ -210,7 +221,7 @@ function attributeQuery (robot, documentSet, spec, feature, patternBase, attrKin
 
   const pattern = new RegExp(`${patternBase}\\s+(\\S+)(\\s+[^]+)?$`, 'i')
 
-  robot.respond(pattern, msg => {
+  robot.respond(pattern, async msg => {
     if (!feature.role.verify(robot, msg)) return
 
     const subjects = msg.match[1]
@@ -219,9 +230,12 @@ function attributeQuery (robot, documentSet, spec, feature, patternBase, attrKin
     const attributes = {[attrKind]: subjects}
     const query = msg.match[2] || ''
 
-    documentSet.randomMatching(attributes, query)
-      .then(doc => msg.send(doc.getBody()))
-      .catch(errorHandler(msg))
+    try {
+      const doc = await documentSet.randomMatching(attributes, query)
+      msg.send(doc.getBody())
+    } catch (err) {
+      errorHandler(msg, err)
+    }
   })
 }
 
@@ -261,21 +275,22 @@ function countCommand (robot, documentSet, spec, feature) {
 
   const pattern = new RegExp(`${spec.name}count(\\s+[^]+)?$`, 'i')
 
-  robot.respond(pattern, msg => {
+  robot.respond(pattern, async msg => {
     if (!feature.role.verify(robot, msg)) return
 
     const query = msg.match[1] || ''
     const hasQuery = query.trim().length > 0
 
-    documentSet.countMatching({}, query)
-    .then(count => {
+    try {
+      const count = await documentSet.countMatching({}, query)
       const verb = count === 1 ? 'is' : 'are'
       const noun = count === 1 ? spec.name : spec.plural
       const matching = hasQuery ? ` matching \`${query.trim()}\`` : ''
 
       msg.reply(`there ${verb} ${count} ${noun}${matching}.`)
-    })
-    .catch(errorHandler(msg))
+    } catch (err) {
+      errorHandler(msg, err)
+    }
   })
 }
 
@@ -290,14 +305,14 @@ function statsCommand (robot, documentSet, spec, feature) {
   }
 
   const pattern = new RegExp(`${spec.name}stats(?:\\s+@?(\\S+))?$`, 'i')
-  robot.respond(pattern, msg => {
+  robot.respond(pattern, async msg => {
     if (!feature.role.verify(robot, msg)) return
 
     const target = msg.match[1] || ''
     const hasTarget = target.trim().length > 0
 
-    documentSet.getUserStats(['speaker', 'mention'])
-    .then(table => {
+    try {
+      const table = await documentSet.getUserStats(['speaker', 'mention'])
       if (hasTarget) {
         const stat = table.getStats().find(stat => stat.getUsername() === target)
         if (stat === undefined) {
@@ -335,7 +350,9 @@ function statsCommand (robot, documentSet, spec, feature) {
         output += '```\n'
         msg.send(output)
       }
-    })
+    } catch (err) {
+      errorHandler(msg, err)
+    }
   })
 }
 

@@ -1,5 +1,7 @@
 // Model classes for quotefile entries
 
+const {BEFORE, AFTER} = require('./storage')
+
 // A queryable collection of related documents.
 class DocumentSet {
   constructor (storage, name, nullBody) {
@@ -11,62 +13,104 @@ class DocumentSet {
     this.connected = this.storage.connectDocumentSet(this)
   }
 
-  add (submitter, body, attributes) {
-    return this.connected
-    .then(() => this.storage.insertDocument(this, submitter, body, attributes))
-    .then(result => new Document(this, result))
+  async add (submitter, body, attributes) {
+    await this.connected
+    const result = await this.storage.insertDocument(this, submitter, body, attributes)
+    return new Document(this, result)
   }
 
-  randomMatching (attributes, query) {
-    return this.connected
-    .then(() => this.storage.randomDocumentMatching(this, attributes, query))
-    .then(row => {
-      if (!row) {
-        return this.nullDocument
+  async randomMatching (attributes, query) {
+    await this.connected
+
+    const row = await this.storage.randomDocumentMatching(this, attributes, query)
+    if (!row) {
+      return this.nullDocument
+    }
+
+    const doc = new Document(this, row)
+    await doc.loadAttributes()
+    return doc
+  }
+
+  async allMatching (attributes, query, first = null, cursor = null) {
+    await this.connected
+
+    const [rows, hasPreviousPage] = await Promise.all([
+      this.storage.allDocumentsMatching(this, attributes, query, first, cursor),
+      cursor !== null
+        ? this.storage.hasDocumentsMatching(this, attributes, query, cursor, BEFORE)
+        : false
+    ])
+
+    const documents = rows.map(row => new Document(this, row))
+    const lastId = documents.length > 0
+      ? documents[documents.length - 1].id
+      : cursor
+    const byId = new Map(documents.map(doc => [doc.id, doc]))
+
+    const [attrRows, hasNextPage] = await Promise.all([
+      this.storage.loadDocumentAttributes(this, documents),
+      this.storage.hasDocumentsMatching(this, attributes, query, first, lastId, AFTER)
+    ])
+
+    for (const row of attrRows) {
+      const doc = byId.get(row.document_id)
+      if (!doc) {
+        continue
       }
 
-      return new Document(this, row)
-    })
-  }
-
-  countMatching (attributes, query) {
-    return this.connected
-    .then(() => this.storage.countDocumentsMatching(this, attributes, query))
-    .then(row => parseInt(row.count))
-  }
-
-  getUserStats (attributeKinds) {
-    return this.connected
-    .then(() => this.storage.attributeStats(this, attributeKinds))
-    .then(rows => {
-      const statsByUsername = new Map()
-      for (const row of rows) {
-        let stat = statsByUsername.get(row.value)
-        if (stat === undefined) {
-          stat = new UserStatistic(row.value)
-          statsByUsername.set(row.value, stat)
-        }
-
-        const count = parseInt(row.count)
-        stat.record(row.kind, count)
+      if (doc.attributes === null) {
+        doc.attributes = []
       }
 
-      const builder = new UserStatisticTableBuilder()
-      for (const stat of statsByUsername.values()) {
-        builder.append(stat)
+      doc.attributes.push(new Attribute(doc, row))
+    }
+
+    return {
+      hasPreviousPage,
+      hasNextPage,
+      documents
+    }
+  }
+
+  async countMatching (attributes, query) {
+    await this.connected
+
+    const row = await this.storage.countDocumentsMatching(this, attributes, query)
+    return parseInt(row.count)
+  }
+
+  async getUserStats (attributeKinds) {
+    await this.connected
+    const rows = await this.storage.attributeStats(this, attributeKinds)
+
+    const statsByUsername = new Map()
+    for (const row of rows) {
+      let stat = statsByUsername.get(row.value)
+      if (stat === undefined) {
+        stat = new UserStatistic(row.value)
+        statsByUsername.set(row.value, stat)
       }
-      return builder.build()
-    })
+
+      const count = parseInt(row.count)
+      stat.record(row.kind, count)
+    }
+
+    const builder = new UserStatisticTableBuilder()
+    for (const stat of statsByUsername.values()) {
+      builder.append(stat)
+    }
+    return builder.build()
   }
 
-  deleteMatching (attributes) {
-    return this.connected
-    .then(() => this.storage.deleteDocumentsMatching(this, attributes))
+  async deleteMatching (attributes) {
+    await this.connected
+    return this.storage.deleteDocumentsMatching(this, attributes)
   }
 
-  destroy () {
-    return this.connected
-    .then(() => this.storage.destroyDocumentSet(this))
+  async destroy () {
+    await this.connected
+    return this.storage.destroyDocumentSet(this)
   }
 
   whenConnected () {
@@ -93,15 +137,32 @@ class Document {
     this.submitter = result.submitter
     this.body = result.body
 
-    this.attributes = (result.attributes || []).map(row => new Attribute(this, row))
+    if (result.attributes) {
+      this.attributes = result.attributes.map(row => new Attribute(this, row))
+    } else {
+      this.attributes = null
+    }
   }
 
   getBody () {
     return this.body
   }
 
+  getAttributes () {
+    return this.attributes || []
+  }
+
   wasFound () {
     return true
+  }
+
+  async loadAttributes () {
+    if (this.attributes !== null) {
+      return
+    }
+
+    const rows = await this.set.storage.loadDocumentAttributes(this.set, [this])
+    this.attributes = rows.map(row => new Attribute(this, row))
   }
 }
 
@@ -109,10 +170,19 @@ class Document {
 class NullDocument {
   constructor (body) {
     this.body = body
+    this.attributes = []
   }
 
   getBody () {
     return this.body
+  }
+
+  getAttributes () {
+    return []
+  }
+
+  loadAttributes () {
+    return Promise.resolve()
   }
 
   wasFound () {
