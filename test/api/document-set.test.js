@@ -1,7 +1,7 @@
 const {createDocumentSet} = require('../../scripts/documentset')
 const DocumentSetResolver = require('../../scripts/api/document-set')
 
-describe.only('DocumentSetResolver', function () {
+describe('DocumentSetResolver', function () {
   let set, resolver
 
   beforeEach(function () {
