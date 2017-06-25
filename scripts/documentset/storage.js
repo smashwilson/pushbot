@@ -3,6 +3,9 @@
 const pg = require('pg-promise')()
 const queryParser = require('./query')
 
+const BEFORE = Symbol('before')
+const AFTER = Symbol('after')
+
 class Storage {
   constructor (options) {
     if (options.db) {
@@ -134,7 +137,7 @@ class Storage {
     return this.db.oneOrNone(sql, parameters)
   }
 
-  async allDocumentsMatching (documentSet, attributes, query, first = null, cursor = null) {
+  allDocumentsMatching (documentSet, attributes, query, first = null, cursor = null) {
     const documentTableName = documentSet.documentTableName()
     const attributeTableName = documentSet.attributeTableName()
 
@@ -159,7 +162,7 @@ class Storage {
     }
 
     if (hasCursor) {
-      clauses.push(`id >= $${parameters.length + 1}`)
+      clauses.push(`id > $${parameters.length + 1}`)
       parameters.push(cursor)
     }
 
@@ -167,7 +170,7 @@ class Storage {
     let limit = ''
     if (hasFirst) {
       limit = `LIMIT $${parameters.length + 1}`
-      parameters.push(first + 2)
+      parameters.push(first)
     }
 
     const sql = `
@@ -178,15 +181,44 @@ class Storage {
       ${limit}
     `
 
-    const results = await this.db.any(sql, parameters)
-    const hasPreviousPage = hasCursor && results.length > 0 && results[0].id !== cursor
-    const hasNextPage = hasFirst && results.length > first + 1
+    return this.db.any(sql, parameters)
+  }
 
-    const lower = hasPreviousPage ? 1 : 0
-    const upper = lower + (first || results.length)
-    const rows = results.slice(lower, upper)
+  hasDocumentsMatching (documentSet, attributes, query, cursor, direction) {
+    const documentTableName = documentSet.documentTableName()
+    const attributeTableName = documentSet.attributeTableName()
 
-    return {hasPreviousPage, hasNextPage, rows}
+    const hasAttributes = Object.keys(attributes).length > 0
+    const hasQuery = /\s*\S/.test(query)
+
+    const clauses = []
+    const parameters = [documentTableName, attributeTableName]
+
+    if (hasQuery) {
+      const {clause, parameters: queryParameters} = createQueryClause(query, 'body', parameters.length + 1)
+      clauses.push(clause)
+      parameters.push(...queryParameters)
+    }
+
+    if (hasAttributes) {
+      const {query, parameters: attrParameters} = createAttributeQuery(attributes, 2, parameters.length + 1)
+      clauses.push(`id IN (${query})`)
+      parameters.push(...attrParameters)
+    }
+
+    const operator = direction === BEFORE ? '<' : '>'
+    clauses.push(`id ${operator} $${parameters.length + 1}`)
+    parameters.push(cursor)
+
+    const sql = `
+      SELECT EXISTS(
+        SELECT 1
+        FROM $1:name
+        WHERE ${clauses.join(' AND ')}
+      ) AS exists
+    `
+
+    return this.db.one(sql, parameters, row => row.exists)
   }
 
   countDocumentsMatching (documentSet, attributes, query) {
@@ -345,4 +377,8 @@ function createAttributeQuery (attributes, attrTablePlaceholder, placeholderBase
   return {query: subSelects.join(' INTERSECT '), parameters}
 }
 
-module.exports = Storage
+module.exports = {
+  Storage,
+  BEFORE,
+  AFTER
+}

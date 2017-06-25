@@ -3,7 +3,7 @@
 // Entry point for the database-backed "quotefile" management API.
 
 const {DocumentSet} = require('./model')
-const Storage = require('./storage')
+const {Storage} = require('./storage')
 const {generate} = require('./commands')
 const {Anyone} = require('../roles')
 

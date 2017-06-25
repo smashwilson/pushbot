@@ -1,5 +1,7 @@
 // Model classes for quotefile entries
 
+const {BEFORE, AFTER} = require('./storage')
+
 // A queryable collection of related documents.
 class DocumentSet {
   constructor (storage, name, nullBody) {
@@ -33,14 +35,24 @@ class DocumentSet {
   async allMatching (attributes, query, first = null, cursor = null) {
     await this.connected
 
-    const {
-      hasPreviousPage, hasNextPage, rows
-    } = await this.storage.allDocumentsMatching(this, attributes, query, first, cursor)
+    const [rows, hasPreviousPage] = await Promise.all([
+      this.storage.allDocumentsMatching(this, attributes, query, first, cursor),
+      cursor !== null
+        ? this.storage.hasDocumentsMatching(this, attributes, query, cursor, BEFORE)
+        : false
+    ])
 
     const documents = rows.map(row => new Document(this, row))
+    const lastId = documents.length > 0
+      ? documents[documents.length - 1].id
+      : cursor
     const byId = new Map(documents.map(doc => [doc.id, doc]))
 
-    const attrRows = await this.storage.loadDocumentAttributes(this, documents)
+    const [attrRows, hasNextPage] = await Promise.all([
+      this.storage.loadDocumentAttributes(this, documents),
+      this.storage.hasDocumentsMatching(this, attributes, query, first, lastId, AFTER)
+    ])
+
     for (const row of attrRows) {
       const doc = byId.get(row.document_id)
       if (!doc) {
