@@ -1,7 +1,7 @@
 const {createDocumentSet} = require('../../scripts/documentset')
 const DocumentSetResolver = require('../../scripts/api/document-set')
 
-describe('DocumentSetResolver', function () {
+describe.only('DocumentSetResolver', function () {
   let set, resolver
 
   beforeEach(function () {
@@ -317,11 +317,65 @@ describe('DocumentSetResolver', function () {
   })
 
   describe('count', function () {
-    it('with no documents')
-    it('with an empty query')
-    it('matching a query')
-    it('with a matching subject')
-    it('with all speakers')
-    it('with all mentions')
+    it('with no documents', async function () {
+      const result = await resolver.count({criteria: {}})
+      expect(result).to.equal(0)
+    })
+
+    it('with an empty query', async function () {
+      await populate({}, {}, {})
+
+      const result = await resolver.count({criteria: {}})
+      expect(result).to.equal(3)
+    })
+
+    it('matching a query', async function () {
+      await populate(
+        {}, {}, {},
+        {body: 'yes zzz 0'}, {body: 'yes 1 zzz'},
+        {}, {}
+      )
+
+      const result = await resolver.count({criteria: {query: 'zzz'}})
+      expect(result).to.equal(2)
+    })
+
+    it('with a matching subject', async function () {
+      await populate(
+        {}, {}, {},
+        {subject: 'me'}, {subject: 'me'},
+        {subject: 'other'},
+        {}, {}
+      )
+
+      const result = await resolver.count({criteria: {subject: 'me'}})
+      expect(result).to.equal(2)
+    })
+
+    it('with all speakers', async function () {
+      await populate(
+        {speakers: ['yes0']},
+        {speakers: ['yes0', 'yes1']},
+        {speakers: ['yes0', 'yes1', 'extra']},
+        {speakers: ['no0']},
+        {}
+      )
+
+      const result = await resolver.count({criteria: {speakers: ['yes0', 'yes1']}})
+      expect(result).to.equal(2)
+    })
+
+    it('with all mentions', async function () {
+      await populate(
+        {mentions: ['yes0']},
+        {mentions: ['yes0', 'yes1']},
+        {mentions: ['yes0', 'yes1', 'extra']},
+        {mentions: ['no0']},
+        {}
+      )
+
+      const result = await resolver.count({criteria: {mentions: ['yes0', 'yes1']}})
+      expect(result).to.equal(2)
+    })
   })
 })
