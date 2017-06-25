@@ -249,9 +249,38 @@ describe('DocumentSetResolver', function () {
   })
 
   describe('mine', function () {
-    it('with no documents')
-    it('with no documents matching the subject of the current user')
-    it('with a document matching the subject of the current user')
+    it('with no documents', async function () {
+      const req = {user: {name: 'me'}}
+      const result = await resolver.mine({}, req)
+
+      expect(result.found).to.equal(false)
+    })
+
+    it('with no documents matching the subject of the current user', async function () {
+      await populate(
+        {}, {}, {}, {},
+        {subject: 'other'}
+      )
+
+      const req = {user: {name: 'me'}}
+      const result = await resolver.mine({}, req)
+
+      expect(result.found).to.equal(false)
+    })
+
+    it('with a document matching the subject of the current user', async function () {
+      await populate(
+        {}, {}, {}, {},
+        {body: 'yes', subject: 'me'},
+        {subject: 'other'}
+      )
+
+      const req = {user: {name: 'me'}}
+      const result = await resolver.mine({}, req)
+
+      expect(result.found).to.equal(true)
+      expect(result.text).to.equal('yes')
+    })
   })
 
   describe('rank', function () {
