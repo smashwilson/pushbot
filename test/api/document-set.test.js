@@ -284,8 +284,36 @@ describe('DocumentSetResolver', function () {
   })
 
   describe('rank', function () {
-    it('with no documents')
-    it('with no documents matching with a matching speaker')
+    it('with no documents', async function () {
+      const result = await resolver.rank({speaker: 'me'})
+      expect(result).to.equal(0)
+    })
+
+    it('with no documents matching with a matching speaker', async function () {
+      await populate(
+        {}, {}, {speakers: ['other']}, {speakers: ['no']}
+      )
+
+      const result = await resolver.rank({speaker: 'me'})
+      expect(result).to.equal(0)
+    })
+
+    it('with documents matching the requested speaker', async function () {
+      await populate(
+        {speakers: ['me']},
+        {speakers: ['me']},
+        {speakers: ['me']},
+        {speakers: ['first']},
+        {speakers: ['first']},
+        {speakers: ['first']},
+        {speakers: ['first']},
+        {speakers: ['last']},
+        {speakers: ['last']}
+      )
+
+      const result = await resolver.rank({speaker: 'me'})
+      expect(result).to.equal(2)
+    })
   })
 
   describe('count', function () {
