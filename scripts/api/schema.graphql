@@ -96,6 +96,8 @@ type DocumentSet {
   random(criteria: Criteria!): Document!
 
   # Paginated view of all Documents matching specified Criteria.
+  # Supply the "cursor" of the final DocumentEdge in one page as the "after"
+  # parameter to the next query to retrieve the next page of results.
   all(criteria: Criteria!, first: Int, after: String): DocumentConnection!
 
   # A random Document with a "subject" of the currently authenticated User.
@@ -113,14 +115,22 @@ type DocumentSet {
 # Paginated collection of Documents. As specified by:
 # https://facebook.github.io/relay/graphql/connections.htm
 type DocumentConnection {
+  # Containers for the results on this page.
   edges: [DocumentEdge!]!
+
+  # Paging support information.
   pageInfo: PageInfo!
 }
 
 # Paginated Document result. As specified by:
 # https://facebook.github.io/relay/graphql/connections.htm
 type DocumentEdge {
+  # Opaque identifier used for paging. Supply the "cursor" of the final result
+  # in one page as the "after" parameter to the next query to retrieve the
+  # next page of results.
   cursor: String!
+
+  # A single matching Document.
   node: Document!
 }
 
@@ -145,15 +155,36 @@ type Document {
   mentions: [String!]!
 }
 
+# Metadata about the current page of results and its relationship with the full
+# result set.
 type PageInfo {
+  # The total number of results that were matched by the Criteria constraints
+  # across all possible pages.
   count: Int!
+
+  # True if there is a page of results before this one.
   hasPreviousPage: Boolean!
+
+  # True if there is a page of results after this one.
   hasNextPage: Boolean!
 }
 
+# Constraints on the Documents to be included in a query, count, or random
+# selection.
 input Criteria {
+  # Whitespace-delimited text terms that must all be present in the Document's
+  # body. Use 'single quotes' or "double quotes" to include multi-word terms.
   query: String
+
+  # A one-to-one mapping that exists between some DocumentSets and Users to
+  # "attach" each Document to a specific User. For example, a User's motto.
   subject: String
+
+  # If listed, all named Users must have a speaking role in the Document. The
+  # meaning of "speaking" varies from DocumentSet to DocumentSet.
   speakers: [String!]
+
+  # If listed, all named Users must be mentioned in the Document. The meaning of
+  # a "mention" varies from DocumentSet to DocumentSet.
   mentions: [String!]
 }
