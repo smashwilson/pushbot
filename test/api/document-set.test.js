@@ -120,7 +120,7 @@ describe('DocumentSetResolver', function () {
       expect(result.pageInfo.hasNextPage).to.equal(false)
     })
 
-    it.only('with "first" less than the document count', async function () {
+    it('with "first" less than the document count', async function () {
       await populate({}, {}, {}, {}, {})
 
       const result = await resolver.all({criteria: {}, first: 4})
