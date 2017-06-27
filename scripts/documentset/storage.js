@@ -273,9 +273,9 @@ class Storage {
   }
 
   loadDocumentAttributes (documentSet, documents) {
-    const attributeTableName = documentSet.attributeTableName()
-    const parameters = {attributeTableName}
+    const attributeTableName = documentSet.attributeTableName()    
     const ids = documents.map(doc => doc.id)
+    const parameters = {attributeTableName, ids}
 
     if (documents.length === 0) {
       return []
@@ -284,7 +284,7 @@ class Storage {
     const sql = `
       SELECT id, kind, value, document_id
       FROM $<attributeTableName:name>
-      WHERE document_id IN (${ids.join(', ')})
+      WHERE document_id IN ($<ids:csv>)
     `
 
     return this.db.any(sql, parameters)
@@ -292,17 +292,12 @@ class Storage {
 
   attributeStats (documentSet, attributeKinds) {
     const attributeTableName = documentSet.attributeTableName()
-    const parameters = [attributeTableName, ...attributeKinds]
-
-    const kinds = []
-    for (let i = 2; i <= parameters.length; i++) {
-      kinds.push(`$${i}`)
-    }
+    const parameters = [attributeTableName, attributeKinds]
 
     const sql = `
       SELECT kind, value, COUNT(*) AS count
       FROM $1:name
-      WHERE kind IN (${kinds.join(', ')})
+      WHERE kind IN ($2:csv)
       GROUP BY kind, value
       HAVING COUNT(*) > 0
     `
