@@ -219,12 +219,10 @@ function queryCommand (robot, documentSet, spec, feature) {
 function attributeQuery (robot, documentSet, spec, feature, patternBase, attrKind) {
   robot.commands.push(...feature.helpText)
 
-  const pattern = new RegExp(`${patternBase}\\s+(\\S+)(\\s+[^]+)?$`, 'i')
+  const pattern = new RegExp(`${patternBase}\\s+(\\S+)\\s*([^]+)?$`, 'i')
 
   robot.respond(pattern, async msg => {
-    robot.logger.debug('attribute query received')
     if (!feature.role.verify(robot, msg)) return
-    robot.logger.debug('role verified')
 
     const subjects = msg.match[1]
       .split(/\+/)
@@ -232,11 +230,8 @@ function attributeQuery (robot, documentSet, spec, feature, patternBase, attrKin
     const attributes = {[attrKind]: subjects}
     const query = msg.match[2] || ''
 
-    robot.logger.debug(`subjects: ${subjects.join(' ')} attributes: ${require('util').inspect(attributes)} query: ${query}`)
-
     try {
       const doc = await documentSet.randomMatching(attributes, query)
-      robot.logger.debug(`doc: ${require('util').inspect(doc)}`)
       msg.send(doc.getBody())
     } catch (err) {
       errorHandler(msg, err)
@@ -309,7 +304,7 @@ function statsCommand (robot, documentSet, spec, feature) {
     )
   }
 
-  const pattern = new RegExp(`${spec.name}stats(?:\\s+@?(\\S+))?$`, 'i')
+  const pattern = new RegExp(`${spec.name}stats(?:\\s+@?(\\S+))?\\s*$`, 'i')
   robot.respond(pattern, async msg => {
     if (!feature.role.verify(robot, msg)) return
 
