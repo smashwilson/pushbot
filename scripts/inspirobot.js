@@ -7,7 +7,7 @@
 const request = require('request')
 
 module.exports = function (robot) {
-  robot.respond(/inspire me/i, msg => {
+  robot.respond(/inspire\b/i, msg => {
     request('http://inspirobot.me/api?generate=true', (err, resp, body) => {
       if (err) {
         robot.logger.error(`Unable to inspire a user:\n${err.stack}`)
