@@ -4,7 +4,6 @@
 # Commands:
 #   hubot hug <user> - express mechanical affection toward a target
 #   hubot hi5 <user> - enthusiastically express congratulations
-#   hubot zing - someone made a terrible joke
 #   hubot magic8 <question> - gaze into your future
 #   hubot judge <something> - render a verdict upon... something
 #   hubot barf - BAAAAAARRRRRRRFFFFF
@@ -66,17 +65,6 @@ module.exports = (robot) ->
       "http://mlb.mlb.com/images/0/7/2/177185072/050916_jose_helmet_med_a3yfultb.gif"
       "https://media.giphy.com/media/OIoQ9FzLel1qo/giphy.gif"
       "https://media.giphy.com/media/l4FGzzKKoxuv7AaL6/giphy.gif"
-    ]
-
-  robot.respond /zing/i, (msg) ->
-    msg.send atRandom [
-      "http://i.imgur.com/Wd9NiaB.jpg"
-      "https://slack-files.com/files-tmb/T02D23B7G-F02ECEZEG-3fd432/img_201407206_133131_360.png"
-      "http://media.giphy.com/media/xs6FqhzEdWMZW/giphy.gif#.png"
-      "http://i.imgur.com/pZPtRZm.jpg"
-      "http://i.imgur.com/Km8sGO8.jpg"
-      "http://i.imgur.com/vt0zL8z.jpg"
-      "http://i.imgur.com/m0CUETW.jpg"
     ]
 
   robot.respond /magic8/i, (msg) ->
