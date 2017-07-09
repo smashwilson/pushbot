@@ -35,6 +35,7 @@
     "hubot-swanson": "1.2.0",
     "hubot-table-flip": "0.2.0",
     "jsdom": "9.8.3",
+    "log": "^1.4.0",
     "moment": "2.17.0",
     "moment-precise-range-plugin": "^1.2.3",
     "moment-timezone": "^0.5.13",
