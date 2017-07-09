@@ -22,6 +22,7 @@ class DocumentResolver {
   constructor (document) {
     this.document = document
 
+    this.id = this.document.id
     this.found = this.document.wasFound()
     this.text = this.document.getBody()
   }

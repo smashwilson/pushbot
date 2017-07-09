@@ -137,6 +137,10 @@ type DocumentEdge {
 # Single entry retrieved from a DocumentSet. A single quote, limerick, title,
 # soultrait, motto, whatever.
 type Document {
+  # Unique identifier for this Document within its DocumentSet. Absent if
+  # "found" is false.
+  id: ID
+
   # False if this Document is a null document, returned when no documents match
   # search criteria.
   found: Boolean!
