@@ -4,6 +4,8 @@
 // Commands:
 //   hubot zing - someone made a terrible joke
 
+const {atRandom} = require('./helpers')
+
 const zings = {
   atomicknight: 'https://user-images.githubusercontent.com/17565/27990023-1c97c360-6417-11e7-96b9-aa73761b1a09.jpg',
   femshep: 'https://user-images.githubusercontent.com/17565/27990024-1e83c4f8-6417-11e7-9a49-3292c761110f.jpg',
@@ -21,7 +23,7 @@ module.exports = function (robot) {
       zingReq = msg.message.user.name
     }
 
-    const zing = zings[zingReq] || zings[msg.atRandom(Object.keys(zings))]
+    const zing = zings[zingReq] || zings[atRandom(Object.keys(zings))]
     msg.send(zing)
   })
 }

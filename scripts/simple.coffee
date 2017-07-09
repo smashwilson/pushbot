@@ -22,13 +22,12 @@
 #   HUBOT_BETRAY_IMMUNE - comma-separated list of users who are immune to betrayal.
 
 _ = require 'underscore'
+{atRandom} = require './helpers'
 
 betrayImmune = _.map (process.env.HUBOT_BETRAY_IMMUNE or '').split(/,/), (line) -> line.trim()
 
 targetFrom = (msg, matchNo = 1) ->
   if msg.match[matchNo] then msg.match[matchNo] else msg.message.user.name
-
-atRandom = (list) -> list[_.random list.length - 1]
 
 module.exports = (robot) ->
 
