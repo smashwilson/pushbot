@@ -40,6 +40,13 @@ describe('Pattern', function () {
       expect(parsed[0].end.rx.test('end')).to.be.true
     })
 
+    it('without a space between patterns', function () {
+      const parsed = Pattern.parse('"start"...\'end\'')
+      expect(parsed).to.have.length(1)
+      expect(parsed[0].start.source).to.equal('start')
+      expect(parsed[0].end.source).to.equal('end')
+    })
+
     it('fails on unexpected characters outside of delimiters', function () {
       expect(() => Pattern.parse('oops')).to.throw(/You need to quote patterns/)
     })
