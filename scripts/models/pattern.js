@@ -119,9 +119,8 @@ function parse (source) {
         PatternConstructor = RegexpPattern
         patternDelimiter = '/'
       } else if (ch === '.') {
-        while (ch === '.') {
+        while (source[i + 1] === '.') {
           i++
-          ch = source[i]
         }
 
         startPattern = patterns.pop()
