@@ -7,6 +7,7 @@
   "dependencies": {
     "bluebird": "^3.4.6",
     "cheerio": "0.22.0",
+    "coffee-script": "^1.12.6",
     "cookie-session": "^2.0.0-beta.2",
     "cors": "^2.8.3",
     "express": "4.15.3",
@@ -66,7 +67,7 @@
   },
   "scripts": {
     "lint": "eslint scripts/ test/",
-    "mocha": "mocha --compilers coffee:coffee-script --require test/globals.js --colors --recursive",
+    "mocha": "mocha --compilers coffee:coffee-script --require coffee-script/register --require test/globals.js --colors --recursive",
     "test": "npm run lint && npm run mocha"
   }
 }
