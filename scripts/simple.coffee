@@ -250,6 +250,9 @@ module.exports = (robot) ->
     unown_string = lower_string.split('').map(unownify).join('')
     msg.send unown_string
 
+  robot.hear /(^|[^0-9])69([^0-9]|$)/, (msg) ->
+    msg.send "https://thats.thesexnumber.fyi/"
+    
   robot.respond /femshep/i, (msg) ->
     msg.send atRandom [
       "http://media.tumblr.com/tumblr_lsxdm7yONC1qbplir.gif"
