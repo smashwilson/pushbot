@@ -64,6 +64,7 @@ module.exports = (robot) ->
       "http://mlb.mlb.com/images/0/7/2/177185072/050916_jose_helmet_med_a3yfultb.gif"
       "https://media.giphy.com/media/OIoQ9FzLel1qo/giphy.gif"
       "https://media.giphy.com/media/l4FGzzKKoxuv7AaL6/giphy.gif"
+      "https://i.imgur.com/MAiIwW8.gifv"
     ]
 
   robot.respond /magic8/i, (msg) ->
