@@ -12,6 +12,7 @@ const zings = {
   fenris: 'https://user-images.githubusercontent.com/17565/27990025-20754778-6417-11e7-992e-377d82831c8c.jpg',
   iguanaditty: 'https://user-images.githubusercontent.com/17565/27990026-23b9d836-6417-11e7-953d-67ff9f1a2953.jpg',
   jrhusel: 'https://user-images.githubusercontent.com/17565/27990027-252fb74e-6417-11e7-9afb-7467fedb7f50.jpg',
+  llynmir: 'https://user-images.githubusercontent.com/13645/29254394-afbc7e9e-8062-11e7-9896-c668fdaf1352.jpg',
   'purr-purr': 'https://user-images.githubusercontent.com/17565/27990028-2685c6ec-6417-11e7-8ecb-831b90bad97e.jpg',
   reostra: 'https://user-images.githubusercontent.com/17565/27990029-27c0c318-6417-11e7-9c47-d9b5a6551c26.jpg',
   smashwilson: 'https://user-images.githubusercontent.com/17565/27990125-e5849886-641a-11e7-8ca1-cac9dd731cf4.jpg',
