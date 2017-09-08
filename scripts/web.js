@@ -95,6 +95,10 @@ class Status {
 }
 
 module.exports = function (robot) {
+  if (!SLACK_CLIENT_ID || !SLACK_CLIENT_SECRET) {
+    return
+  }
+
   // Passport
 
   if (PASSPORT_DEV_ID) {

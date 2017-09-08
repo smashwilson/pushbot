@@ -31,6 +31,10 @@ const limFormatter = (lines, speakers, mentions) => {
 }
 
 module.exports = function (robot) {
+  if (!robot.postgres) {
+    return
+  }
+
   // !quote and friends
   createDocumentSet(robot, 'quote', {
     add: { role: QuotePontiff },
