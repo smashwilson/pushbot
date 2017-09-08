@@ -199,7 +199,9 @@ function queryCommand (robot, documentSet, spec, feature) {
       if (!role.verify(robot, msg)) return
 
       try {
-        const doc = await documentSet.randomMatching({subject: [subject]}, query)
+        const doc = feature.latest
+          ? await documentSet.latestMatching({subject: [subject]}, query)
+          : await documentSet.randomMatching({subject: [subject]}, query)
         msg.send(doc.getBody())
       } catch (err) {
         errorHandler(msg, err)
@@ -219,7 +221,9 @@ function queryCommand (robot, documentSet, spec, feature) {
       const query = msg.match[1] || ''
 
       try {
-        const doc = await documentSet.randomMatching({}, query)
+        const doc = feature.latest
+          ? await documentSet.latestMatching({}, query)
+          : await documentSet.randomMatching({}, query)
         msg.send(doc.getBody())
       } catch (err) {
         errorHandler(msg, err)
