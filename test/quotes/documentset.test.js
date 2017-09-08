@@ -867,6 +867,27 @@ describe('createDocumentSet', function () {
       })
     })
 
+    it('can be configured to return the latest rather than a random result', async function () {
+      usesDatabase(this)
+
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        query: { userOriented: true, latest: true }
+      })
+
+      for (let i = 0; i < 10; i++) {
+        await documentSet.add('me', `document #${i}`, [{kind: 'subject', value: 'me'}])
+      }
+      await documentSet.add('me', 'latest', [{kind: 'subject', value: 'me'}])
+
+      await room.user.say('me', '@hubot blarf')
+      await delay()()
+
+      expect(room.messages).to.deep.equal([
+        ['me', '@hubot blarf'],
+        ['hubot', 'latest']
+      ])
+    })
+
     it('generates default help text', function () {
       return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {query: true}))
