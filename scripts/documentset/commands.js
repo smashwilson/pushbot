@@ -140,10 +140,13 @@ function setCommand (robot, documentSet, spec, feature) {
     const attribute = {kind: 'subject', value: target}
 
     try {
-      await documentSet.deleteMatching({subject: [target]})
-
+      const former = await documentSet.latestMatching({subject: [target]})
       const doc = await documentSet.add(submitter, body, [attribute])
-      msg.send(`${target}'s ${spec.name} has been set to '${doc.getBody()}'.`)
+      if (former.wasFound()) {
+        msg.send(`${target}'s ${spec.name} has been changed from '${former.getBody()}' to '${doc.getBody()}'.`)
+      } else {
+        msg.send(`${target}'s ${spec.name} has been set to '${doc.getBody()}'.`)
+      }
     } catch (err) {
       errorHandler(msg, err)
     }

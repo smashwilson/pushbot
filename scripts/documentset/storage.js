@@ -5,6 +5,8 @@ const queryParser = require('./query')
 
 const BEFORE = Symbol('before')
 const AFTER = Symbol('after')
+const RANDOM = Symbol('random')
+const LATEST = Symbol('latest')
 
 class Storage {
   constructor (options) {
@@ -93,12 +95,12 @@ class Storage {
     return docResult
   }
 
-  randomDocumentMatching (documentSet, attributes, query) {
+  singleDocumentMatching (documentSet, attributes, query, order) {
     const documentTableName = documentSet.documentTableName()
     const attributeTableName = documentSet.attributeTableName()
 
     const hasAttributes = Object.keys(attributes).length > 0
-    const hasQuery = /\s*\S/.test(query)
+    const hasQuery = query && /\s*\S/.test(query)
 
     let where = ''
     let queryClause = ''
@@ -126,11 +128,15 @@ class Storage {
       parameters.push(...attrParameters)
     }
 
+    let orderClause = ''
+    if (order === RANDOM) orderClause = 'ORDER BY RANDOM()'
+    if (order === LATEST) orderClause = 'ORDER BY created DESC'
+
     const sql = `
       SELECT id, created, updated, submitter, body
       FROM $1:name
       ${where} ${queryClause} ${separator} ${attrClause}
-      ORDER BY RANDOM()
+      ${orderClause}
       LIMIT 1
     `
 
@@ -380,5 +386,7 @@ function createAttributeQuery (attributes, attrTablePlaceholder, placeholderBase
 module.exports = {
   Storage,
   BEFORE,
-  AFTER
+  AFTER,
+  RANDOM,
+  LATEST
 }

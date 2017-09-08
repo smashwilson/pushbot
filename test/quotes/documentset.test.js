@@ -484,7 +484,7 @@ describe('createDocumentSet', function () {
     })
   })
 
-  describe('set', function () {
+  describe.only('set', function () {
     it('adds a new document with "setblarf:"', function () {
       usesDatabase(this)
       documentSet = createDocumentSet(room.robot, 'blarf', { set: true })
@@ -498,7 +498,7 @@ describe('createDocumentSet', function () {
           ['hubot', "me's blarf has been set to 'something embarassing'."]
         ])
 
-        return documentSet.randomMatching({subject: ['me']}, '')
+        return documentSet.latestMatching({subject: ['me']}, '')
       })
       .then(doc => expect(doc.getBody()).to.equal('something embarassing'))
     })
@@ -516,7 +516,7 @@ describe('createDocumentSet', function () {
           ['hubot', "other's blarf has been set to 'something embarassing'."]
         ])
 
-        return documentSet.randomMatching({subject: ['other']}, '')
+        return documentSet.latestMatching({subject: ['other']}, '')
       })
       .then(doc => expect(doc.getBody()).to.equal('something embarassing'))
     })
@@ -531,16 +531,16 @@ describe('createDocumentSet', function () {
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot setblarf: something better'],
-          ['hubot', "me's blarf has been set to 'something better'."]
+          ['hubot', "me's blarf has been changed from 'blah' to 'something better'."]
         ])
 
         return Promise.all([
           documentSet.countMatching({subject: ['me']}, ''),
-          documentSet.randomMatching({subject: ['me']}, '')
+          documentSet.latestMatching({subject: ['me']}, '')
         ])
       })
       .then(results => {
-        expect(results[0]).to.equal(1)
+        expect(results[0]).to.equal(2)
         expect(results[1].getBody()).to.equal('something better')
       })
     })
@@ -555,16 +555,16 @@ describe('createDocumentSet', function () {
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot setblarf other: something better'],
-          ['hubot', "other's blarf has been set to 'something better'."]
+          ['hubot', "other's blarf has been changed from 'blah' to 'something better'."]
         ])
 
         return Promise.all([
           documentSet.countMatching({subject: ['other']}, ''),
-          documentSet.randomMatching({subject: ['other']}, '')
+          documentSet.latestMatching({subject: ['other']}, '')
         ])
       })
       .then(results => {
-        expect(results[0]).to.equal(1)
+        expect(results[0]).to.equal(2)
         expect(results[1].getBody()).to.equal('something better')
       })
     })
