@@ -484,7 +484,7 @@ describe('createDocumentSet', function () {
     })
   })
 
-  describe.only('set', function () {
+  describe('set', function () {
     it('adds a new document with "setblarf:"', function () {
       usesDatabase(this)
       documentSet = createDocumentSet(room.robot, 'blarf', { set: true })
