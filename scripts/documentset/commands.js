@@ -162,12 +162,21 @@ function queryCommand (robot, documentSet, spec, feature) {
 
   if (feature.userOriented) {
     if (!feature.helpText) {
-      robot.commands.push(
-        `hubot ${spec.name} - Return one of your ${spec.plural} at random.`,
-        `hubot ${spec.name} @<user> - Return one of <user>'s ${spec.plural} at random.`,
-        `hubot ${spec.name} <query> - Return one of your ${spec.plural} that matches <query>.`,
-        `hubot ${spec.name} @<user> <query> - Return one of <user>'s ${spec.plural} that matches <query>.`
-      )
+      if (feature.latest) {
+        robot.commands.push(
+          `hubot ${spec.name} - Return your current ${spec.name}.`,
+          `hubot ${spec.name} @<user> - Return <user>'s current ${spec.name}.`,
+          `hubot ${spec.name} <query> - Return your most recent ${spec.name} that matches <query>.`,
+          `hubot ${spec.name} @<user> <query> - Return <user>'s most recent ${spec.name} that matches <query>.`
+        )
+      } else {
+        robot.commands.push(
+          `hubot ${spec.name} - Return one of your ${spec.plural} at random.`,
+          `hubot ${spec.name} @<user> - Return one of <user>'s ${spec.plural} at random.`,
+          `hubot ${spec.name} <query> - Return one of your ${spec.plural} that matches <query>.`,
+          `hubot ${spec.name} @<user> <query> - Return one of <user>'s ${spec.plural} that matches <query>.`
+        )
+      }
     }
 
     robot.respond(pattern, async msg => {
