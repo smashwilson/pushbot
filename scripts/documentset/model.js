@@ -22,7 +22,7 @@ class DocumentSet {
   async singleMatching (attributes, query, order) {
     await this.connected
 
-    const row = await this.storage.singleDocumentMatching(this, attributes, query, RANDOM)
+    const row = await this.storage.singleDocumentMatching(this, attributes, query, order)
     if (!row) {
       return this.nullDocument
     }
