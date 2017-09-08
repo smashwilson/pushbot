@@ -922,6 +922,57 @@ describe('createDocumentSet', function () {
     })
   })
 
+  describe.only('all', function () {
+    async function populate (commandOpts = true, docs = [], parallel = true) {
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        all: commandOpts
+      })
+
+      const args = docs.map(doc => {
+        let body = ''
+        const attributes = []
+        if (doc.body && doc.subject) {
+          body = doc.body
+          attributes.push({kind: 'subject', value: doc.subject})
+        } else {
+          body = doc
+        }
+        return ['me', body, attributes]
+      })
+
+      if (parallel) {
+        await Promise.all(args.map(arg => documentSet.add(...arg)))
+      } else {
+        for (const arg of args) {
+          await documentSet.add(...arg)
+        }
+      }
+    }
+
+    it('returns all known documents', async function () {
+      await populate(true, ['one', 'two', 'three'], false)
+
+      await room.user.say('me', '@hubot allblarfs')
+      await delay()()
+
+      expect(room.messages[1]).to.equal('one, two, three')
+    })
+
+    it('returns all documents associated with a user', async function () {
+      await populate({ userOriented: true }, [
+        {body: '111', subject: 'you'},
+        {body: '222', subject: 'you'},
+        {body: '000', subject: 'nope'},
+        {body: '333', subject: 'you'}
+      ], false)
+
+      await room.user.say('me', '@hubot allblarfs @you')
+      await delay()()
+
+      expect(room.messages[1][1]).to.equal('111, 222, 333')
+    })
+  })
+
   describe('count', function () {
     function populate (commandOpts = true, docs = []) {
       documentSet = createDocumentSet(room.robot, 'blarf', {

@@ -19,6 +19,10 @@ exports.generate = function (robot, documentSet, spec) {
     queryCommand(robot, documentSet, spec, spec.features.query)
   }
 
+  if (spec.features.all !== null) {
+    allCommand(robot, documentSet, spec, spec.features.all)
+  }
+
   if (spec.features.count !== null) {
     countCommand(robot, documentSet, spec, spec.features.count)
   }
@@ -229,6 +233,59 @@ function queryCommand (robot, documentSet, spec, feature) {
         errorHandler(msg, err)
       }
     })
+  }
+}
+
+function allCommand (robot, documentSet, spec, feature) {
+  const pattern = new RegExp(`all${spec.plural}(\\s+[^]+)?$`)
+
+  if (feature.helpText) {
+    robot.commands.push(...feature.helpText)
+  }
+
+  if (feature.userOriented) {
+    if (!feature.helpText) {
+      robot.commands.push(
+        `hubot all${spec.plural} - Return all of your ${spec.plural}.`,
+        `hubot all${spec.plural} @<user> - Return all of <user>'s ${spec.plural}.`,
+        `hubot all${spec.plural} <query> - Return all of your ${spec.plural} that match <query>.`,
+        `hubot all${spec.plural} @<user> <query> - Return <user>'s ${spec.plural} that match <query>.`
+      )
+    }
+
+    robot.respond(pattern, async msg => {
+      const requester = msg.message.user.name
+      const input = (msg.match[1] || '').trim()
+
+      let query = ''
+      let subject = ''
+
+      const usernameMatch = /^@?(\S+)\b/.exec(input)
+      if (usernameMatch) {
+        subject = usernameMatch[1]
+        query = input.substring(usernameMatch[0].length)
+      } else {
+        subject = msg.message.user.name
+        query = input
+      }
+
+      const role = requester === subject ? feature.roleForSelf : feature.roleForOther
+      if (!role.verify(robot, msg)) return
+
+      try {
+        const {documents} = await documentSet.allMatching({subject: [subject]}, query)
+        msg.send(documents.map(doc => doc.getBody()).join(feature.separator || ', '))
+      } catch (err) {
+        errorHandler(msg, err)
+      }
+    })
+  } else {
+    if (!feature.helpText) {
+      robot.commands.push(
+        `hubot all${spec.plural} - Return all ${spec.plural}.`,
+        `hubot all${spec.plural} <query> - Return all ${spec.plural} that match <query>.`
+      )
+    }
   }
 }
 
