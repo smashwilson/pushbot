@@ -69,10 +69,14 @@ module.exports = function (robot) {
     },
     query: {
       userOriented: true,
+      latest: true,
       helpText: [
         'hubot title - See what the #~s hive mind has decided you are.',
         'hubot title @<user> - See what the #~s hive mind has designated <user>.'
       ]
+    },
+    all: {
+      userOriented: true
     },
     nullBody: 'No title yet. Care to set it?'
   })
