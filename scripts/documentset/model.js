@@ -1,6 +1,6 @@
 // Model classes for quotefile entries
 
-const {BEFORE, AFTER} = require('./storage')
+const {BEFORE, AFTER, RANDOM, LATEST} = require('./storage')
 
 // A queryable collection of related documents.
 class DocumentSet {
@@ -19,10 +19,10 @@ class DocumentSet {
     return new Document(this, result)
   }
 
-  async randomMatching (attributes, query) {
+  async singleMatching (attributes, query, order) {
     await this.connected
 
-    const row = await this.storage.randomDocumentMatching(this, attributes, query)
+    const row = await this.storage.singleDocumentMatching(this, attributes, query, order)
     if (!row) {
       return this.nullDocument
     }
@@ -30,6 +30,14 @@ class DocumentSet {
     const doc = new Document(this, row)
     await doc.loadAttributes()
     return doc
+  }
+
+  randomMatching (attributes, query) {
+    return this.singleMatching(attributes, query, RANDOM)
+  }
+
+  latestMatching (attributes, query) {
+    return this.singleMatching(attributes, query, LATEST)
   }
 
   async allMatching (attributes, query, first = null, cursor = null) {

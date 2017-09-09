@@ -19,6 +19,10 @@ exports.generate = function (robot, documentSet, spec) {
     queryCommand(robot, documentSet, spec, spec.features.query)
   }
 
+  if (spec.features.all !== null) {
+    allCommand(robot, documentSet, spec, spec.features.all)
+  }
+
   if (spec.features.count !== null) {
     countCommand(robot, documentSet, spec, spec.features.count)
   }
@@ -140,10 +144,13 @@ function setCommand (robot, documentSet, spec, feature) {
     const attribute = {kind: 'subject', value: target}
 
     try {
-      await documentSet.deleteMatching({subject: [target]})
-
+      const former = await documentSet.latestMatching({subject: [target]})
       const doc = await documentSet.add(submitter, body, [attribute])
-      msg.send(`${target}'s ${spec.name} has been set to '${doc.getBody()}'.`)
+      if (former.wasFound()) {
+        msg.send(`${target}'s ${spec.name} has been changed from '${former.getBody()}' to '${doc.getBody()}'.`)
+      } else {
+        msg.send(`${target}'s ${spec.name} has been set to '${doc.getBody()}'.`)
+      }
     } catch (err) {
       errorHandler(msg, err)
     }
@@ -159,11 +166,90 @@ function queryCommand (robot, documentSet, spec, feature) {
 
   if (feature.userOriented) {
     if (!feature.helpText) {
+      if (feature.latest) {
+        robot.commands.push(
+          `hubot ${spec.name} - Return your current ${spec.name}.`,
+          `hubot ${spec.name} @<user> - Return <user>'s current ${spec.name}.`,
+          `hubot ${spec.name} <query> - Return your most recent ${spec.name} that matches <query>.`,
+          `hubot ${spec.name} @<user> <query> - Return <user>'s most recent ${spec.name} that matches <query>.`
+        )
+      } else {
+        robot.commands.push(
+          `hubot ${spec.name} - Return one of your ${spec.plural} at random.`,
+          `hubot ${spec.name} @<user> - Return one of <user>'s ${spec.plural} at random.`,
+          `hubot ${spec.name} <query> - Return one of your ${spec.plural} that matches <query>.`,
+          `hubot ${spec.name} @<user> <query> - Return one of <user>'s ${spec.plural} that matches <query>.`
+        )
+      }
+    }
+
+    robot.respond(pattern, async msg => {
+      const requester = msg.message.user.name
+      const input = (msg.match[1] || '').trim()
+
+      let query = ''
+      let subject = ''
+
+      const usernameMatch = /^@?(\S+)\b/.exec(input)
+      if (usernameMatch) {
+        subject = usernameMatch[1]
+        query = input.substring(usernameMatch[0].length)
+      } else {
+        subject = msg.message.user.name
+        query = input
+      }
+
+      const role = requester === subject ? feature.roleForSelf : feature.roleForOther
+      if (!role.verify(robot, msg)) return
+
+      try {
+        const doc = feature.latest
+          ? await documentSet.latestMatching({subject: [subject]}, query)
+          : await documentSet.randomMatching({subject: [subject]}, query)
+        msg.send(doc.getBody())
+      } catch (err) {
+        errorHandler(msg, err)
+      }
+    })
+  } else {
+    if (!feature.helpText) {
       robot.commands.push(
-        `hubot ${spec.name} - Return one of your ${spec.plural} at random.`,
-        `hubot ${spec.name} @<user> - Return one of <user>'s ${spec.plural} at random.`,
-        `hubot ${spec.name} <query> - Return one of your ${spec.plural} that matches <query>.`,
-        `hubot ${spec.name} @<user> <query> - Return one of <user>'s ${spec.plural} that matches <query>.`
+        `hubot ${spec.name} - Return a ${spec.name} at random.`,
+        `hubot ${spec.name} <query> - Return a ${spec.name} that matches <query>.`
+      )
+    }
+
+    robot.respond(pattern, async msg => {
+      if (!feature.role.verify(robot, msg)) return
+
+      const query = msg.match[1] || ''
+
+      try {
+        const doc = feature.latest
+          ? await documentSet.latestMatching({}, query)
+          : await documentSet.randomMatching({}, query)
+        msg.send(doc.getBody())
+      } catch (err) {
+        errorHandler(msg, err)
+      }
+    })
+  }
+}
+
+function allCommand (robot, documentSet, spec, feature) {
+  const pattern = new RegExp(`all${spec.plural}(\\s+[^]+)?$`)
+
+  if (feature.helpText) {
+    robot.commands.push(...feature.helpText)
+  }
+
+  if (feature.userOriented) {
+    if (!feature.helpText) {
+      robot.commands.push(
+        `hubot all${spec.plural} - Return all of your ${spec.plural}.`,
+        `hubot all${spec.plural} @<user> - Return all of <user>'s ${spec.plural}.`,
+        `hubot all${spec.plural} <query> - Return all of your ${spec.plural} that match <query>.`,
+        `hubot all${spec.plural} @<user> <query> - Return <user>'s ${spec.plural} that match <query>.`
       )
     }
 
@@ -187,8 +273,8 @@ function queryCommand (robot, documentSet, spec, feature) {
       if (!role.verify(robot, msg)) return
 
       try {
-        const doc = await documentSet.randomMatching({subject: [subject]}, query)
-        msg.send(doc.getBody())
+        const {documents} = await documentSet.allMatching({subject: [subject]}, query)
+        msg.send(documents.map(doc => doc.getBody()).join(feature.separator || ', '))
       } catch (err) {
         errorHandler(msg, err)
       }
@@ -196,8 +282,8 @@ function queryCommand (robot, documentSet, spec, feature) {
   } else {
     if (!feature.helpText) {
       robot.commands.push(
-        `hubot ${spec.name} - Return a ${spec.name} at random.`,
-        `hubot ${spec.name} <query> - Return a ${spec.name} that matches <query>.`
+        `hubot all${spec.plural} - Return all ${spec.plural}.`,
+        `hubot all${spec.plural} <query> - Return all ${spec.plural} that match <query>.`
       )
     }
 
@@ -207,8 +293,8 @@ function queryCommand (robot, documentSet, spec, feature) {
       const query = msg.match[1] || ''
 
       try {
-        const doc = await documentSet.randomMatching({}, query)
-        msg.send(doc.getBody())
+        const {documents} = await documentSet.allMatching({}, query)
+        msg.send(documents.map(doc => doc.getBody()).join(feature.separator || ', '))
       } catch (err) {
         errorHandler(msg, err)
       }

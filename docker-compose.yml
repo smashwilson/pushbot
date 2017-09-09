@@ -7,7 +7,6 @@ services:
       POSTGRES_PASSWORD: shhh
     ports:
     - '5432:5432'
-    user: postgres
   pushbot:
     build: .
     volumes:
@@ -29,6 +28,6 @@ services:
       API_BASE_URL: http://localhost:8080
       WEB_BASE_URL:
     ports:
-    - '8080:8080'
+    - '9000:8080'
     depends_on:
     - postgres

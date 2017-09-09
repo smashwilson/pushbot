@@ -48,6 +48,7 @@ exports.createDocumentSet = function createDocumentSet (robot, name, commands) {
       add: populateCommand(name, commands.add),
       set: populateCommand(name, commands.set, true),
       query: populateCommand(name, commands.query),
+      all: populateCommand(name, commands.all),
       count: populateCommand(name, commands.count),
       stats: populateCommand(name, commands.stats),
       by: populateCommand(name, commands.by),

@@ -498,7 +498,7 @@ describe('createDocumentSet', function () {
           ['hubot', "me's blarf has been set to 'something embarassing'."]
         ])
 
-        return documentSet.randomMatching({subject: ['me']}, '')
+        return documentSet.latestMatching({subject: ['me']}, '')
       })
       .then(doc => expect(doc.getBody()).to.equal('something embarassing'))
     })
@@ -516,7 +516,7 @@ describe('createDocumentSet', function () {
           ['hubot', "other's blarf has been set to 'something embarassing'."]
         ])
 
-        return documentSet.randomMatching({subject: ['other']}, '')
+        return documentSet.latestMatching({subject: ['other']}, '')
       })
       .then(doc => expect(doc.getBody()).to.equal('something embarassing'))
     })
@@ -531,16 +531,16 @@ describe('createDocumentSet', function () {
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot setblarf: something better'],
-          ['hubot', "me's blarf has been set to 'something better'."]
+          ['hubot', "me's blarf has been changed from 'blah' to 'something better'."]
         ])
 
         return Promise.all([
           documentSet.countMatching({subject: ['me']}, ''),
-          documentSet.randomMatching({subject: ['me']}, '')
+          documentSet.latestMatching({subject: ['me']}, '')
         ])
       })
       .then(results => {
-        expect(results[0]).to.equal(1)
+        expect(results[0]).to.equal(2)
         expect(results[1].getBody()).to.equal('something better')
       })
     })
@@ -555,16 +555,16 @@ describe('createDocumentSet', function () {
       .then(() => {
         expect(room.messages).to.deep.equal([
           ['me', '@hubot setblarf other: something better'],
-          ['hubot', "other's blarf has been set to 'something better'."]
+          ['hubot', "other's blarf has been changed from 'blah' to 'something better'."]
         ])
 
         return Promise.all([
           documentSet.countMatching({subject: ['other']}, ''),
-          documentSet.randomMatching({subject: ['other']}, '')
+          documentSet.latestMatching({subject: ['other']}, '')
         ])
       })
       .then(results => {
-        expect(results[0]).to.equal(1)
+        expect(results[0]).to.equal(2)
         expect(results[1].getBody()).to.equal('something better')
       })
     })
@@ -867,6 +867,27 @@ describe('createDocumentSet', function () {
       })
     })
 
+    it('can be configured to return the latest rather than a random result', async function () {
+      usesDatabase(this)
+
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        query: { userOriented: true, latest: true }
+      })
+
+      for (let i = 0; i < 10; i++) {
+        await documentSet.add('me', `document #${i}`, [{kind: 'subject', value: 'me'}])
+      }
+      await documentSet.add('me', 'latest', [{kind: 'subject', value: 'me'}])
+
+      await room.user.say('me', '@hubot blarf')
+      await delay()()
+
+      expect(room.messages).to.deep.equal([
+        ['me', '@hubot blarf'],
+        ['hubot', 'latest']
+      ])
+    })
+
     it('generates default help text', function () {
       return loadHelp(room.robot)
       .then(() => createDocumentSet(room.robot, 'blarf', {query: true}))
@@ -898,6 +919,57 @@ describe('createDocumentSet', function () {
         expect(messages).to.include('hubot blarf 1 - line one')
         expect(messages).to.include('hubot blarf 2 - line two')
       })
+    })
+  })
+
+  describe('all', function () {
+    async function populate (commandOpts = true, docs = [], parallel = true) {
+      documentSet = createDocumentSet(room.robot, 'blarf', {
+        all: commandOpts
+      })
+
+      const args = docs.map(doc => {
+        let body = ''
+        const attributes = []
+        if (doc.body && doc.subject) {
+          body = doc.body
+          attributes.push({kind: 'subject', value: doc.subject})
+        } else {
+          body = doc
+        }
+        return ['me', body, attributes]
+      })
+
+      if (parallel) {
+        await Promise.all(args.map(arg => documentSet.add(...arg)))
+      } else {
+        for (const arg of args) {
+          await documentSet.add(...arg)
+        }
+      }
+    }
+
+    it('returns all known documents', async function () {
+      await populate(true, ['one', 'two', 'three'], false)
+
+      await room.user.say('me', '@hubot allblarfs')
+      await delay()()
+
+      expect(room.messages[1][1]).to.equal('one, two, three')
+    })
+
+    it('returns all documents associated with a user', async function () {
+      await populate({ userOriented: true }, [
+        {body: '111', subject: 'you'},
+        {body: '222', subject: 'you'},
+        {body: '000', subject: 'nope'},
+        {body: '333', subject: 'you'}
+      ], false)
+
+      await room.user.say('me', '@hubot allblarfs @you')
+      await delay()()
+
+      expect(room.messages[1][1]).to.equal('111, 222, 333')
     })
   })
 
