@@ -922,7 +922,7 @@ describe('createDocumentSet', function () {
     })
   })
 
-  describe.only('all', function () {
+  describe('all', function () {
     async function populate (commandOpts = true, docs = [], parallel = true) {
       documentSet = createDocumentSet(room.robot, 'blarf', {
         all: commandOpts
@@ -955,7 +955,7 @@ describe('createDocumentSet', function () {
       await room.user.say('me', '@hubot allblarfs')
       await delay()()
 
-      expect(room.messages[1]).to.equal('one, two, three')
+      expect(room.messages[1][1]).to.equal('one, two, three')
     })
 
     it('returns all documents associated with a user', async function () {
