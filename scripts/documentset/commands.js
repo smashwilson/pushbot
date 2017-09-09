@@ -286,6 +286,19 @@ function allCommand (robot, documentSet, spec, feature) {
         `hubot all${spec.plural} <query> - Return all ${spec.plural} that match <query>.`
       )
     }
+
+    robot.respond(pattern, async msg => {
+      if (!feature.role.verify(robot, msg)) return
+
+      const query = msg.match[1] || ''
+
+      try {
+        const {documents} = await documentSet.allMatching({}, query)
+        msg.send(documents.map(doc => doc.getBody()).join(feature.separator || ', '))
+      } catch (err) {
+        errorHandler(msg, err)
+      }
+    })
   }
 }
 
