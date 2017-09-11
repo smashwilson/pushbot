@@ -11,6 +11,7 @@ const {buildSchema} = require('graphql')
 const passport = require('passport')
 const cors = require('cors')
 const SlackStrategy = require('passport-slack').Strategy
+const BasicStrategy = require('passport-http').BasicStrategy
 
 const root = require('./api/root')
 
@@ -22,11 +23,11 @@ const PRIOR_ADDRESSES = (process.env.PRIOR_ADDRESSES || '')
 const PRIOR_SCHEME = process.env.PRIOR_SCHEME || 'https'
 const PRIOR_PORT = parseInt(process.env.PRIOR_PORT || '443')
 
-const SESSION_SECRET = process.env.SESSION_SECRET
+const SESSION_SECRET = process.env.SESSION_SECRET || 'shhh'
 const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID
 const SLACK_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET
 const SLACK_TEAM_ID = process.env.SLACK_TEAM_ID
-const PASSPORT_DEV_ID = process.env.PASSPORT_DEV_ID
+const DEV_USERNAME = process.env.DEV_USERNAME
 
 const CORS_OPTIONS = {
   origin: process.env.WEB_BASE_URL,
@@ -95,43 +96,67 @@ class Status {
 }
 
 module.exports = function (robot) {
-  if (!SLACK_CLIENT_ID || !SLACK_CLIENT_SECRET) {
-    return
-  }
+  const useSlackAuth = Boolean(SLACK_CLIENT_ID) && Boolean(SLACK_CLIENT_SECRET)
+  const useHttpAuth = !useSlackAuth && Boolean(DEV_USERNAME)
 
   // Passport
 
-  if (PASSPORT_DEV_ID) {
-    robot.logger.warning(`Hosting API with dev ID: ${PASSPORT_DEV_ID}`)
+  if (useSlackAuth) {
+    passport.use(new SlackStrategy({
+      clientID: SLACK_CLIENT_ID,
+      clientSecret: SLACK_CLIENT_SECRET,
+      scope: ['identity.basic'],
+      callbackURL: `${process.env.API_BASE_URL}/auth/slack/callback`
+    }, (accessToken, refreshToken, profile, done) => {
+      robot.logger.debug(`Log-in attempt with profile: ${JSON.stringify(profile)}.`)
+
+      if (profile.team.id !== SLACK_TEAM_ID) {
+        robot.logger.debug(`Incorrect team: ${profile.team.id}.`)
+        return done(null, false, {
+          message: `Please log in with the correct team.`
+        })
+      }
+
+      const uid = profile.id
+      const existing = robot.brain.users()[uid]
+      if (!existing) {
+        robot.logger.debug(`No user with id ${uid}.`)
+        return done(null, false, {
+          message: "Senpai @pushbot hasn't noticed you yet."
+        })
+      }
+
+      robot.logger.info(`User authenticated: ${existing.id} ${existing.name}`)
+      done(null, existing)
+    }))
+  } else if (useHttpAuth) {
+    robot.logger.warning('Hosting API in developer mode.')
+    robot.logger.warning(`Authenticate with the username "${DEV_USERNAME}" and any non-empty password.`)
+
+    passport.use(new BasicStrategy(
+      (username, password, done) => {
+        if (username !== DEV_USERNAME) {
+          return done(null, false, {message: 'Incorrect username.'})
+        }
+
+        const existing = robot.brain.userForName(username)
+        if (existing) {
+          return done(null, existing)
+        }
+
+        const uid = require('crypto').randomBytes(32).toString('hex')
+        const created = robot.brain.userForId(uid, {name: username, room: username})
+        done(null, created)
+      }
+    ))
+  } else {
+    robot.logger.warning('API disabled.')
+    robot.logger.warning(' * For local development, set DEV_USERNAME to the account username to')
+    robot.logger.warning('   authenticate all requests. Use any non-empty password.')
+    robot.logger.warning(' * In production, set SLACK_CLIENT_ID and SLACK_CLIENT_SECRET to the')
+    robot.logger.warning('   OAuth configuration values.')
+    return
   }
-
-  passport.use(new SlackStrategy({
-    clientID: SLACK_CLIENT_ID,
-    clientSecret: SLACK_CLIENT_SECRET,
-    scope: ['identity.basic'],
-    callbackURL: `${process.env.API_BASE_URL}/auth/slack/callback`
-  }, (accessToken, refreshToken, profile, done) => {
-    robot.logger.debug(`Log-in attempt with profile: ${JSON.stringify(profile)}.`)
-
-    if (profile.team.id !== SLACK_TEAM_ID) {
-      robot.logger.debug(`Incorrect team: ${profile.team.id}.`)
-      return done(null, false, {
-        message: `Please log in with the correct team.`
-      })
-    }
-
-    const uid = PASSPORT_DEV_ID || profile.id
-    const existing = robot.brain.users()[uid]
-    if (!existing) {
-      robot.logger.debug(`No user with id ${uid}.`)
-      return done(null, false, {
-        message: "Senpai @pushbot hasn't noticed you yet."
-      })
-    }
-
-    robot.logger.info(`User authenticated: ${existing.id} ${existing.name}`)
-    done(null, existing)
-  }))
 
   passport.serializeUser((user, done) => done(null, user.id))
   passport.deserializeUser((id, done) => done(null, robot.brain.users()[id]))
@@ -146,6 +171,7 @@ module.exports = function (robot) {
       maxAge: 30 * 24 * 60 * 60 * 1000
     }
   }))
+
   app.use(passport.initialize())
   app.use(passport.session())
 
@@ -154,29 +180,43 @@ module.exports = function (robot) {
     return next()
   })
 
-  app.get('/auth/slack',
-    (req, res, next) => {
-      if (req.query.backTo) {
-        req.session.backTo = req.query.backTo
-      }
-      return next()
-    },
-    passport.authenticate('slack')
-  )
+  if (useSlackAuth) {
+    app.get('/auth/slack',
+      (req, res, next) => {
+        if (req.query.backTo) {
+          req.session.backTo = req.query.backTo
+        }
+        return next()
+      },
+      passport.authenticate('slack')
+    )
 
-  app.get('/auth/slack/callback',
-    passport.authenticate('slack'),
-    (req, res) => {
-      req.session.save()
-      const backTo = req.session.backTo
-      if (backTo) {
-        delete req.session.backTo
-        res.redirect(`${process.env.WEB_BASE_URL}${backTo}`)
-      } else {
-        res.send('Authenticated successfully')
+    app.get('/auth/slack/callback',
+      passport.authenticate('slack'),
+      (req, res) => {
+        req.session.save()
+        const backTo = req.session.backTo
+        if (backTo) {
+          delete req.session.backTo
+          res.redirect(`${process.env.WEB_BASE_URL}${backTo}`)
+        } else {
+          res.send('Authenticated successfully')
+        }
       }
-    }
-  )
+    )
+  } else if (useHttpAuth) {
+    app.get('/auth/http',
+      passport.authenticate('basic'),
+      (req, res, next) => {
+        req.session.save()
+        if (req.query.backTo) {
+          res.redirect(`${process.env.WEB_BASE_URL}${req.query.backTo}`)
+        } else {
+          res.send('Authenticated successfully')
+        }
+      }
+    )
+  }
 
   app.get('/logout', (req, res) => {
     req.logout()
@@ -193,8 +233,10 @@ module.exports = function (robot) {
       return next()
     }
 
+    const authUrl = useSlackAuth ? '/auth/slack' : '/auth/http'
+
     robot.logger.debug('Request not authenticated')
-    res.status(401).send(`Please visit ${process.env.API_BASE_URL}/auth/slack to authenticate.`)
+    res.status(401).send(`Please visit ${process.env.API_BASE_URL}${authUrl} to authenticate.`)
   }
 
   // GraphQL

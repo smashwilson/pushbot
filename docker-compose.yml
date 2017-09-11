@@ -18,7 +18,7 @@ services:
       SLACK_CLIENT_SECRET:
       SLACK_TEAM_ID:
       SESSION_SECRET:
-      PASSPORT_DEV_ID:
+      DEV_USERNAME:
       HUBOT_MARKOV_STORAGE: postgres
       HUBOT_MARKOV_STORAGE_URL: postgres://pushbot:shhh@postgres/pushbot
       HUBOT_MARKOV_LEARN_MIN:
@@ -28,6 +28,6 @@ services:
       API_BASE_URL: http://localhost:8080
       WEB_BASE_URL:
     ports:
-    - '9000:8080'
+    - '8080:8080'
     depends_on:
     - postgres

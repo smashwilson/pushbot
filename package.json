@@ -42,6 +42,7 @@
     "moment-timezone": "^0.5.13",
     "morse": "0.1.0",
     "passport": "^0.3.2",
+    "passport-http": "^0.3.0",
     "passport-slack": "0.0.7",
     "pg-promise": "^5.4.5",
     "request": "2.79.0",
