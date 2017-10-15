@@ -75,10 +75,14 @@ class Cache {
   }
 }
 
-function cacheForChannel (robot, channel) {
+function cacheForChannel (robot, channel, create = true) {
   const existing = CACHES.get(channel)
   if (existing) {
     return existing
+  }
+
+  if (!create) {
+    return null
   }
 
   const created = new Cache(robot, channel)
