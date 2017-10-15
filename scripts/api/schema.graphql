@@ -11,6 +11,9 @@ type Query {
 
   # Query documents within a named DocumentSet.
   documents(set: String!): DocumentSet
+
+  # Access the Cache of recent Lines seen by the bot.
+  cache: Cache!
 }
 
 type UserSet {
@@ -171,6 +174,31 @@ type PageInfo {
 
   # True if there is a page of results after this one.
   hasNextPage: Boolean!
+}
+
+# Line of spoken text within a Cache collected by the bot from one of the channels the bot belongs to. Messages
+# that contain newlines are split into multiple Lines.
+type Line {
+  # Unique, stable identifier for this specific row.
+  id: ID
+
+  # Username of the Slack User who spoke this line.
+  speaker: User!
+
+  # Timestamp at which this Line was spoken, expressed as milliseconds since the epoch.
+  timestamp: Int!
+
+  # Actual, unformatted text.
+  text: String!
+}
+
+# Query recently seen text.
+type Cache {
+  # Enumerate the channels that the bot has data from.
+  knownChannels: [String!]!
+
+  # Access the stored data collected from a named channel. Returns null if no such channel is known.
+  linesForChannel(channel: String!): [Line!]
 }
 
 # Constraints on the Documents to be included in a query, count, or random
