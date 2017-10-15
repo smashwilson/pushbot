@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -eu
+
+COMMAND="docker-compose --project-name pushbot-tests run "
+COMMAND="${COMMAND} --entrypoint /usr/src/app/bin/ci/test"
+COMMAND="${COMMAND} --rm"
+COMMAND="${COMMAND} pushbot"
+
+case "${OSTYPE}" in
+  linux*) sudo -E ${COMMAND} ;;
+  *) ${COMMAND} ;;
+esac

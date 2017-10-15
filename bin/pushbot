@@ -1,8 +1,12 @@
 #!/bin/bash
 
-export PATH="node_modules/.bin:node_modules/hubot/node_modules/.bin:$PATH"
+set -eu
 
-DIR=`dirname $0`/..
+export DEV_USERNAME=${DEV_USERNAME:-${USER}}
 
-source ${DIR}/.botrc
-exec node_modules/.bin/hubot --name pushbot --alias '!' "$@"
+COMMAND="docker-compose run --service-ports pushbot"
+
+case "${OSTYPE}" in
+  linux*) sudo -E ${COMMAND} ;;
+  *) ${COMMAND} ;;
+esac
