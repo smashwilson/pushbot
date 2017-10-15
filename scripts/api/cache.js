@@ -4,6 +4,10 @@ const UserSetResolver = require('./user-set')
 const NullDataStore = {
   getChannelGroupOrDMById () {
     return null
+  },
+
+  getChannelByName () {
+    return null
   }
 }
 
@@ -33,9 +37,9 @@ class CacheResolver {
 
     let existing = cache.forChannel(req.robot, channel, false)
     if (!existing) {
-      const ch = dataStore.getChannelGroupOrDMById(channel)
+      const ch = dataStore.getChannelByName(channel)
       if (ch) {
-        existing = cache.forChannel(req.robot, ch.name, false)
+        existing = cache.forChannel(req.robot, ch.id, false)
       }
     }
 
@@ -54,7 +58,7 @@ class CacheResolver {
         timestamp: line.timestamp.valueOf(),
         text: line.text
       }
-    })
+    }).filter(result => Boolean(result.speaker))
   }
 }
 
