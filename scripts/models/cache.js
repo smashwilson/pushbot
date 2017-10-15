@@ -32,6 +32,7 @@ class Cache {
 
     const serialized = this.lines.map(line => line.serialize())
     this.robot.brain.set(`buffer-cache:${this.channel}`, serialized)
+    return this
   }
 
   mostRecent () {
