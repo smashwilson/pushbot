@@ -185,8 +185,9 @@ type Line {
   # Username of the Slack User who spoke this line.
   speaker: User!
 
-  # Timestamp at which this Line was spoken, expressed as milliseconds since the epoch.
-  timestamp: Int!
+  # Timestamp at which this Line was spoken, expressed as milliseconds since the epoch. Encoded as a String because
+  # GraphQL Ints are limited to 32 bits.
+  timestamp: String!
 
   # Actual, unformatted text.
   text: String!
