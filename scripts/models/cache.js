@@ -94,6 +94,11 @@ function clear () {
   CACHES.clear()
 }
 
+function known () {
+  return Array.from(CACHES.keys())
+}
+
 exports.MAX_SIZE = MAX_CACHE_SIZE
 exports.forChannel = cacheForChannel
 exports.clear = clear
+exports.known = known
