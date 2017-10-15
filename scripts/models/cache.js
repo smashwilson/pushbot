@@ -32,6 +32,7 @@ class Cache {
 
     const serialized = this.lines.map(line => line.serialize())
     this.robot.brain.set(`buffer-cache:${this.channel}`, serialized)
+    return this
   }
 
   mostRecent () {
@@ -74,10 +75,14 @@ class Cache {
   }
 }
 
-function cacheForChannel (robot, channel) {
+function cacheForChannel (robot, channel, create = true) {
   const existing = CACHES.get(channel)
   if (existing) {
     return existing
+  }
+
+  if (!create) {
+    return null
   }
 
   const created = new Cache(robot, channel)
@@ -89,6 +94,11 @@ function clear () {
   CACHES.clear()
 }
 
+function known () {
+  return Array.from(CACHES.keys())
+}
+
 exports.MAX_SIZE = MAX_CACHE_SIZE
 exports.forChannel = cacheForChannel
 exports.clear = clear
+exports.known = known

@@ -5,8 +5,6 @@ services:
     environment:
       POSTGRES_USER: pushbot
       POSTGRES_PASSWORD: shhh
-    ports:
-    - '5432:5432'
   pushbot:
     build: .
     volumes:
@@ -19,6 +17,7 @@ services:
       SLACK_TEAM_ID:
       SESSION_SECRET:
       DEV_USERNAME:
+      DISABLE_ALIAS:
       HUBOT_MARKOV_STORAGE: postgres
       HUBOT_MARKOV_STORAGE_URL: postgres://pushbot:shhh@postgres/pushbot
       HUBOT_MARKOV_LEARN_MIN:

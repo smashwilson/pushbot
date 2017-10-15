@@ -3,6 +3,9 @@
 set -eu
 
 export DEV_USERNAME=${DEV_USERNAME:-${USER}}
+export DISABLE_ALIAS="true"
+
+source .shovebotrc
 
 COMMAND="docker-compose run --service-ports pushbot"
 

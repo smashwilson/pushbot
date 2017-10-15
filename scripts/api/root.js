@@ -1,5 +1,6 @@
 const UserSetResolver = require('./user-set')
 const DocumentSetResolver = require('./document-set')
+const CacheResolver = require('./cache')
 
 module.exports = {
   me (args, req) {
@@ -19,5 +20,9 @@ module.exports = {
     const documentSet = sets[set]
 
     return documentSet && new DocumentSetResolver(set, documentSet)
+  },
+
+  cache () {
+    return new CacheResolver()
   }
 }
