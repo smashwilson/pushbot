@@ -48,7 +48,8 @@
     "request": "2.79.0",
     "tinycolor2": "1.4.1",
     "twit": "2.2.5",
-    "underscore": "1.8.3"
+    "underscore": "1.8.3",
+    "uuid": "^3.1.0"
   },
   "engines": {
     "node": "0.10.x"
