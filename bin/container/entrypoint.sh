@@ -8,4 +8,7 @@ source bin/common/all.sh
 ADAPTER=
 [ -n "${HUBOT_SLACK_TOKEN:-}" ] && ADAPTER='-a slack'
 
-exec /usr/src/app/node_modules/.bin/hubot --name pushbot --disable-httpd --alias '!' ${ADAPTER}
+ALIAS=
+[ "${DISABLE_ALIAS}" = "true" ] || ALIAS="--alias '!'"
+
+exec /usr/src/app/node_modules/.bin/hubot --name pushbot --disable-httpd ${ALIAS} ${ADAPTER}

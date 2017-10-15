@@ -17,6 +17,7 @@ services:
       SLACK_TEAM_ID:
       SESSION_SECRET:
       DEV_USERNAME:
+      DISABLE_ALIAS:
       HUBOT_MARKOV_STORAGE: postgres
       HUBOT_MARKOV_STORAGE_URL: postgres://pushbot:shhh@postgres/pushbot
       HUBOT_MARKOV_LEARN_MIN:
