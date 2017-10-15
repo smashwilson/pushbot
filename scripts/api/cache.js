@@ -1,13 +1,44 @@
 const cache = require('../models/cache')
 const UserSetResolver = require('./user-set')
 
+const NullDataStore = {
+  getChannelGroupOrDMById () {
+    return null
+  }
+}
+
+function getDataStore (req) {
+  const adapter = req.robot.adapter
+  const client = adapter.client
+  if (!client) return NullDataStore
+  const rtm = client.rtm
+  if (!rtm) return NullDataStore
+  const dataStore = rtm.dataStore
+  if (!dataStore) return NullDataStore
+  return dataStore
+}
+
 class CacheResolver {
-  knownChannels () {
-    return cache.known()
+  knownChannels (options, req) {
+    const dataStore = getDataStore(req)
+
+    return cache.known().map(id => {
+      const channel = dataStore.getChannelGroupOrDMById(id)
+      return channel ? channel.name : id
+    })
   }
 
   linesForChannel ({channel}, req) {
-    const existing = cache.forChannel(req.robot, channel, false)
+    const dataStore = getDataStore(req)
+
+    let existing = cache.forChannel(req.robot, channel, false)
+    if (!existing) {
+      const ch = dataStore.getChannelGroupOrDMById(channel)
+      if (ch) {
+        existing = cache.forChannel(req.robot, ch.name, false)
+      }
+    }
+
     if (!existing) {
       return null
     }

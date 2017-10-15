@@ -37,16 +37,37 @@ describe('CacheResolver', function () {
 
   describe('knownChannels', function () {
     it('returns an empty array if no caches are present', function () {
-      expect(resolver.knownChannels()).to.eql([])
+      expect(resolver.knownChannels({}, req)).to.eql([])
     })
 
     it('returns the populated caches', function () {
-      cache.forChannel(req.robot, '#general')
-      cache.forChannel(req.robot, '#pushbotdev')
+      cache.forChannel(req.robot, 'general')
+      cache.forChannel(req.robot, 'pushbotdev')
 
-      expect(resolver.knownChannels()).to.have.members([
-        '#general',
-        '#pushbotdev'
+      expect(resolver.knownChannels({}, req)).to.have.members([
+        'general',
+        'pushbotdev'
+      ])
+    })
+
+    it('translates channel IDs to channel names when available', function () {
+      cache.forChannel(req.robot, 'C100')
+      cache.forChannel(req.robot, 'C200')
+
+      req.robot.adapter.client = {
+        rtm: {
+          dataStore: {
+            getChannelGroupOrDMById (id) {
+              if (id === 'C100') return {name: 'general'}
+              return undefined
+            }
+          }
+        }
+      }
+
+      expect(resolver.knownChannels({}, req)).to.have.members([
+        'general',
+        'C200'
       ])
     })
   })
