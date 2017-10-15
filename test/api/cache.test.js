@@ -13,7 +13,7 @@ function message (username, line) {
   }
 }
 
-describe.only('CacheResolver', function () {
+describe('CacheResolver', function () {
   let room, user, req, resolver
 
   beforeEach(function () {
