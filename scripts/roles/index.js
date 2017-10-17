@@ -33,7 +33,7 @@ exports.Admin = {
   },
 
   verify (robot, msg) {
-    if (!exports.Admin.isAllowed(msg.message.user)) {
+    if (!robot.auth.isAdmin(msg.message.user)) {
       msg.reply('Only an admin can do that.')
       return false
     }
