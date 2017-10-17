@@ -1,5 +1,5 @@
 const cache = require('../models/cache')
-const UserSetResolver = require('./user-set')
+const {UserSetResolver} = require('./user-set')
 const {getDataStore} = require('../helpers')
 
 class CacheResolver {
