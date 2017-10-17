@@ -66,4 +66,4 @@ class UserSetResolver {
   }
 }
 
-module.exports = UserSetResolver
+module.exports = {UserSetResolver, UserResolver}

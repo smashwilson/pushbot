@@ -1,6 +1,6 @@
-const UserSetResolver = require('./user-set')
-const DocumentSetResolver = require('./document-set')
-const CacheResolver = require('./cache')
+const {UserSetResolver} = require('./user-set')
+const {DocumentSetResolver, DocumentResolver} = require('./document-set')
+const {CacheResolver} = require('./cache')
 
 const bufferPreprocessor = require('../documentset/preprocessor/buffer')
 const cache = require('../models/cache')

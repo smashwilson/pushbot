@@ -98,4 +98,4 @@ class DocumentSetResolver {
   }
 }
 
-module.exports = DocumentSetResolver
+module.exports = {DocumentSetResolver, DocumentResolver}

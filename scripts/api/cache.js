@@ -62,4 +62,4 @@ class CacheResolver {
   }
 }
 
-module.exports = CacheResolver
+module.exports = {CacheResolver}
