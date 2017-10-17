@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -eu
+
+COMMAND="docker-compose exec postgres psql -U pushbot"
+
+case "${OSTYPE}" in
+  linux*) sudo -E ${COMMAND} ;;
+  *) ${COMMAND} ;;
+esac

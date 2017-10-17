@@ -8,7 +8,8 @@
     "database": true,
     "delay": true,
     "usesDatabase": true,
-    "loadHelp": true
+    "loadHelp": true,
+    "message": true
   },
   "rules": {
     "no-unused-expressions": "off"

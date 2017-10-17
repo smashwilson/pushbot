@@ -6,6 +6,28 @@ function atRandom (list) {
   return list[index]
 }
 
+const NullDataStore = {
+  getChannelGroupOrDMById () {
+    return null
+  },
+
+  getChannelByName () {
+    return null
+  }
+}
+
+function getDataStore (robot) {
+  const adapter = robot.adapter
+  const client = adapter.client
+  if (!client) return NullDataStore
+  const rtm = client.rtm
+  if (!rtm) return NullDataStore
+  const dataStore = rtm.dataStore
+  if (!dataStore) return NullDataStore
+  return dataStore
+}
+
 module.exports = {
-  atRandom
+  atRandom,
+  getDataStore
 }

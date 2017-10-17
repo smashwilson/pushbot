@@ -20,8 +20,8 @@ class Cache {
     }
   }
 
-  append (msg) {
-    const now = moment.tz('America/New_York')
+  append (msg, ts = undefined) {
+    const now = ts || moment.tz('America/New_York')
     const toAdd = msg.message.text.split(/\n/).map(sourceLine => {
       return new Line(now, msg.message.user.name, sourceLine)
     })

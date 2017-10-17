@@ -58,7 +58,7 @@ exports.createDocumentSet = function createDocumentSet (robot, name, commands) {
   }
 
   const storage = new Storage({db: robot.postgres})
-  const documentSet = new DocumentSet(storage, spec.name, spec.nullBody)
+  const documentSet = new DocumentSet(storage, spec)
 
   generate(robot, documentSet, spec)
 

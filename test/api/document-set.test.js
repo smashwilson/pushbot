@@ -1,5 +1,5 @@
 const {createDocumentSet} = require('../../scripts/documentset')
-const DocumentSetResolver = require('../../scripts/api/document-set')
+const {DocumentSetResolver} = require('../../scripts/api/document-set')
 
 describe('DocumentSetResolver', function () {
   let set, resolver

@@ -5,6 +5,7 @@
 
 const util = require('util')
 const preprocessors = require('./preprocessor')
+const formatters = require('./formatter')
 
 exports.generate = function (robot, documentSet, spec) {
   if (spec.features.add !== null) {
@@ -55,19 +56,7 @@ function addCommands (robot, documentSet, spec, feature) {
   }
 
   if (!feature.formatter) {
-    feature.formatter = (lines, speakers, mentions, userTz) => ({
-      body: lines
-        .map(line => {
-          if (line.isRaw()) {
-            return line.text
-          } else {
-            return `[${line.timestamp.tz('America/New_York').format('h:mm A D MMM YYYY')}] ${line.speaker}: ${line.text}`
-          }
-        })
-        .join('\n'),
-      speakers,
-      mentions
-    })
+    feature.formatter = formatters.quote
   }
 
   const preprocessorNames = Object.keys(preprocessors)

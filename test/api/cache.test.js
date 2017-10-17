@@ -1,17 +1,8 @@
 const Helper = require('hubot-test-helper')
 const helper = new Helper([])
 
-const CacheResolver = require('../../scripts/api/cache')
+const {CacheResolver} = require('../../scripts/api/cache')
 const cache = require('../../scripts/models/cache')
-
-function message (username, line) {
-  return {
-    message: {
-      text: line,
-      user: {name: username}
-    }
-  }
-}
 
 describe('CacheResolver', function () {
   let room, user, req, resolver

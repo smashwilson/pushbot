@@ -5,8 +5,12 @@ class Role {
     this.name = name
   }
 
+  isAllowed (robot, user) {
+    return robot.auth.hasRole(user, this.name)
+  }
+
   verify (robot, msg) {
-    if (!robot.auth.hasRole(msg.message.user, this.name)) {
+    if (!this.isAllowed(robot, msg.message.user)) {
       msg.reply([
         `You can't do that! You're not a *${this.name}*.`,
         `Ask an admin to run \`${robot.name} grant ${msg.message.user.name} the ${this.name} role\`.`
@@ -19,11 +23,16 @@ class Role {
 }
 
 exports.Anyone = {
+  isAllowed: () => true,
   verify: () => true
 }
 
 exports.Admin = {
-  verify: (robot, msg) => {
+  isAllowed (robot, user) {
+    return robot.auth.isAdmin(user)
+  },
+
+  verify (robot, msg) {
     if (!robot.auth.isAdmin(msg.message.user)) {
       msg.reply('Only an admin can do that.')
       return false

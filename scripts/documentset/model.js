@@ -4,11 +4,12 @@ const {BEFORE, AFTER, RANDOM, LATEST} = require('./storage')
 
 // A queryable collection of related documents.
 class DocumentSet {
-  constructor (storage, name, nullBody) {
+  constructor (storage, spec) {
     this.storage = storage
-    this.name = name
+    this.spec = spec
+    this.name = spec.name
 
-    this.nullDocument = new NullDocument(nullBody)
+    this.nullDocument = new NullDocument(spec.nullBody)
 
     this.connected = this.storage.connectDocumentSet(this)
   }

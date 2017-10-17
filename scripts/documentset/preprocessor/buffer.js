@@ -2,10 +2,8 @@
 
 const createMentionDetector = require('./mentions')
 
-module.exports = function (robot, msg) {
-  const buffer = robot.bufferForUserId(msg.message.user.id)
+function fromLines (robot, lines) {
   const detector = createMentionDetector(robot)
-  const lines = buffer.commit()
 
   const result = []
   const speakers = new Set()
@@ -27,3 +25,13 @@ module.exports = function (robot, msg) {
 
   return {lines: result, speakers, mentions}
 }
+
+function preprocess (robot, msg) {
+  const buffer = robot.bufferForUserId(msg.message.user.id)
+  const lines = buffer.commit()
+
+  return fromLines(robot, lines)
+}
+
+preprocess.fromLines = fromLines
+module.exports = preprocess
