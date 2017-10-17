@@ -26,11 +26,12 @@ function fromLines (robot, lines) {
   return {lines: result, speakers, mentions}
 }
 
-module.exports = function (robot, msg) {
+function preprocess (robot, msg) {
   const buffer = robot.bufferForUserId(msg.message.user.id)
   const lines = buffer.commit()
 
   return fromLines(lines)
 }
 
-exports.fromLines = fromLines
+preprocess.fromLines = fromLines
+module.exports = preprocess
