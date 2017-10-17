@@ -3,6 +3,7 @@ const {DocumentSetResolver, DocumentResolver} = require('./document-set')
 const {CacheResolver} = require('./cache')
 
 const bufferPreprocessor = require('../documentset/preprocessor/buffer')
+const {getDataStore} = require('../helpers')
 const cache = require('../models/cache')
 
 module.exports = {
@@ -41,11 +42,18 @@ module.exports = {
     const role = addSpec.role
     if (!role.isAllowed(req.robot, req.user)) throw new Error(`You are not authorized to add to document set ${set}`)
 
-    const theCache = cache.forChannel(req.robot, channel, false)
-    if (!theCache) throw new Error(`No lines available in channel ${channel}`)
+    let existing = cache.forChannel(req.robot, channel, false)
+    if (!existing) {
+      const ch = getDataStore(req.robot).getChannelByName(channel)
+      if (ch) {
+        existing = cache.forChannel(req.robot, ch.id, false)
+      }
+    }
+    if (!existing) throw new Error(`No lines available in channel ${channel}`)
 
     const ids = new Set(lines)
-    const chosen = theCache.lines.filter(line => ids.delete(line.id))
+    if (ids.size === 0) throw new Error('You must provide at least one line')
+    const chosen = existing.lines.filter(line => ids.delete(line.id))
     if (ids.size > 0) throw new Error(`Unable to find lines with IDs: ${Array.from(ids).join(', ')}`)
     chosen.reverse()
 
@@ -62,6 +70,6 @@ module.exports = {
     }
 
     const doc = await documentSet.add(req.user.name, body, attributes)
-    return new DocumentSetResolver(doc)
+    return new DocumentResolver(doc)
   }
 }
