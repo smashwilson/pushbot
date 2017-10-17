@@ -1,30 +1,10 @@
 const cache = require('../models/cache')
 const UserSetResolver = require('./user-set')
-
-const NullDataStore = {
-  getChannelGroupOrDMById () {
-    return null
-  },
-
-  getChannelByName () {
-    return null
-  }
-}
-
-function getDataStore (req) {
-  const adapter = req.robot.adapter
-  const client = adapter.client
-  if (!client) return NullDataStore
-  const rtm = client.rtm
-  if (!rtm) return NullDataStore
-  const dataStore = rtm.dataStore
-  if (!dataStore) return NullDataStore
-  return dataStore
-}
+const {getDataStore} = require('../helpers')
 
 class CacheResolver {
   knownChannels (options, req) {
-    const dataStore = getDataStore(req)
+    const dataStore = getDataStore(req.robot)
 
     return cache.known().map(id => {
       const channel = dataStore.getChannelGroupOrDMById(id)
@@ -33,7 +13,7 @@ class CacheResolver {
   }
 
   linesForChannel ({channel}, req) {
-    const dataStore = getDataStore(req)
+    const dataStore = getDataStore(req.robot)
 
     let existing = cache.forChannel(req.robot, channel, false)
     if (!existing) {
