@@ -16,6 +16,12 @@ type Query {
   cache: Cache!
 }
 
+type Mutation {
+  # Create a new Document within a DocumentSet. Requires a user role specified by the named DocumentSet, like
+  # "quote pontiff" for the "quotes" set.
+  createDocument(set: String!, channel: String!, lines: [ID!]!): Document!
+}
+
 type UserSet {
   # Profile for the currently logged-in User.
   me: User!
