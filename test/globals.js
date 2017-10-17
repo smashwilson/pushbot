@@ -29,6 +29,15 @@ global.loadHelp = function (robot) {
   return new Promise(resolve => setTimeout(resolve, 200))
 }
 
+global.message = function (username, line) {
+  return {
+    message: {
+      text: line,
+      user: {name: username}
+    }
+  }
+}
+
 // eslint-disable-next-line no-extend-native
 Promise.prototype.tap = function (chunk) {
   return this.then((...values) => {
