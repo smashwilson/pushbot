@@ -1,7 +1,7 @@
 const Helper = require('hubot-test-helper')
 const helper = new Helper([])
 
-const UserSetResolver = require('../../scripts/api/user-set')
+const {UserSetResolver} = require('../../scripts/api/user-set')
 
 describe('UserSetResolver', function () {
   let room, self, req, resolver

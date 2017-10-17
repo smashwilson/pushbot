@@ -1,7 +1,7 @@
 const Helper = require('hubot-test-helper')
 const helper = new Helper([])
 
-const CacheResolver = require('../../scripts/api/cache')
+const {CacheResolver} = require('../../scripts/api/cache')
 const cache = require('../../scripts/models/cache')
 
 describe('CacheResolver', function () {
