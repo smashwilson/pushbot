@@ -10,7 +10,7 @@ class Role {
   }
 
   verify (robot, msg) {
-    if (!this.isAllowed(msg.message.user, this.name)) {
+    if (!this.isAllowed(robot, msg.message.user)) {
       msg.reply([
         `You can't do that! You're not a *${this.name}*.`,
         `Ask an admin to run \`${robot.name} grant ${msg.message.user.name} the ${this.name} role\`.`
