@@ -30,7 +30,7 @@ function preprocess (robot, msg) {
   const buffer = robot.bufferForUserId(msg.message.user.id)
   const lines = buffer.commit()
 
-  return fromLines(lines)
+  return fromLines(robot, lines)
 }
 
 preprocess.fromLines = fromLines
