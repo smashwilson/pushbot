@@ -2,6 +2,7 @@
 
 const pg = require('pg-promise')()
 const hubotHelp = require('hubot-help')
+const hubotAuth = require('hubot-auth')
 require('hubot-test-helper')
 
 global.expect = require('chai').expect
@@ -27,6 +28,13 @@ global.loadHelp = function (robot) {
   hubotHelp(robot, '*')
 
   return new Promise(resolve => setTimeout(resolve, 200))
+}
+
+global.loadAuth = function (robot, adminID = '0') {
+  process.env.HUBOT_AUTH_ADMIN = adminID
+  hubotAuth(robot, '*')
+
+  return new Promise(resolve => setTimeout(resolve, 20))
 }
 
 global.message = function (username, line) {
