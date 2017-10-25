@@ -3,6 +3,7 @@ const {DocumentSetResolver, DocumentResolver} = require('./document-set')
 const {CacheResolver} = require('./cache')
 
 const bufferPreprocessor = require('../documentset/preprocessor/buffer')
+const briefFormatter = require('../documentset/formatter').brief
 const {getDataStore} = require('../helpers')
 const cache = require('../models/cache')
 
@@ -59,6 +60,11 @@ module.exports = {
 
     const processed = bufferPreprocessor.fromLines(req.robot, chosen)
     const formatted = addSpec.formatter(processed.lines, processed.speakers, processed.mentions)
+
+    const announcement =
+      `_<@${req.user.id}> quoted_\n` +
+      briefFormatter(processed.lines, processed.speakers, processed.mentions).body
+    req.robot.messageRoom(channel, announcement)
 
     const body = formatted.body
     const attributes = []
