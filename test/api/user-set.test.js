@@ -6,13 +6,15 @@ const {UserSetResolver} = require('../../scripts/api/user-set')
 describe('UserSetResolver', function () {
   let room, self, req, resolver
 
-  beforeEach(function () {
+  beforeEach(async function () {
     room = helper.createRoom({httpd: false})
 
     const robot = room.robot
+    await loadAuth(robot, '1')
+
     const brain = robot.brain
 
-    self = brain.userForId('1', {name: 'self'})
+    self = brain.userForId('1', {name: 'self', roles: ['role one', 'role two']})
     brain.userForId('2', {name: 'two'})
     brain.userForId('3', {name: 'three'})
 
@@ -35,7 +37,7 @@ describe('UserSetResolver', function () {
     it('returns resolvers for all users', function () {
       const results = resolver.all({}, req)
       expect(results.map(each => each.user)).to.have.deep.members([
-        {id: '1', name: 'self'},
+        {id: '1', name: 'self', roles: ['role one', 'role two']},
         {id: '2', name: 'two'},
         {id: '3', name: 'three'}
       ])
@@ -137,6 +139,16 @@ describe('UserSetResolver', function () {
       expect(avatarResolver.image192).to.eql(undefined)
       expect(avatarResolver.image512).to.eql(undefined)
       expect(avatarResolver.image1024).to.eql(undefined)
+    })
+
+    it('accesses currently assigned roles', function () {
+      const userResolver = resolver.me({}, req)
+      const roles = userResolver.roles({}, req)
+      expect(roles).to.eql([
+        {name: 'admin'},
+        {name: 'role one'},
+        {name: 'role two'}
+      ])
     })
   })
 })

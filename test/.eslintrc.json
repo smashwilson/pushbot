@@ -9,6 +9,7 @@
     "delay": true,
     "usesDatabase": true,
     "loadHelp": true,
+    "loadAuth": true,
     "message": true
   },
   "rules": {
