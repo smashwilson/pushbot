@@ -9,7 +9,7 @@ const helper = new Helper([])
 
 const ts = moment.tz('2017-10-16 21:30:00-0400', 'America/New_York')
 
-describe.only('GraphQL mutations', function () {
+describe('GraphQL mutations', function () {
   let room, blarfSet
   let authorized, unauthorized
 
