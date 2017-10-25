@@ -41,8 +41,10 @@ class UserResolver {
     return new AvatarResolver(this.profile)
   }
 
-  roles () {
-    return []
+  roles (args, req) {
+    return req.robot.auth.userRoles(this.user).map(role => {
+      return {name: role}
+    })
   }
 }
 
