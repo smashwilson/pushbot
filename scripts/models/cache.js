@@ -8,11 +8,15 @@ const MAX_CACHE_SIZE = 200
 const CACHES = new Map()
 
 class Cache {
+  static storageForChannel (robot, channel) {
+    return robot.brain.get(`buffer-cache:${channel}`)
+  }
+
   constructor (robot, channel) {
     this.robot = robot
     this.channel = channel
 
-    const serialized = this.robot.brain.get(`buffer-cache:${this.channel}`)
+    const serialized = Cache.storageForChannel(this.robot, this.channel)
     if (serialized === null) {
       this.lines = []
     } else {
@@ -81,7 +85,7 @@ function cacheForChannel (robot, channel, create = true) {
     return existing
   }
 
-  if (!create) {
+  if (!create && !Cache.storageForChannel(robot, channel)) {
     return null
   }
 
