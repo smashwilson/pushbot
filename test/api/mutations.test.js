@@ -9,7 +9,7 @@ const helper = new Helper([])
 
 const ts = moment.tz('2017-10-16 21:30:00-0400', 'America/New_York')
 
-describe('GraphQL mutations', function () {
+describe.only('GraphQL mutations', function () {
   let room, blarfSet
   let authorized, unauthorized
 
@@ -105,6 +105,22 @@ describe('GraphQL mutations', function () {
       expect(doc.wasFound()).to.be.true
       expect(doc.id).to.equal(docResolver.id)
       expect(doc.getBody()).to.equal(docResolver.text)
+    })
+
+    it('announces the quoting user to the channel', async function () {
+      await resolver.createDocument(
+        {set: 'blarf', channel: 'C100', lines: [lineIDs[1], lineIDs[3]]},
+        {robot: room.robot, user: authorized}
+      )
+
+      expect(room.messages).to.deep.equal([
+        [
+          'hubot',
+          '_<@1> quoted:_\n' +
+          '> bbb: line two\n' +
+          '> ccc: line four'
+        ]
+      ])
     })
 
     it('preserves the channel order cache of the chosen lines', async function () {
