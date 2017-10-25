@@ -8,6 +8,17 @@ const MAX_CACHE_SIZE = 200
 const CACHES = new Map()
 
 class Cache {
+  static known (robot) {
+    return robot.brain.get('buffer-cache-known') || []
+  }
+
+  static remember (robot, channel) {
+    const existing = Cache.known(robot)
+    if (!existing.includes(channel)) {
+      robot.brain.set('buffer-cache-known', existing.concat([channel]))
+    }
+  }
+
   static storageForChannel (robot, channel) {
     return robot.brain.get(`buffer-cache:${channel}`)
   }
@@ -22,6 +33,8 @@ class Cache {
     } else {
       this.lines = serialized.map(each => Line.deserialize(each))
     }
+
+    Cache.remember(this.robot, this.channel)
   }
 
   append (msg, ts = undefined) {
@@ -79,7 +92,19 @@ class Cache {
   }
 }
 
+function prepopulate (robot) {
+  if (CACHES.size !== 0) return
+
+  // Pre-populate known channels.
+  for (const former of Cache.known(robot)) {
+    const resurrected = new Cache(robot, former)
+    CACHES.set(former, resurrected)
+  }
+}
+
 function cacheForChannel (robot, channel, create = true) {
+  prepopulate(robot)
+
   const existing = CACHES.get(channel)
   if (existing) {
     return existing
@@ -98,7 +123,9 @@ function clear () {
   CACHES.clear()
 }
 
-function known () {
+function known (robot) {
+  prepopulate(robot)
+
   return Array.from(CACHES.keys())
 }
 

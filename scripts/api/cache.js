@@ -6,7 +6,7 @@ class CacheResolver {
   knownChannels (options, req) {
     const dataStore = getDataStore(req.robot)
 
-    return cache.known().map(id => {
+    return cache.known(req.robot).map(id => {
       const channel = dataStore.getChannelGroupOrDMById(id)
       return channel ? channel.name : id
     })
