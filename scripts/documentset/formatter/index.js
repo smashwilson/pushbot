@@ -3,5 +3,6 @@
 
 module.exports = {
   quote: require('./quote'),
-  lim: require('./lim')
+  lim: require('./lim'),
+  brief: require('./brief')
 }
