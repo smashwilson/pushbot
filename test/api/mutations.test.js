@@ -116,7 +116,7 @@ describe.only('GraphQL mutations', function () {
       expect(room.messages).to.deep.equal([
         [
           'hubot',
-          '_<@1> quoted:_\n' +
+          '_<@1> quoted_\n' +
           '> bbb: line two\n' +
           '> ccc: line four'
         ]
