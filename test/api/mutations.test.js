@@ -107,6 +107,22 @@ describe('GraphQL mutations', function () {
       expect(doc.getBody()).to.equal(docResolver.text)
     })
 
+    it('announces the quoting user to the channel', async function () {
+      await resolver.createDocument(
+        {set: 'blarf', channel: 'C100', lines: [lineIDs[1], lineIDs[3]]},
+        {robot: room.robot, user: authorized}
+      )
+
+      expect(room.messages).to.deep.equal([
+        [
+          'hubot',
+          '_<@1> quoted_\n' +
+          '> bbb: line two\n' +
+          '> ccc: line four'
+        ]
+      ])
+    })
+
     it('preserves the channel order cache of the chosen lines', async function () {
       const docResolver = await resolver.createDocument(
         {set: 'blarf', channel: 'C100', lines: [lineIDs[2], lineIDs[3], lineIDs[1]]},
