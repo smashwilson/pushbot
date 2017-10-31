@@ -28,7 +28,7 @@ module.exports = function (robot) {
     if (zingReq === 'me') {
       zingReq = msg.message.user.name
     }
-    
+
     let zing = `I don't have a zing yet for ${zingReq}.`
     if (zingReq) {
       if (zing[zingReq]) zing = zing[zingReq]
