@@ -2,7 +2,7 @@ dist: trusty
 sudo: required
 language: node_js
 node_js:
-- node
+- 8
 addons:
   postgresql: '9.6'
 services:
