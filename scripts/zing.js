@@ -33,7 +33,7 @@ module.exports = function (robot) {
     if (zingReq) {
       if (zing[zingReq]) zing = zing[zingReq]
     } else {
-      zing = zings[atRandom(Object.keys(zings)]]
+      zing = zings[atRandom(Object.keys(zings)]
     }
     msg.send(zing)
   })
