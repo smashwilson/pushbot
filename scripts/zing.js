@@ -16,7 +16,10 @@ const zings = {
   'purr-purr': 'https://user-images.githubusercontent.com/17565/27990028-2685c6ec-6417-11e7-8ecb-831b90bad97e.jpg',
   reostra: 'https://user-images.githubusercontent.com/17565/27990029-27c0c318-6417-11e7-9c47-d9b5a6551c26.jpg',
   smashwilson: 'https://user-images.githubusercontent.com/17565/27990125-e5849886-641a-11e7-8ca1-cac9dd731cf4.jpg',
-  phbarna: 'https://user-images.githubusercontent.com/17565/28244206-7ec77720-69b1-11e7-8456-dd0aa5055511.png'
+  phbarna: 'https://user-images.githubusercontent.com/17565/28244206-7ec77720-69b1-11e7-8456-dd0aa5055511.png',
+  earmuffs: 'https://user-images.githubusercontent.com/17565/32245435-241aedde-be52-11e7-862d-eac1615022c7.jpg',
+  frey: 'https://user-images.githubusercontent.com/17565/32245443-2836eb84-be52-11e7-8ef4-6aec7b1af49b.jpg',
+  haus: 'https://user-images.githubusercontent.com/17565/32245445-29e0105a-be52-11e7-90bf-1b868bbab590.jpg'
 }
 
 module.exports = function (robot) {
@@ -25,8 +28,13 @@ module.exports = function (robot) {
     if (zingReq === 'me') {
       zingReq = msg.message.user.name
     }
-
-    const zing = zings[zingReq] || zings[atRandom(Object.keys(zings))]
+    
+    let zing = `I don't have a zing yet for ${zingReq}.`
+    if (zingReq) {
+      if (zing[zingReq]) zing = zing[zingReq]
+    } else {
+      zing = zings[atRandom(Object.keys(zings)]]
+    }
     msg.send(zing)
   })
 }
