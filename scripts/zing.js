@@ -31,7 +31,7 @@ module.exports = function (robot) {
 
     let zing = `I don't have a zing yet for ${zingReq}.`
     if (zingReq) {
-      if (zing[zingReq]) zing = zing[zingReq]
+      if (zings[zingReq]) zing = zings[zingReq]
     } else {
       zing = zings[atRandom(Object.keys(zings))]
     }
