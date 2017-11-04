@@ -1,6 +1,7 @@
 // Required first.
 
 const pg = require('pg-promise')()
+const Hubot = require('hubot')
 const hubotHelp = require('hubot-help')
 const hubotAuth = require('hubot-auth')
 require('hubot-test-helper')
@@ -24,15 +25,21 @@ global.usesDatabase = function (context, timeoutMs) {
   }
 }
 
-global.loadHelp = function (robot) {
-  hubotHelp(robot, '*')
+global.loadHelp = function (room) {
+  hubotHelp(room.robot, '*')
 
   return new Promise(resolve => setTimeout(resolve, 200))
 }
 
-global.loadAuth = function (robot, adminID = '0') {
+global.loadAuth = function (room, adminID = '0') {
   process.env.HUBOT_AUTH_ADMIN = adminID
-  hubotAuth(robot, '*')
+  hubotAuth(room.robot, '*')
+
+  room.receive = async function (userName, message) {
+    this.messages.push([userName, message])
+    const user = room.robot.brain.userForName(userName) || room.robot.brain.userForId('0', {name: userName, room})
+    await new Promise(resolve => room.robot.receive(new Hubot.TextMessage(user, message), resolve))
+  }
 
   return new Promise(resolve => setTimeout(resolve, 20))
 }
