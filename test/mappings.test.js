@@ -25,12 +25,24 @@ describe('mappings', function () {
     return room.messages.filter(pair => pair[0] === 'hubot').map(pair => pair[1])
   }
 
-  async function response (expected) {
-    await delay()()
-    if (responses().indexOf(expected) === -1) {
-      console.log(room.messages)
-      throw new Error(`"${expected}" response not seen.`)
-    }
+  function response (expected) {
+    return new Promise((resolve, reject) => {
+      let count = 0
+
+      const check = () => {
+        if (responses().indexOf(expected) !== -1) {
+          resolve()
+        } else if (count > 20) {
+          console.log(room.messages)
+          return reject(new Error(`"${expected}" response not seen.`))
+        } else {
+          count++
+          setTimeout(check, 50)
+        }
+      }
+
+      check()
+    })
   }
 
   it('creates a new mapping with !createmapping', async function () {
