@@ -8,17 +8,15 @@ describe('UserSetResolver', function () {
 
   beforeEach(async function () {
     room = helper.createRoom({httpd: false})
+    await loadAuth(room, '1')
 
-    const robot = room.robot
-    await loadAuth(robot, '1')
-
-    const brain = robot.brain
+    const brain = room.robot.brain
 
     self = brain.userForId('1', {name: 'self', roles: ['role one', 'role two']})
     brain.userForId('2', {name: 'two'})
     brain.userForId('3', {name: 'three'})
 
-    req = {robot, user: self}
+    req = {robot: room.robot, user: self}
     resolver = new UserSetResolver()
   })
 
