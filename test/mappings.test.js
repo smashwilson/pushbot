@@ -88,7 +88,26 @@ describe('mappings', function () {
     await response('yep')
   })
 
-  it('configures the role required to set others with --role-other')
+  it('configures the role required to set others with --role-other', async function () {
+    usesDatabase(this)
+
+    await room.user.say('admin', '@hubot createmapping foo --role-other "fancy lad"')
+    await response('@admin mapping foo has been created. :sparkles:')
+    await delay(500)()
+
+    await room.user.say('dandy', '@hubot setfoo @fancy: nope')
+    await response("@dandy You can't do that! You're not a *fancy lad*.\n" +
+            'Ask an admin to run `hubot grant dandy the fancy lad role`.')
+
+    await room.user.say('fancy', '@hubot setfoo @dandy: yep')
+    await response("dandy's foo has been set to 'yep'.")
+
+    await room.user.say('dandy', '@hubot foo')
+    await response('yep')
+
+    await room.user.say('fancy', '@hubot foo')
+    await response("I don't know any foos that contain that!")
+  })
 
   it('configures the banner shown before !all with --all-banner')
 
