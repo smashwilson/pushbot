@@ -17,7 +17,7 @@ describe('mappings', function () {
 
   afterEach(async function () {
     await room.user.say('admin', '@hubot destroymapping foo')
-    await delay(200)()
+    await delay(400)()
     await room.destroy()
   })
 
