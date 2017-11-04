@@ -52,7 +52,7 @@ module.exports = function (robot) {
     }
   })
 
-  robot.respond(/createmapping\s+([^]+)?/, async msg => {
+  robot.respond(/createmapping\s+([^]+)/, async msg => {
     if (!MapMaker.verify(robot, msg)) { return }
 
     const args = await parseArguments(msg, msg.match[1], yargs => {
@@ -83,6 +83,54 @@ module.exports = function (robot) {
     } catch (e) {
       msg.send(e.message)
     }
+  })
+
+  robot.respond(/changemapping\s+([^]+)/, async msg => {
+    if (!MapMaker.verify(robot, msg)) { return }
+
+    const args = await parseArguments(msg, msg.match[1], yargs => {
+      return yargs.usage('!changemapping <name> [options]')
+        .option('null', {
+          describe: 'Response when no <name> has been set',
+          type: 'string'
+        })
+        .option('role-own', {
+          describe: 'Role required to set your own <name>',
+          type: 'string'
+        })
+        .option('role-other', {
+          describe: 'Role required to set a <name> for others',
+          type: 'string'
+        })
+        .help()
+    })
+    const name = args._[0]
+    if (!name) {
+      msg.reply('You must specify the name of an existing mapping.')
+      return
+    }
+
+    if (!mappings.has(name)) {
+      msg.reply(`I don't know of a mapping called "${name}".`)
+      return
+    }
+
+    const {documentSet, options} = mappings.get(name)
+
+    if (args.null) {
+      documentSet.change({nullBody: args.null})
+      options.null = args.null
+    }
+
+    if (args.roleOwn) {
+      documentSet.spec.features.set.roleForSelf = withName(args.roleOwn)
+    }
+
+    if (args.roleOther) {
+      documentSet.spec.features.set.roleForOther = withName(args.roleOther)
+    }
+
+    msg.send(`Mapping ${name} changed. :party-corgi:`)
   })
 
   robot.respond(/destroymapping\s+(\S+)/, msg => {

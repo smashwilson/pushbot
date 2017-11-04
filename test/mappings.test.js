@@ -120,6 +120,20 @@ describe('mappings', function () {
     await response("There's already a mapping called foo, silly!")
   })
 
+  it('changes an existing mapping with !changemapping', async function () {
+    await room.user.say('admin', '@hubot createmapping foo')
+    await response('@admin mapping foo has been created. :sparkles:')
+
+    await room.user.say('dandy', '@hubot foo')
+    await response("I don't know any foos that contain that!")
+
+    await room.user.say('admin', '@hubot changemapping foo --null stuff')
+    await response('Mapping foo changed. :party-corgi:')
+
+    await room.user.say('dandy', '@hubot foo')
+    await response('stuff')
+  })
+
   it('destroys a mapping with !destroymapping', async function () {
     usesDatabase(this)
 
