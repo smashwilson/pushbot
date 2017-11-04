@@ -1,8 +1,10 @@
 // Description:
 //   Maintain arbitrary sets of username => text mappings.
 
+const {parseArguments} = require('./helpers')
+
 const {createDocumentSet} = require('./documentset')
-const {Admin, MapMaker} = require('./roles')
+const {MapMaker, withName} = require('./roles')
 
 const mappings = new Map()
 
@@ -14,13 +16,17 @@ module.exports = function (robot) {
 
     const ds = createDocumentSet(robot, name, {
       set: {
-        role: MapMaker,
+        roleForSelf: withName(options.roleOwn),
+        roleForOther: withName(options.roleOther),
         userOriented: true
       },
       query: {
         userOriented: true
       },
-      nullBody: options.nullBody
+      all: {
+        userOriented: true
+      },
+      nullBody: options.null
     })
 
     mappings.set(name, {
@@ -46,21 +52,33 @@ module.exports = function (robot) {
     }
   })
 
-  robot.respond(/createmapping\s+(\S+)([^]+)?/, msg => {
-    if (!Admin.verify(robot, msg)) { return }
+  robot.respond(/createmapping\s+([^]+)?/, async msg => {
+    if (!MapMaker.verify(robot, msg)) { return }
 
-    const name = msg.match[1]
-    const argList = msg.match[2]
-
-    const options = {}
-
-    const nullBodyMatch = /--null="([^"]+)"/.exec(argList)
-    if (nullBodyMatch) {
-      options.nullBody = nullBodyMatch[1]
+    const args = await parseArguments(msg, msg.match[1], yargs => {
+      return yargs.usage('!createmapping <name> [options]')
+        .option('null', {
+          describe: 'Response when no <name> has been set',
+          type: 'string'
+        })
+        .option('role-own', {
+          describe: 'Role required to set your own <name>',
+          type: 'string'
+        })
+        .option('role-other', {
+          describe: 'Role required to set a <name> for others',
+          type: 'string'
+        })
+        .help()
+    })
+    const name = args._[0]
+    if (!name) {
+      msg.reply('You must specify a <name> for the mapping.')
+      return
     }
 
     try {
-      createMapping(name, options)
+      createMapping(name, args)
       msg.reply(`mapping ${name} has been created. :sparkles:`)
     } catch (e) {
       msg.send(e.message)
@@ -68,7 +86,7 @@ module.exports = function (robot) {
   })
 
   robot.respond(/destroymapping\s+(\S+)/, msg => {
-    if (!Admin.verify(robot, msg)) { return }
+    if (!MapMaker.verify(robot, msg)) { return }
 
     const name = msg.match[1]
     const data = mappings.get(name)
