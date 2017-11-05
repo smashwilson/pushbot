@@ -9,6 +9,14 @@ const {MapMaker, withName} = require('./roles')
 const mappings = new Map()
 
 module.exports = function (robot) {
+  function persistMappings () {
+    const payload = {}
+    for (const [name, {options}] of mappings) {
+      payload[name] = options
+    }
+    robot.brain.set('mappingMeta', payload)
+  }
+
   function loadMapping (name, options) {
     if (mappings.has(name)) {
       throw new Error(`There's already a mapping called ${name}, silly!`)
@@ -23,9 +31,6 @@ module.exports = function (robot) {
       query: {
         userOriented: true
       },
-      all: {
-        userOriented: true
-      },
       nullBody: options.null
     })
 
@@ -37,12 +42,7 @@ module.exports = function (robot) {
 
   function createMapping (name, options) {
     loadMapping(name, options)
-
-    const payload = {}
-    for (const [name, {options}] of mappings) {
-      payload[name] = options
-    }
-    robot.brain.set('mappingMeta', payload)
+    persistMappings()
   }
 
   robot.on('brainReady', () => {
@@ -123,13 +123,15 @@ module.exports = function (robot) {
     }
 
     if (args.roleOwn) {
+      options.roleOwn = args.roleOwn
       documentSet.spec.features.set.roleForSelf = withName(args.roleOwn)
     }
 
     if (args.roleOther) {
+      options.roleOther = args.roleOther
       documentSet.spec.features.set.roleForOther = withName(args.roleOther)
     }
-
+    persistMappings()
     msg.send(`Mapping ${name} changed. :party-corgi:`)
   })
 

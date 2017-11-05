@@ -109,8 +109,6 @@ describe('mappings', function () {
     await response("I don't know any foos that contain that!")
   })
 
-  it('configures the banner shown before !all with --all-banner')
-
   it('fails if the mapping already exists', async function () {
     usesDatabase(this)
 
