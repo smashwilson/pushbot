@@ -46,3 +46,9 @@ exports.QuotePontiff = new Role('quote pontiff')
 exports.PoetLaureate = new Role('poet laureate')
 
 exports.MapMaker = new Role('mapmaker')
+
+exports.withName = function (name, def = exports.Anyone) {
+  if (!name) return def
+  if (/^anyone$/i.test(name)) return exports.Anyone
+  return new Role(name)
+}

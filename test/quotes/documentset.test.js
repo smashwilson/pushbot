@@ -448,7 +448,7 @@ describe('createDocumentSet', function () {
     it('generates default help text', function () {
       usesDatabase(this)
 
-      return loadHelp(room.robot)
+      return loadHelp(room)
       .then(() => createDocumentSet(room.robot, 'blarf', {add: true}))
       .then(() => room.user.say('me', '@hubot help blarf'))
       .then(delay())
@@ -464,7 +464,7 @@ describe('createDocumentSet', function () {
     it('accepts custom help text', function () {
       usesDatabase(this)
 
-      return loadHelp(room.robot)
+      return loadHelp(room)
       .then(() => createDocumentSet(room.robot, 'blarf', {
         add: {
           helpText: [
@@ -646,7 +646,7 @@ describe('createDocumentSet', function () {
     it('generates default help text', function () {
       usesDatabase(this)
 
-      return loadHelp(room.robot)
+      return loadHelp(room)
       .then(() => createDocumentSet(room.robot, 'blarf', {set: true}))
       .then(() => room.user.say('me', '@hubot help'))
       .then(delay())
@@ -661,7 +661,7 @@ describe('createDocumentSet', function () {
     it('accepts custom help text', function () {
       usesDatabase(this)
 
-      return loadHelp(room.robot)
+      return loadHelp(room)
       .then(() => createDocumentSet(room.robot, 'blarf', {
         set: {
           helpText: [
@@ -889,7 +889,7 @@ describe('createDocumentSet', function () {
     })
 
     it('generates default help text', function () {
-      return loadHelp(room.robot)
+      return loadHelp(room)
       .then(() => createDocumentSet(room.robot, 'blarf', {query: true}))
       .then(() => room.user.say('me', '@hubot help blarf'))
       .then(delay())
@@ -902,7 +902,7 @@ describe('createDocumentSet', function () {
     })
 
     it('accepts custom help text', function () {
-      return loadHelp(room.robot)
+      return loadHelp(room)
       .then(() => createDocumentSet(room.robot, 'blarf', {
         query: {
           helpText: [
@@ -1079,7 +1079,7 @@ describe('createDocumentSet', function () {
     })
 
     it('generates default help text', function () {
-      return loadHelp(room.robot)
+      return loadHelp(room)
       .then(() => createDocumentSet(room.robot, 'blarf', {count: true}))
       .then(() => room.user.say('me', '@hubot help blarfcount'))
       .then(delay())
@@ -1092,7 +1092,7 @@ describe('createDocumentSet', function () {
     })
 
     it('accepts custom help text', function () {
-      return loadHelp(room.robot)
+      return loadHelp(room)
       .then(() => createDocumentSet(room.robot, 'blarf', {
         count: {
           helpText: [
@@ -1179,7 +1179,7 @@ describe('createDocumentSet', function () {
     it('generates default help text', function () {
       usesDatabase(this)
 
-      return loadHelp(room.robot)
+      return loadHelp(room)
       .then(() => createDocumentSet(room.robot, 'blarf', {stats: true}))
       .then(() => room.user.say('me', '@hubot help blarfstats'))
       .then(delay())
@@ -1194,7 +1194,7 @@ describe('createDocumentSet', function () {
     it('accepts custom help text', function () {
       usesDatabase(this)
 
-      return loadHelp(room.robot)
+      return loadHelp(room)
       .then(() => createDocumentSet(room.robot, 'blarf', {
         stats: {
           helpText: [
@@ -1344,7 +1344,7 @@ describe('createDocumentSet', function () {
       })
 
       it('generates default help text', function () {
-        return loadHelp(room.robot)
+        return loadHelp(room)
         .then(() => createDocumentSet(room.robot, 'blarf', {[commandName]: true}))
         .then(() => room.user.say('me', `@hubot help blarf${commandName}`))
         .then(delay())
@@ -1355,7 +1355,7 @@ describe('createDocumentSet', function () {
       })
 
       it('accepts custom help text', function () {
-        return loadHelp(room.robot)
+        return loadHelp(room)
         .then(() => createDocumentSet(room.robot, 'blarf', {
           [commandName]: {
             helpText: [

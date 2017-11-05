@@ -14,6 +14,10 @@ class DocumentSet {
     this.connected = this.storage.connectDocumentSet(this)
   }
 
+  change (spec) {
+    if (spec.nullBody) this.nullDocument = new NullDocument(spec.nullBody)
+  }
+
   async add (submitter, body, attributes) {
     await this.connected
     const result = await this.storage.insertDocument(this, submitter, body, attributes)
