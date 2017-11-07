@@ -9,7 +9,7 @@ class CacheResolver {
     return cache.known(req.robot).map(id => {
       const channel = dataStore.getChannelGroupOrDMById(id)
       return channel ? channel.name : id
-    })
+    }).filter(Boolean)
   }
 
   linesForChannel ({channel}, req) {
