@@ -93,13 +93,16 @@ class Cache {
 }
 
 function prepopulate (robot) {
+  console.log('In prepopulate()')
   if (CACHES.size !== 0) return
 
   // Pre-populate known channels.
   for (const former of Cache.known(robot)) {
+    console.log(`Resurrecting cache ${former}`)
     const resurrected = new Cache(robot, former)
     CACHES.set(former, resurrected)
   }
+  console.log('All channels prepopulated')
 }
 
 function cacheForChannel (robot, channel, create = true) {

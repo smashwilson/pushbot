@@ -4,12 +4,16 @@ const {getDataStore} = require('../helpers')
 
 class CacheResolver {
   knownChannels (options, req) {
+    req.robot.logger.debug('Entering CacheResolver.knownChannels')
     const dataStore = getDataStore(req.robot)
+    req.robot.logger.debug(`Found data store: ${dataStore}`)
 
-    return cache.known(req.robot).map(id => {
+    const r = cache.known(req.robot).map(id => {
       const channel = dataStore.getChannelGroupOrDMById(id)
       return channel ? channel.name : id
     })
+    req.robot.logger.debug(`Returning known channels: ${require('util').inspect(r)}`)
+    return r
   }
 
   linesForChannel ({channel}, req) {
