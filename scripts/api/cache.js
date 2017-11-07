@@ -11,7 +11,7 @@ class CacheResolver {
     const r = cache.known(req.robot).map(id => {
       const channel = dataStore.getChannelGroupOrDMById(id)
       return channel ? channel.name : id
-    })
+    }).filter(Boolean)
     req.robot.logger.debug(`Returning known channels: ${require('util').inspect(r)}`)
     return r
   }
