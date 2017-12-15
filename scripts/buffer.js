@@ -39,11 +39,11 @@ module.exports = function (robot) {
 
   // Accumulate messages into the appropriate cache for each channel.
   robot.catchAll(msg => {
-    if (!msg.message.text || !msg.message.room) {
+    if (!msg.message.text || !msg.envelope.room) {
       return
     }
 
-    robot.cacheForChannel(msg.message.room).append(msg)
+    robot.cacheForChannel(msg.envelope.room).append(msg)
   })
 
   robot.respond(/buffer\s+help/i, msg => {

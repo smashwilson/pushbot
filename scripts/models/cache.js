@@ -39,8 +39,13 @@ class Cache {
 
   append (msg, ts = undefined) {
     const now = ts || moment.tz('America/New_York')
+    const isAction = msg.message.subtype === 'me_message'
     const toAdd = msg.message.text.split(/\n/).map(sourceLine => {
-      return new Line(now, msg.message.user.name, sourceLine)
+      return new Line(
+        now,
+        msg.message.user.name,
+        isAction ? `_${sourceLine}_` : sourceLine
+      )
     })
     toAdd.reverse()
 
