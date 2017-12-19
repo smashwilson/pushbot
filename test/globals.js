@@ -7,8 +7,6 @@ const hubotHelp = require('hubot-help')
 const hubotAuth = require('hubot-auth')
 
 const Helper = require('hubot-test-helper')
-const helper = new Helper([])
-
 const moment = require('moment-timezone')
 
 global.expect = require('chai').expect
@@ -40,8 +38,9 @@ global.message = function (username, line) {
 }
 
 global.BotContext = class {
-  constructor () {
-    this.room = helper.createRoom({httpd: false})
+  constructor (...scriptPaths) {
+    this.helper = new Helper(scriptPaths)
+    this.room = this.helper.createRoom({httpd: false})
 
     if (global.database) {
       this.room.robot.postgres = global.database
@@ -57,8 +56,9 @@ global.BotContext = class {
   }
 
   createUser (uid, username, extra = {}) {
-    const udata = {name: username, ...extra}
+    const udata = {id: uid, name: username, ...extra}
     this.room.robot.brain.users()[uid] = udata
+    return udata
   }
 
   load (filename) {
@@ -70,13 +70,15 @@ global.BotContext = class {
     await new Promise(resolve => setTimeout(resolve, 200))
   }
 
-  async loadAuth (room, adminID = '0') {
+  async loadAuth (adminID = '0') {
     process.env.HUBOT_AUTH_ADMIN = adminID
     hubotAuth(this.room.robot, '*')
 
-    room.receive = async function (userName, message) {
+    const room = this.room
+    this.room.receive = async function (userName, message) {
       this.messages.push([userName, message])
-      const user = room.robot.brain.userForName(userName) || room.robot.brain.userForId('0', {name: userName, room})
+      const user = room.robot.brain.userForName(userName) ||
+        room.robot.brain.userForId('0', {name: userName, room})
       await new Promise(resolve => room.robot.receive(new Hubot.TextMessage(user, message), resolve))
     }
 
