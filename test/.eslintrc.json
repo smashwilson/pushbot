@@ -10,7 +10,9 @@
     "usesDatabase": true,
     "loadHelp": true,
     "loadAuth": true,
-    "message": true
+    "message": true,
+    "BotContext": true,
+    "TimeContext": true
   },
   "rules": {
     "no-unused-expressions": "off"

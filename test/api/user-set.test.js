@@ -1,27 +1,22 @@
-const Helper = require('hubot-test-helper')
-const helper = new Helper([])
-
 const {UserSetResolver} = require('../../scripts/api/user-set')
 
 describe('UserSetResolver', function () {
-  let room, self, req, resolver
+  let bot, self, req, resolver
 
   beforeEach(async function () {
-    room = helper.createRoom({httpd: false})
-    await loadAuth(room, '1')
+    bot = new BotContext()
+    await bot.loadAuth('1')
 
-    const brain = room.robot.brain
+    self = bot.createUser('1', 'self', {roles: ['role one', 'role two']})
+    bot.createUser('2', 'two')
+    bot.createUser('3', 'three')
 
-    self = brain.userForId('1', {name: 'self', roles: ['role one', 'role two']})
-    brain.userForId('2', {name: 'two'})
-    brain.userForId('3', {name: 'three'})
-
-    req = {robot: room.robot, user: self}
+    req = {robot: bot.getRobot(), user: self}
     resolver = new UserSetResolver()
   })
 
   afterEach(function () {
-    room.destroy()
+    bot.destroy()
   })
 
   describe('me', function () {
