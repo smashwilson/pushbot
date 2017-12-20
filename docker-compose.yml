@@ -5,6 +5,8 @@ services:
     environment:
       POSTGRES_USER: pushbot
       POSTGRES_PASSWORD: shhh
+    ports:
+    - '5432'
   pushbot:
     build: .
     volumes:
