@@ -479,16 +479,19 @@ function kovCommands (robot, documentSet, spec, feature) {
   })
 
   robot.respond(new RegExp(`reindex\\s+${spec.name}kov`, 'i'), async msg => {
+    robot.logger.debug(`Reindexing ${spec.name}kov model.`)
     await new Promise((resolve, reject) => {
       try {
         robot.markov.modelNamed(`${spec.name}kov`, model => {
           model.destroy(err => {
             delete robot.markov.byName[`${spec.name}kov`]
             if (err) return reject(err)
+            robot.logger.info(`Model ${spec.name}kov destroyed.`)
             resolve()
           })
         })
       } catch (e) {
+        robot.logger.info(`No model yet for ${spec.name}kov.`)
         resolve()
       }
     })
@@ -496,16 +499,31 @@ function kovCommands (robot, documentSet, spec, feature) {
     robot.markov.createModel(`${spec.name}kov`, {})
 
     const {documents} = await documentSet.allMatching({}, '')
-    await Promise.all(
-      documents.map(document => new Promise((resolve, reject) => {
-        robot.markov.modelNamed(`${spec.name}kov`, model => {
-          model.learn(document.getBody(), err => {
-            if (err) return reject(err)
-            resolve()
+
+    robot.logger.debug(`Reindexing ${documents.length} ${spec.plural}.`)
+    await new Promise((resolve, reject) => {
+      robot.markov.modelNamed(`${spec.name}kov`, async model => {
+        let count = 0
+        for (const document of documents) {
+          await new Promise((resolve, reject) => {
+            const body = document.getBody()
+              .replace(/\[[^\]]+\]\s+/g, '')
+              .replace(/(^|\n)>\s+/g, ' ')
+
+            model.learn(body, err => {
+              if (err) return reject(err)
+              resolve()
+            })
           })
-        })
-      }))
-    )
+          count++
+
+          if (count % 100 === 0) {
+            robot.logger.debug(`Indexed ${count} ${spec.plural}.`)
+          }
+        }
+        resolve()
+      })
+    })
     msg.reply(`Regenerated markov model from ${documents.length} ${spec.plural}.`)
   })
 }
