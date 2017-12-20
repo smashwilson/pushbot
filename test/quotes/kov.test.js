@@ -64,7 +64,7 @@ describe('DocumentSet markov models', function () {
     await new Promise(resolve => {
       bot.getRobot().markov.modelNamed('blarfkov', model => {
         model.learn('aaa bbb ccc', err => {
-          expect(err).to.be.null
+          expect(err).to.be.falsy
           resolve()
         })
       })
