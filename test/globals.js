@@ -5,6 +5,7 @@ const pg = require('pg-promise')()
 const Hubot = require('hubot')
 const hubotHelp = require('hubot-help')
 const hubotAuth = require('hubot-auth')
+const hubotMarkov = require('hubot-markov')
 
 const Helper = require('hubot-test-helper')
 const moment = require('moment-timezone')
@@ -44,6 +45,7 @@ global.BotContext = class {
 
     if (global.database) {
       this.room.robot.postgres = global.database
+      this.room.robot.getDatabase = () => global.database
     }
   }
 
@@ -83,6 +85,11 @@ global.BotContext = class {
     }
 
     return new Promise(resolve => setTimeout(resolve, 20))
+  }
+
+  async loadMarkov () {
+    hubotMarkov(this.room.robot, '*')
+    await new Promise(resolve => setTimeout(resolve, 20))
   }
 
   say (...args) {

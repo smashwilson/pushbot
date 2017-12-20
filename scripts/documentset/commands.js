@@ -41,7 +41,7 @@ exports.generate = function (robot, documentSet, spec) {
   }
 
   if (spec.features.kov !== null) {
-    kovCommands(robot.documentSet, spec, spec.features.kov)
+    kovCommands(robot, documentSet, spec, spec.features.kov)
   }
 }
 
@@ -57,6 +57,10 @@ function addCommands (robot, documentSet, spec, feature) {
 
   if (!feature.formatter) {
     feature.formatter = formatters.quote
+  }
+
+  if (spec.features.kov && !spec.features.kov.formatter) {
+    spec.features.kov.formatter = formatters.markov
   }
 
   const preprocessorNames = Object.keys(preprocessors)
@@ -96,6 +100,19 @@ function addCommands (robot, documentSet, spec, feature) {
         }
         for (const value of formatted.mentions) {
           attributes.push({kind: 'mention', value})
+        }
+
+        if (spec.features.kov) {
+          const markovInput = spec.features.kov.formatter(processed.lines, processed.speakers, processed.mentions)
+
+          await new Promise((resolve, reject) => {
+            robot.markov.modelNamed(`${spec.name}kov`, model => {
+              model.learn(markovInput.body, err => {
+                if (err) return reject(err)
+                resolve()
+              })
+            })
+          })
         }
 
         const doc = await documentSet.add(submitter, body, attributes)
@@ -432,5 +449,81 @@ function statsCommand (robot, documentSet, spec, feature) {
 }
 
 function kovCommands (robot, documentSet, spec, feature) {
-  //
+  if (feature.helpText) {
+    robot.commands.push(...feature.helpText)
+  } else {
+    robot.commands.push(
+      `hubot ${spec.name}kov - Generate a ${spec.name} using a model built from real ${spec.plural}.`,
+      `hubot ${spec.name}kov <seed> - Generate a ${spec.name} beginning with seed text.`
+    )
+  }
+
+  const pattern = new RegExp(`${spec.name}kov(\\s+[^]+)?$`, 'i')
+  robot.respond(pattern, async msg => {
+    if (!feature.role.verify(robot, msg)) return
+
+    try {
+      robot.markov.modelNamed(`${spec.name}kov`, model => {
+        model.generate(msg.match[1] || '', 100, (err, output) => {
+          if (err) {
+            errorHandler(msg, err)
+            return
+          }
+
+          msg.send(output)
+        })
+      })
+    } catch (e) {
+      errorHandler(msg, e)
+    }
+  })
+
+  robot.respond(new RegExp(`reindex\\s+${spec.name}kov`, 'i'), async msg => {
+    robot.logger.debug(`Reindexing ${spec.name}kov model.`)
+    await new Promise((resolve, reject) => {
+      try {
+        robot.markov.modelNamed(`${spec.name}kov`, model => {
+          model.destroy(err => {
+            delete robot.markov.byName[`${spec.name}kov`]
+            if (err) return reject(err)
+            robot.logger.info(`Model ${spec.name}kov destroyed.`)
+            resolve()
+          })
+        })
+      } catch (e) {
+        robot.logger.info(`No model yet for ${spec.name}kov.`)
+        resolve()
+      }
+    })
+
+    robot.markov.createModel(`${spec.name}kov`, {})
+
+    const {documents} = await documentSet.allMatching({}, '')
+
+    robot.logger.debug(`Reindexing ${documents.length} ${spec.plural}.`)
+    await new Promise((resolve, reject) => {
+      robot.markov.modelNamed(`${spec.name}kov`, async model => {
+        let count = 0
+        for (const document of documents) {
+          await new Promise((resolve, reject) => {
+            const body = document.getBody()
+              .replace(/\[[^\]]+\]\s+/g, '')
+              .replace(/(^|\n)>\s+/g, ' ')
+
+            model.learn(body, err => {
+              if (err) return reject(err)
+              resolve()
+            })
+          })
+          count++
+
+          if (count % 100 === 0) {
+            robot.logger.debug(`Indexed ${count} ${spec.plural}.`)
+          }
+        }
+        resolve()
+      })
+    })
+    msg.reply(`Regenerated markov model from ${documents.length} ${spec.plural}.`)
+  })
 }

@@ -18,6 +18,7 @@ module.exports = function (robot) {
     stats: true,
     by: true,
     about: true,
+    kov: true,
 
     nullBody: "That wasn't notable enough to quote. Try harder."
   })
@@ -31,6 +32,7 @@ module.exports = function (robot) {
     query: true,
     count: true,
     by: true,
+    kov: true,
 
     nullBody: 'No limericks found.'
   })

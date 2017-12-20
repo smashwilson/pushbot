@@ -60,6 +60,18 @@ exports.createDocumentSet = function createDocumentSet (robot, name, commands) {
   const storage = new Storage({db: robot.postgres})
   const documentSet = new DocumentSet(storage, spec)
 
+  if (spec.features.kov) {
+    const createModel = () => {
+      if (!robot.markov) {
+        setTimeout(createModel, 1)
+        return
+      }
+
+      robot.markov.createModel(`${spec.name}kov`, {})
+    }
+    createModel()
+  }
+
   generate(robot, documentSet, spec)
 
   if (!robot.documentSets) {

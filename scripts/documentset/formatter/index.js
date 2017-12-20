@@ -3,6 +3,7 @@
 
 module.exports = {
   quote: require('./quote'),
+  markov: require('./markov'),
   lim: require('./lim'),
   brief: require('./brief')
 }
