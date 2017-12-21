@@ -6,7 +6,7 @@
   "description": "Here to protect you from the terrible secret of space",
   "dependencies": {
     "bluebird": "^3.4.6",
-    "cheerio": "0.22.0",
+    "cheerio": "^0.22.0",
     "coffee-script": "^1.12.6",
     "cookie-session": "^2.0.0-beta.2",
     "cors": "^2.8.3",
@@ -47,6 +47,7 @@
     "passport-slack": "0.0.7",
     "pg-promise": "^5.4.5",
     "request": "2.79.0",
+    "request-promise-native": "^1.0.5",
     "tinycolor2": "1.4.1",
     "twit": "2.2.5",
     "underscore": "1.8.3",
