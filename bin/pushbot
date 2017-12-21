@@ -3,6 +3,7 @@
 set -eu
 
 export DEV_USERNAME=${DEV_USERNAME:-${USER}}
+export HUBOT_AUTH_ADMIN=1
 
 COMMAND="docker-compose run --service-ports pushbot"
 
