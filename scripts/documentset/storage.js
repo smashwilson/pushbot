@@ -341,6 +341,15 @@ class Storage {
     await this.db.none('DROP TABLE IF EXISTS $<documentTable:name>', values)
     this.columnSets.delete(documentSet)
   }
+
+  async truncateDocumentSet (documentSet) {
+    const values = {
+      documentTable: documentSet.documentTableName(),
+      attributeTable: documentSet.attributeTableName()
+    }
+
+    await this.db.none('TRUNCATE TABLE $<attributeTable:name>, $<documentTable:name>', values)
+  }
 }
 
 function createQueryClause (quoteSrc, fieldName, placeholderBase) {

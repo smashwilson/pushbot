@@ -126,6 +126,11 @@ class DocumentSet {
     return this.storage.destroyDocumentSet(this)
   }
 
+  async truncate () {
+    await this.connected
+    return this.storage.truncateDocumentSet(this)
+  }
+
   whenConnected () {
     return this.connected
   }
