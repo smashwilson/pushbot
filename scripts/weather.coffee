@@ -29,9 +29,9 @@ colors =
 
 tempToColor = (temp) ->
   if temp > MAX_TEMP
-    return colors[MAX_TEMP]
+    return colors[MAX_TEMP].toHexString()
   if temp < MIN_TEMP
-    return colors[MIN_TEMP]
+    return colors[MIN_TEMP].toHexString()
   lowBound = MIN_TEMP
   highBound = MAX_TEMP
   for checkTemp, checkColor of colors
