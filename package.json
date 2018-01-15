@@ -28,7 +28,7 @@
     "hubot-pipe-scripts": "0.0.2",
     "hubot-plan": "0.0.5",
     "hubot-plusplus": "1.3.0",
-    "hubot-pugme": "0.1.0",
+    "hubot-pugme-reddit": "^1.0.0",
     "hubot-roller": "0.2.0",
     "hubot-rules": "0.1.1",
     "hubot-scripts": "2.17.2",
