@@ -14,6 +14,9 @@ Once Docker is installed and running, build and pull containers with:
 # One-time setup
 docker-compose build
 docker-compose pull
+npm install
+touch .hubot_history
+chmod 666 .hubot_history
 ```
 
 Then, to run pushbot with a shell adapter in the current terminal window:
