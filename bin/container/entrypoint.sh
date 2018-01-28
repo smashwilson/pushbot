@@ -11,4 +11,6 @@ ADAPTER=
 ALIAS="--alias !"
 [ "${DISABLE_ALIAS:-}" = "true" ] && ALIAS=
 
+[ -d /usr/src/app/node_modules ] || npm install
+
 exec /usr/src/app/node_modules/.bin/hubot --name pushbot --disable-httpd ${ALIAS} ${ADAPTER}
