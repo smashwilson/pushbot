@@ -5,8 +5,8 @@ ENV NPM_CONFIG_LOGLEVEL warn
 
 RUN apk add --no-cache bash postgresql-client
 RUN npm install -g coffee-script
-RUN adduser -s /bin/false -D -H pushbot
 RUN mkdir -p /usr/src/app
+RUN adduser -s /bin/false -D pushbot
 
 WORKDIR /usr/src/app
 ADD package.json /usr/src/app/package.json
