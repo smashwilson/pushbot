@@ -1,6 +1,6 @@
 // Grab-bag of utility functions.
 
-const yargs = require('yargs')
+const yargs = require('yargs/yargs')
 
 function atRandom (list) {
   const max = list.length - 1
@@ -32,7 +32,7 @@ function getDataStore (robot) {
 // Parse command options provided with shell-like syntax
 
 function parseArguments (msg, argline, fn) {
-  const y = fn(yargs)
+  const y = fn(yargs().version(false))
   return new Promise(resolve => {
     y.parse(argline, (err, argv, output) => {
       if (err) {
