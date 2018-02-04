@@ -4,6 +4,8 @@
 // Commands:
 //   hubot when - what day is it?
 
+const moment = require('moment-timezone')
+
 const DAYS = [
   'https://user-images.githubusercontent.com/13645/35175032-cea2a374-fd3f-11e7-8009-9217789c6a4a.png',
   'https://user-images.githubusercontent.com/13645/35175030-ce7b6034-fd3f-11e7-851b-39b28602ff89.png',
@@ -34,11 +36,13 @@ const ALIASES = {
 module.exports = function (robot) {
   robot.respond(/when(?:\s+(.+))*/i, msg => {
     const when = msg.match[1]
-    let now = new Date()
+    const userTz = msg.message.user.tz
+
+    let now = moment.tz(userTz)
     if (when) {
-      const ms = Date.parse(when)
-      if (!isNaN(ms)) {
-        now = new Date(ms)
+      const parsed = moment.tz(when, moment.ISO_8601, true, userTz)
+      if (parsed.isValid()) {
+        now = parsed
       } else {
         const alias = ALIASES[when.toLowerCase()]
         if (alias !== undefined) {
@@ -48,6 +52,6 @@ module.exports = function (robot) {
       }
     }
 
-    msg.send(DAYS[now.getDay()])
+    msg.send(DAYS[now.day()])
   })
 }
