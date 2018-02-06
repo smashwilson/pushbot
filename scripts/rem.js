@@ -26,7 +26,7 @@ module.exports = function (robot) {
 
   robot.respond(/forget([^]+)/, function (msg) {
     const key = msg.match[1].trim()
-    robot.brain.remove(key)
+    robot.brain.remove(`rem:${key}`)
     msg.reply(`:dusty_stick: "${key}" has been forgotten.`)
   })
 }
