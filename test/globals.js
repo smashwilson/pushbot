@@ -92,6 +92,14 @@ global.BotContext = class {
     await new Promise(resolve => setTimeout(resolve, 20))
   }
 
+  store (key, value) {
+    this.room.robot.brain.set(key, value)
+  }
+
+  get (key) {
+    return this.room.robot.brain.get(key)
+  }
+
   say (...args) {
     return this.room.user.say(...args)
   }
