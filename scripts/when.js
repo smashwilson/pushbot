@@ -21,7 +21,7 @@ const ALIASES = {
   'sun': 0,
   'monday': 1,
   'mon': 1,
-  'tuesday': 2,  // It's 2sday!
+  'tuesday': 2, // It's 2sday!
   'tue': 2,
   'wednesday': 3,
   'wed': 3,

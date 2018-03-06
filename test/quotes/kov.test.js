@@ -32,7 +32,7 @@ describe('DocumentSet markov models', function () {
     documentSet = createDocumentSet(bot.getRobot(), 'blarf', {kov: true})
 
     bot.getRobot().markov.modelNamed('blarfkov', model => {
-      expect(model).to.be.defined
+      expect(model).to.not.be.undefined
     })
   })
 
@@ -64,7 +64,7 @@ describe('DocumentSet markov models', function () {
     await new Promise(resolve => {
       bot.getRobot().markov.modelNamed('blarfkov', model => {
         model.learn('aaa bbb ccc', err => {
-          expect(err).to.be.falsy
+          expect(err).to.not.be.ok
           resolve()
         })
       })

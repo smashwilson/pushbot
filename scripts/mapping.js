@@ -146,7 +146,7 @@ module.exports = function (robot) {
     }
 
     return data.documentSet.destroy()
-    .then(() => mappings.delete(name))
-    .then(() => msg.reply(`mapping ${name} has been destroyed. :fire:`))
+      .then(() => mappings.delete(name))
+      .then(() => msg.reply(`mapping ${name} has been destroyed. :fire:`))
   })
 }

@@ -11,14 +11,18 @@ services:
 env:
   global:
   - DATABASE_URL=postgres://postgres@localhost/travis
+  - secure: poUIevrmyTEasIMUIqeLKNWYsuCh2FATuoB33S4QsV5MlF6rrSDf6f+4JZiZXZIJayfpgvpUNxs2K9gubsIPbTDKEb+Y2g4wmqjYtiiEABCBDZINWYQkAm74ej0M8bia5ddCedv4cv3a28uG9V6Kdg6UHPU29VRXKIswUa7ZVRM=
 notifications:
   email: false
 before_install:
-- curl -s https://raw.githubusercontent.com/smashwilson/azurefire-infra/master/service/ci.sh -o bin/infra.sh
+- curl -s https://raw.githubusercontent.com/smashwilson/azurefire-infra/master/service/ci.sh
+  -o bin/infra.sh
 - chmod +x bin/infra.sh
-- npm install -g npm
+- npm install -g npm@latest greenkeeper-lockfile@1
+before_script: greenkeeper-lockfile-update
 script:
 - bin/ci/test && bin/infra.sh build
+after_script: greenkeeper-lockfile-upload
 after_success: bin/infra.sh after_success
 deploy:
   provider: script
