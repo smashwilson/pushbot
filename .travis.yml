@@ -18,8 +18,6 @@ before_install:
 - curl -s https://raw.githubusercontent.com/smashwilson/azurefire-infra/master/service/ci.sh
   -o bin/infra.sh
 - chmod +x bin/infra.sh
-- npm install -g npm
-before_install:
 - npm install -g npm@latest greenkeeper-lockfile@1
 before_script: greenkeeper-lockfile-update
 script:
