@@ -30,8 +30,8 @@ class CalendarMap {
   }
 
   isValid (calendarId) {
-    for (const assignedId of this.calendars.values()) {
-      if (assignedId === calendarId) {
+    for (const existing of this.calendars.values()) {
+      if (existing.calendarId === calendarId) {
         return true
       }
     }
