@@ -6,6 +6,7 @@ const bufferPreprocessor = require('../documentset/preprocessor/buffer')
 const briefFormatter = require('../documentset/formatter').brief
 const {getDataStore} = require('../helpers')
 const cache = require('../models/cache')
+const {CalendarMap} = require('../models/calendar')
 
 module.exports = {
   me (args, req) {
@@ -29,6 +30,11 @@ module.exports = {
 
   cache () {
     return new CacheResolver()
+  },
+
+  calendarURL (args, req) {
+    const calendarId = CalendarMap.inRobot(req.robot).getCalendar(req.user.id, req.user.tz || 'America/New_York')
+    return `${process.env.API_BASE_URL}/ical/${calendarId}`
   },
 
   async createDocument ({set, channel, lines}, req) {

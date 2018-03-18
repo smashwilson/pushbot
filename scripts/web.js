@@ -14,6 +14,7 @@ const SlackStrategy = require('passport-slack').Strategy
 const BasicStrategy = require('passport-http').BasicStrategy
 
 const root = require('./api/root')
+const {CalendarMap} = require('./models/calendar')
 
 const PORT = 8080
 const MAGICAL_WEAK_SPOT_TOKEN = process.env.MAGICAL_WEAK_SPOT_TOKEN || 'ni'
@@ -340,6 +341,22 @@ module.exports = function (robot) {
   }, err => {
     robot.logger.error(`Unable to terminate prior instances.\n${err}`)
     status.stonithFailed()
+  })
+
+  // iCal feeds
+
+  app.get('/ical/:id', (req, res) => {
+    if (!CalendarMap.inRobot(robot).isValid(req.params.id)) {
+      res.sendStatus(404)
+      return
+    }
+
+    const store = robot['hubot-events'].getStore()
+    const events = store.search({})
+    const feed = events.renderICal({calendarName: '#~s events', userTz: 'America/New_York'})
+
+    res.type('text/calendar')
+    res.send(feed)
   })
 
   // Health monitoring
