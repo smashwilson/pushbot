@@ -351,7 +351,7 @@ module.exports = function (robot) {
       return
     }
 
-    const store = robot['hubot-plan'].getStore()
+    const store = robot['hubot-events'].getStore()
     const events = store.search({})
     const feed = events.renderICal({calendarName: '#~s events', userTz: 'America/New_York'})
 
