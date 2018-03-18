@@ -14,6 +14,9 @@ type Query {
 
   # Access the Cache of recent Lines seen by the bot.
   cache: Cache!
+
+  # URL at which your personal iCal feed is found.
+  calendarURL: String!
 }
 
 type Mutation {
