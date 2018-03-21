@@ -260,6 +260,9 @@ module.exports = (robot) ->
       "http://i.imgur.com/vJL0E6t.gif"
     ]
 
+  robot.respond /fenris/i, (msg) ->
+     msg.send "https://i.imgur.com/oNICSik.gif"
+
   robot.respond /nope\s*$/i, (msg) ->
     msg.send "http://www.reactiongifs.com/wp-content/uploads/2013/06/nope.gif"
 
