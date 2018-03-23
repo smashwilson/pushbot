@@ -7,6 +7,7 @@
 #
 # Configuration:
 #
+# HUBOT_GEOCODING_APIKEY = Google Maps API key
 # HUBOT_WEATHER_APIKEY = forecast.io api key
 #
 
@@ -60,7 +61,8 @@ module.exports = (robot) ->
 
   robot.respond /weather *(.+)/i, (msg) ->
     location = escape(msg.match[1])
-    url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{location}"
+    mapsApiKey = process.env.HUBOT_GEOCODING_APIKEY
+    url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{location}&key=#{mapsApiKey}"
     msg.http(url).get() (err, res, body) ->
       msg.send err if err
       try
