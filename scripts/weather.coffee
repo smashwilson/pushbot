@@ -67,6 +67,9 @@ module.exports = (robot) ->
       msg.send err if err
       try
         json = JSON.parse(body)
+        if json.status isnt "OK"
+          msg.send "Error geocoding location: `#{json.status}`"
+          return
         lat = json.results[0].geometry.location.lat
         lng = json.results[0].geometry.location.lng
         address = json.results[0].formatted_address
