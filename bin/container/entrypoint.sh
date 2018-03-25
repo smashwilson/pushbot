@@ -5,7 +5,7 @@ source bin/common/all.sh
 
 [ -n "${DATABASE_URL:-}" ] && wait_for_postgres
 
-ADAPTER=
+ADAPTER='-a shellish'
 [ -n "${HUBOT_SLACK_TOKEN:-}" ] && ADAPTER='-a slack'
 
 ALIAS="--alias !"
