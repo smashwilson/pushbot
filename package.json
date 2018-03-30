@@ -39,7 +39,7 @@
     "hubot-table-flip": "0.2.0",
     "jsdom": "11.6.2",
     "log": "^1.4.0",
-    "moment": "2.21.0",
+    "moment": "2.22.0",
     "moment-precise-range-plugin": "^1.3.0",
     "moment-timezone": "^0.5.14",
     "morse": "0.1.0",
