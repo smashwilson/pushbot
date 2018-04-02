@@ -79,7 +79,7 @@ describe('BrainResolver', function () {
     })
 
     it('throws an error if the key is unknown', function () {
-      expect(() => resolver.key({name: 'bad-key', property: []}, req)).to.throw(/Unknown key/)
+      expect(() => resolver.key({name: 'bad-key', property: []}, req)).to.throw(/Unknown brain key/)
     })
 
     it('accesses the root-level object of a key as JSON', function () {
@@ -89,22 +89,33 @@ describe('BrainResolver', function () {
 
     it('inspects the root-level object of a key with a given depth', function () {
       const insp = resolver.key({name: 'the-key', property: []}, req).inspect({depth: 2}, req)
-      expect(insp).to.equal(util.inspect(root))
+      expect(insp).to.equal(util.inspect(root, {breakLength: 100}))
     })
 
     it('enumerates child properties of an object', function () {
-      const props = resolver.key({name: 'the-key', property: []}, req).children({}, req)
-      expect(props).to.deep.equal(['key0', 'key1'])
+      const props = resolver.key({name: 'the-key', property: []}, req)
+        .children({limit: 4, prefix: ''}, req)
+      expect(props).to.have.members(['key0', 'key1'])
+    })
+
+    it('filters and limits the child properties of an object', function () {
+      root.key0['asdf00'] = 'no'
+      root.key0['asdf01'] = 'no'
+      root.key0['asdf02'] = 'no'
+
+      const props = resolver.key({name: 'the-key', property: ['key0']}, req)
+        .children({limit: 2, prefix: 'key'}, req)
+      expect(props).to.have.members(['key00', 'key01'])
     })
 
     it('accesses a deep property of an object as JSON', function () {
       const child = resolver.key({name: 'the-key', property: ['key0']}, req).json({pretty: false}, req)
-      expect(JSON.parse(child)).to.equal({key00: 'astring', key01: 100, key02: null})
+      expect(JSON.parse(child)).to.deep.equal({key00: 'astring', key01: 100, key02: null})
     })
 
     it('inspects a deep property of an object', function () {
       const child = resolver.key({name: 'the-key', property: ['key0', 'key00']}, req).inspect({depth: 1}, req)
-      expect(child).to.equal('"astring"')
+      expect(child).to.equal("'astring'")
     })
 
     it('throws an error if a property in the chain is invalid', function () {
