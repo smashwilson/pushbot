@@ -1,6 +1,7 @@
 const {UserSetResolver} = require('./user-set')
 const {DocumentSetResolver, DocumentResolver} = require('./document-set')
 const {CacheResolver} = require('./cache')
+const {BrainResolver} = require('./brain')
 
 const bufferPreprocessor = require('../documentset/preprocessor/buffer')
 const briefFormatter = require('../documentset/formatter').brief
@@ -30,6 +31,10 @@ module.exports = {
 
   cache () {
     return new CacheResolver()
+  },
+
+  brain () {
+    return new BrainResolver()
   },
 
   calendarURL (args, req) {
