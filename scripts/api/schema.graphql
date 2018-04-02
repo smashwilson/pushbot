@@ -15,6 +15,9 @@ type Query {
   # Access the Cache of recent Lines seen by the bot.
   cache: Cache!
 
+  # Go digging around in pushbot's gooey grey matter. Admin-only.
+  brain: Brain!
+
   # URL at which your personal iCal feed is found.
   calendarURL: String!
 }
@@ -23,6 +26,10 @@ type Mutation {
   # Create a new Document within a DocumentSet. Requires a user role specified by the named DocumentSet, like
   # "quote pontiff" for the "quotes" set.
   createDocument(set: String!, channel: String!, lines: [ID!]!): Document!
+
+  # Modify a value within the robot's internal storage. Very dangerous. And yes, this accepts a JSON-encoded
+  # string as an argument: don't @ me.
+  setBrainKey(name: String!, property: [String!] = [], value: String!): Entry!
 }
 
 type UserSet {
@@ -209,6 +216,28 @@ type Cache {
 
   # Access the stored data collected from a named channel. Returns null if no such channel is known.
   linesForChannel(channel: String!): [Line!]
+}
+
+# Single JavaScript object stored within the Brain.
+type Entry {
+  # Enumerate child properties. Admin-only.
+  children(limit: Int = 100, prefix: String = ""): [String!]!
+
+  # Inspect the entry with `util.inspect`. Admin-only.
+  inspect(depth: Int = 2): String!
+
+  # Render the entry as JSON if possible. Admin-only.
+  json(pretty: Boolean = false): String!
+}
+
+# Internal bot storage.
+type Brain {
+  # Enumerate top-level storage keys. Admin-only.
+  keys(limit: Int = 100, prefix: String = ""): [String!]!
+
+  # Access a top-level storage value at a named key. Optionally, descend into the object tree
+  # by following named properties. Admin-only.
+  key(name: String!, property: [String!] = []): Entry!
 }
 
 # Constraints on the Documents to be included in a query, count, or random
