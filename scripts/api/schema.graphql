@@ -26,6 +26,10 @@ type Mutation {
   # Create a new Document within a DocumentSet. Requires a user role specified by the named DocumentSet, like
   # "quote pontiff" for the "quotes" set.
   createDocument(set: String!, channel: String!, lines: [ID!]!): Document!
+
+  # Modify a value within the robot's internal storage. Very dangerous. And yes, this accepts a JSON-encoded
+  # string as an argument: don't @ me.
+  setBrainKey(name: String!, property: [String!] = [], value: String!): Entry!
 }
 
 type UserSet {

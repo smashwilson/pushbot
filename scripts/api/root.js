@@ -1,7 +1,7 @@
 const {UserSetResolver} = require('./user-set')
 const {DocumentSetResolver, DocumentResolver} = require('./document-set')
 const {CacheResolver} = require('./cache')
-const {BrainResolver} = require('./brain')
+const {BrainResolver, BrainMutator} = require('./brain')
 
 const bufferPreprocessor = require('../documentset/preprocessor/buffer')
 const briefFormatter = require('../documentset/formatter').brief
@@ -88,5 +88,7 @@ module.exports = {
 
     const doc = await documentSet.add(req.user.name, body, attributes)
     return new DocumentResolver(doc)
-  }
+  },
+
+  setBrainKey: BrainMutator.set
 }
