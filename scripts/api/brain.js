@@ -6,6 +6,22 @@ function adminOnly (req) {
   if (!Admin.isAllowed(req.robot, req.user)) throw new Error('You must be an admin to perform brain surgery')
 }
 
+function targetFrom (req, name, property) {
+  const root = req.robot.brain.get(name)
+  if (root === null) {
+    throw new Error(`Unknown brain key ${name}`)
+  }
+
+  let target = root
+  for (const step of property) {
+    target = target[step]
+    if (target === undefined) {
+      throw new Error(`Invalid property ${step}`)
+    }
+  }
+  return target
+}
+
 class EntryResolver {
   constructor (target) {
     this.target = target
@@ -50,22 +66,28 @@ class BrainResolver {
 
   key ({name, property}, req) {
     adminOnly(req)
-
-    const root = req.robot.brain.get(name)
-    if (root === null) {
-      throw new Error(`Unknown brain key ${name}`)
-    }
-
-    let target = root
-    for (const step of property) {
-      target = target[step]
-      if (target === undefined) {
-        throw new Error(`Invalid property ${step}`)
-      }
-    }
-
+    const target = targetFrom(req, name, property)
     return new EntryResolver(target)
   }
 }
 
-module.exports = {BrainResolver}
+const BrainMutator = {
+  set ({name, property, value}, req) {
+    adminOnly(req)
+
+    const parsed = JSON.parse(value)
+    if (property.length > 0) {
+      const prefix = property.slice(0, -1)
+      const last = property[property.length - 1]
+
+      const target = targetFrom(req, name, prefix)
+      target[last] = parsed
+      return new EntryResolver(target)
+    } else {
+      req.robot.brain.set(name, parsed)
+      return new EntryResolver(parsed)
+    }
+  }
+}
+
+module.exports = {BrainResolver, BrainMutator}
