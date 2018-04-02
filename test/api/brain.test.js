@@ -1,6 +1,6 @@
 const util = require('util')
 
-const {BrainResolver} = require('../../scripts/api/brain')
+const {BrainResolver, BrainMutator} = require('../../scripts/api/brain')
 
 describe('BrainResolver', function () {
   let bot, brain, req, resolver
@@ -121,5 +121,38 @@ describe('BrainResolver', function () {
     it('throws an error if a property in the chain is invalid', function () {
       expect(() => resolver.key({name: 'the-key', property: ['key0', 'no', 'yes']}, req)).to.throw(/Invalid property/)
     })
+  })
+})
+
+describe('BrainMutator', function () {
+  let bot, authorized, unauthorized, req, brain
+
+  beforeEach(async function () {
+    bot = new BotContext()
+    await bot.loadAuth('1')
+
+    authorized = bot.createUser('1', 'authorized')
+    unauthorized = bot.createUser('2', 'denied')
+
+    brain = bot.getRobot().brain
+
+    req = {robot: bot.getRobot(), user: authorized}
+  })
+
+  it('only permits root access', function () {
+    expect(() => {
+      BrainMutator.set({}, {robot: bot.getRobot(), user: unauthorized})
+    }).to.throw(/must be an admin/)
+  })
+
+  it('sets a root key', function () {
+    BrainMutator.set({name: 'some:key', property: [], value: '{"foo": 100}'}, req)
+    expect(brain.get('some:key')).to.deep.equal({foo: 100})
+  })
+
+  it('sets a deeper key', function () {
+    brain.set('deep:key', {one: {two: {three: 10}}})
+    BrainMutator.set({name: 'deep:key', property: ['one', 'two', 'three'], value: '"abc"'}, req)
+    expect(brain.get('deep:key')).to.deep.equal({one: {two: {three: 'abc'}}})
   })
 })
