@@ -143,5 +143,37 @@ describe('UserSetResolver', function () {
         {name: 'role two'}
       ])
     })
+
+    it('accesses counts of reactions given', function () {
+      bot.store('reactionsGiven', {
+        '1': {
+          yellow_heart: 10,
+          sparkles: 7,
+          partyparrot: 5
+        }
+      })
+
+      const given = resolver.me({}, req).topReactionsGiven({limit: 2}, req)
+      expect(given).to.deep.equal([
+        {count: 10, emoji: {name: 'yellow_heart'}},
+        {count: 7, emoji: {name: 'sparkles'}}
+      ])
+    })
+
+    it('accesses counts of reactions received', function () {
+      bot.store('reactionsReceived', {
+        '1': {
+          boom: 50,
+          heart: 18,
+          partyparrot: 5
+        }
+      })
+
+      const received = resolver.me({}, req).topReactionsReceived({limit: 2}, req)
+      expect(received).to.deep.equal([
+        {count: 50, emoji: {name: 'boom'}},
+        {count: 18, emoji: {name: 'heart'}}
+      ])
+    })
   })
 })

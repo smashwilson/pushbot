@@ -1,3 +1,5 @@
+const {TallyMap} = require('../models/tally-map')
+
 class AvatarResolver {
   constructor (profile) {
     this.profile = profile
@@ -45,6 +47,24 @@ class UserResolver {
     return req.robot.auth.userRoles(this.user).map(role => {
       return {name: role}
     })
+  }
+
+  topReactionsGiven ({limit}, req) {
+    const reactions = []
+    TallyMap.reactionsGiven(req.robot).topForUser(this.id, limit, (err, reaction, count) => {
+      if (err) throw err
+      reactions.push({count, emoji: {name: reaction}})
+    })
+    return reactions
+  }
+
+  topReactionsReceived ({limit}, req) {
+    const reactions = []
+    TallyMap.reactionsReceived(req.robot).topForUser(this.id, limit, (err, reaction, count) => {
+      if (err) throw err
+      reactions.push({count, emoji: {name: reaction}})
+    })
+    return reactions
   }
 }
 
