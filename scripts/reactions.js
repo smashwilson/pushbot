@@ -39,7 +39,7 @@ module.exports = function (robot) {
       uid = msg.message.user.id
     }
 
-    const lines = [`*Top 10 reactions to <${uid}>`]
+    const lines = [`*Top 10 reactions to <${uid}>*`]
     TallyMap.reactionsReceived(robot).topForUser(uid, 10, (err, reaction, tally) => {
       if (err) {
         msg.reply(`:boom: \`${err.stack}\``)
