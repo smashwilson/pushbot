@@ -73,7 +73,7 @@
   },
   "scripts": {
     "lint": "eslint scripts/ test/",
-    "mocha": "mocha --require coffee-script/register --require test/globals.js --colors test/**/*.test.js",
+    "mocha": "mocha --require coffee-script/register --require test/globals.js --colors test/*.test.js test/**/*.test.js",
     "test": "npm run lint && npm run mocha"
   }
 }
