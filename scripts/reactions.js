@@ -60,7 +60,7 @@ module.exports = function (robot) {
       }
       const uid = user.id
 
-      const tally = TallyMap.reactionsReceived(robot).getTallyMap(uid).beachball || 'no'
+      const tally = TallyMap.reactionsReceived(robot).forUser(uid).beachball || 'no'
       msg.send(`<${uid}> has been struck by *${tally}* :beachball:.`)
       return
     }
