@@ -6,6 +6,7 @@ const Hubot = require('hubot')
 const hubotHelp = require('hubot-help')
 const hubotAuth = require('hubot-auth')
 const hubotMarkov = require('hubot-markov')
+const {createSandbox} = require('sinon')
 require('hubot-slack')
 
 const Helper = require('hubot-test-helper')
@@ -13,6 +14,9 @@ const moment = require('moment-timezone')
 const ReactionMessage = require('hubot-slack/src/reaction-message')
 
 global.expect = require('chai').expect
+
+global.sinon = createSandbox()
+
 global.database = process.env.DATABASE_URL ? pg(process.env.DATABASE_URL) : null
 
 global.delay = function (timeoutMs) {
