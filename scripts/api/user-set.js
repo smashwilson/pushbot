@@ -55,7 +55,7 @@ class UserResolver {
 
     const reactions = []
     const emojiPromise = async (name, count) => {
-      const url = emojiCache.get(name)
+      const url = await emojiCache.get(name)
       return {count, emoji: {name, url}}
     }
 
@@ -71,7 +71,7 @@ class UserResolver {
 
     const reactions = []
     const emojiPromise = async (name, count) => {
-      const url = emojiCache.get(name)
+      const url = await emojiCache.get(name)
       return {count, emoji: {name, url}}
     }
 
