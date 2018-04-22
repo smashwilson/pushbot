@@ -6,11 +6,17 @@ const Hubot = require('hubot')
 const hubotHelp = require('hubot-help')
 const hubotAuth = require('hubot-auth')
 const hubotMarkov = require('hubot-markov')
+const {createSandbox} = require('sinon')
+require('hubot-slack')
 
 const Helper = require('hubot-test-helper')
 const moment = require('moment-timezone')
+const ReactionMessage = require('hubot-slack/src/reaction-message')
 
 global.expect = require('chai').expect
+
+global.sinon = createSandbox()
+
 global.database = process.env.DATABASE_URL ? pg(process.env.DATABASE_URL) : null
 
 global.delay = function (timeoutMs) {
@@ -109,6 +115,26 @@ global.BotContext = class {
     const message = this.room.messages[lastInd]
     if (!message || message[0] !== 'hubot') return null
     return message[1]
+  }
+
+  addReaction (giverId, emoji, receiverId) {
+    const giver = this.room.robot.brain.userForId(giverId)
+    const receiver = this.room.robot.brain.userForId(receiverId)
+
+    const m = new ReactionMessage('reaction_added', giver, emoji, receiver, {}, new Date())
+    return new Promise(resolve => {
+      this.room.robot.receive(m, resolve)
+    })
+  }
+
+  removeReaction (giverId, emoji, receiverId) {
+    const giver = this.room.robot.brain.userForId(giverId)
+    const receiver = this.room.robot.brain.userForId(receiverId)
+
+    const m = new ReactionMessage('reaction_removed', giver, emoji, receiver, {}, new Date())
+    return new Promise(resolve => {
+      this.room.robot.receive(m, resolve)
+    })
   }
 
   helpLines () {

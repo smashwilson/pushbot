@@ -5,6 +5,7 @@
   },
   "globals": {
     "expect": true,
+    "sinon": true,
     "database": true,
     "delay": true,
     "usesDatabase": true,

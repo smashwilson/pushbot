@@ -1,6 +1,8 @@
 node_modules
 .DS_Store*
 .env
-.botrc
-.shovebotrc
 .hubot_history
+botrc.sh
+shovebotrc.sh
+botrc.ps1
+shovebotrc.ps1
