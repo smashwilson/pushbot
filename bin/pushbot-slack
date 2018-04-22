@@ -7,6 +7,6 @@ set -e
 DIR=`dirname $0`/..
 cd ${DIR}
 
-source .botrc
+source botrc.sh
 
 exec node_modules/.bin/hubot --alias '!' -a slack
