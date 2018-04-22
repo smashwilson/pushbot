@@ -1,4 +1,4 @@
-# Environment variables used by @pushbot, Shovebot-style.
+# Environment variables used by @pushbot.
 
 # User ID settings
 
