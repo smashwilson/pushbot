@@ -1,4 +1,5 @@
 const {TallyMap} = require('../models/tally-map')
+const {emojiCacheFor} = require('../models/emoji')
 
 class AvatarResolver {
   constructor (profile) {
@@ -50,21 +51,31 @@ class UserResolver {
   }
 
   topReactionsGiven ({limit}, req) {
+    const emojiCache = emojiCacheFor(req.robot)
+
     const reactions = []
     TallyMap.reactionsGiven(req.robot).topForUser(this.id, limit, (err, reaction, count) => {
       if (err) throw err
-      reactions.push({count, emoji: {name: reaction}})
+
+      reactions.push(emojiCache.get(reaction).then(url => {
+        return {count, emoji: {name: reaction, url}}
+      }))
     })
-    return reactions
+    return Promise.all(reactions)
   }
 
   topReactionsReceived ({limit}, req) {
+    const emojiCache = emojiCacheFor(req.robot)
+
     const reactions = []
     TallyMap.reactionsReceived(req.robot).topForUser(this.id, limit, (err, reaction, count) => {
       if (err) throw err
-      reactions.push({count, emoji: {name: reaction}})
+
+      reactions.push(emojiCache.get(reaction).then(url => {
+        return {count, emoji: {name: reaction, url}}
+      }))
     })
-    return reactions
+    return Promise.all(reactions)
   }
 }
 

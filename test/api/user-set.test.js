@@ -144,7 +144,7 @@ describe('UserSetResolver', function () {
       ])
     })
 
-    it('accesses counts of reactions given', function () {
+    it('accesses counts of reactions given', async function () {
       bot.store('reactionsGiven', {
         '1': {
           yellow_heart: 10,
@@ -153,14 +153,14 @@ describe('UserSetResolver', function () {
         }
       })
 
-      const given = resolver.me({}, req).topReactionsGiven({limit: 2}, req)
+      const given = await resolver.me({}, req).topReactionsGiven({limit: 2}, req)
       expect(given).to.deep.equal([
-        {count: 10, emoji: {name: 'yellow_heart'}},
-        {count: 7, emoji: {name: 'sparkles'}}
+        {count: 10, emoji: {name: 'yellow_heart', url: null}},
+        {count: 7, emoji: {name: 'sparkles', url: null}}
       ])
     })
 
-    it('accesses counts of reactions received', function () {
+    it('accesses counts of reactions received', async function () {
       bot.store('reactionsReceived', {
         '1': {
           boom: 50,
@@ -169,10 +169,10 @@ describe('UserSetResolver', function () {
         }
       })
 
-      const received = resolver.me({}, req).topReactionsReceived({limit: 2}, req)
+      const received = await resolver.me({}, req).topReactionsReceived({limit: 2}, req)
       expect(received).to.deep.equal([
-        {count: 50, emoji: {name: 'boom'}},
-        {count: 18, emoji: {name: 'heart'}}
+        {count: 50, emoji: {name: 'boom', url: null}},
+        {count: 18, emoji: {name: 'heart', url: null}}
       ])
     })
   })
