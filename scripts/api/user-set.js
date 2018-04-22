@@ -54,12 +54,14 @@ class UserResolver {
     const emojiCache = emojiCacheFor(req.robot)
 
     const reactions = []
+    const emojiPromise = async (name, count) => {
+      const url = emojiCache.get(name)
+      return {count, emoji: {name, url}}
+    }
+
     TallyMap.reactionsGiven(req.robot).topForUser(this.id, limit, (err, reaction, count) => {
       if (err) throw err
-
-      reactions.push(emojiCache.get(reaction).then(url => {
-        return {count, emoji: {name: reaction, url}}
-      }))
+      reactions.push(emojiPromise(reaction, count))
     })
     return Promise.all(reactions)
   }
@@ -68,12 +70,14 @@ class UserResolver {
     const emojiCache = emojiCacheFor(req.robot)
 
     const reactions = []
+    const emojiPromise = async (name, count) => {
+      const url = emojiCache.get(name)
+      return {count, emoji: {name, url}}
+    }
+
     TallyMap.reactionsReceived(req.robot).topForUser(this.id, limit, (err, reaction, count) => {
       if (err) throw err
-
-      reactions.push(emojiCache.get(reaction).then(url => {
-        return {count, emoji: {name: reaction, url}}
-      }))
+      reactions.push(emojiPromise(reaction, count))
     })
     return Promise.all(reactions)
   }
