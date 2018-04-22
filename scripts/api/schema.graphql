@@ -71,10 +71,10 @@ type User {
   roles: [Role!]!
 
   # Return the reaction emoji most frequently given to messages that this user posts.
-  topReactionsGiven(limit: Int = 10): [Emoji!]!
+  topReactionsGiven(limit: Int = 10): [EmojiCount!]!
 
   # Return the reaction emoji that this user most frequently gives to others.
-  topReactionsReceived(limit: Int = 10): [Emoji!]!
+  topReactionsReceived(limit: Int = 10): [EmojiCount!]!
 }
 
 # Graphic this user has chosen to represent themselves.
@@ -102,6 +102,14 @@ type Emoji {
 
   # The URL of a custom emoji
   url: String
+}
+
+type EmojiCount {
+  # Number of times this emoji has been given or received
+  count: Int!
+
+  # The emoji
+  emoji: Emoji!
 }
 
 # Slack's best guess about whether or not this user is looking at the channel
