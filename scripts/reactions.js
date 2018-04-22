@@ -9,22 +9,24 @@
 const {TallyMap} = require('./models/tally-map')
 
 module.exports = function (robot) {
-  robot.react(msg => {
-    let delta = 0
-    if (msg.message.type === 'added') { delta = 1 }
-    if (msg.message.type === 'removed') { delta = -1 }
+  if (robot.react) {
+    robot.react(msg => {
+      let delta = 0
+      if (msg.message.type === 'added') { delta = 1 }
+      if (msg.message.type === 'removed') { delta = -1 }
 
-    const key = msg.message.reaction
-    const giverUid = msg.message.user.id
-    const receiverUid = msg.message.item_user.id
+      const key = msg.message.reaction
+      const giverUid = msg.message.user.id
+      const receiverUid = msg.message.item_user.id
 
-    if (giverUid === receiverUid) {
-      return
-    }
+      if (giverUid === receiverUid) {
+        return
+      }
 
-    TallyMap.reactionsGiven(robot).modifyTally(giverUid, key, delta)
-    TallyMap.reactionsReceived(robot).modifyTally(receiverUid, key, delta)
-  })
+      TallyMap.reactionsGiven(robot).modifyTally(giverUid, key, delta)
+      TallyMap.reactionsReceived(robot).modifyTally(receiverUid, key, delta)
+    })
+  }
 
   robot.respond(/reactions\s*(?:@?(\S+))?/i, msg => {
     let uid
