@@ -34,7 +34,7 @@ class EmojiCache {
     }
 
     if (this.refreshPromise) {
-      await this.refreshPromise()
+      await this.refreshPromise
       return
     }
 
