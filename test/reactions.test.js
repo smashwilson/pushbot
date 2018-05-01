@@ -69,7 +69,7 @@ describe('reactions', function () {
 
       await bot.say('1', 'hubot: reactions')
       expect(bot.response()).to.equal([
-        '*Top 10 reactions to <1>*',
+        '*Top 10 reactions to <@1>*',
         ':emoji-00: x100',
         ':emoji-01: x90',
         ':emoji-02: x86',
@@ -119,7 +119,7 @@ describe('reactions', function () {
 
       await bot.say('1', 'hubot: reactions user-5')
       expect(bot.response()).to.equal([
-        '*Top 10 reactions to <5>*',
+        '*Top 10 reactions to <@5>*',
         ':emoji-00: x100',
         ':emoji-01: x90',
         ':emoji-02: x86',
@@ -160,23 +160,23 @@ describe('reactions', function () {
       await bot.say('user-1', 'hubot: toppun')
       expect(bot.response()).to.equal([
         '*Top 10 punmakers*',
-        '<0> has been struck by *100* :beachball:.',
-        '<1> has been struck by *90* :beachball:.',
-        '<2> has been struck by *80* :beachball:.',
-        '<3> has been struck by *70* :beachball:.',
-        '<4> has been struck by *60* :beachball:.',
-        '<5> has been struck by *50* :beachball:.',
-        '<6> has been struck by *40* :beachball:.',
-        '<7> has been struck by *30* :beachball:.',
-        '<8> has been struck by *20* :beachball:.',
-        '<9> has been struck by *10* :beachball:.'
+        '<@0> has been struck by *100* :beachball:.',
+        '<@1> has been struck by *90* :beachball:.',
+        '<@2> has been struck by *80* :beachball:.',
+        '<@3> has been struck by *70* :beachball:.',
+        '<@4> has been struck by *60* :beachball:.',
+        '<@5> has been struck by *50* :beachball:.',
+        '<@6> has been struck by *40* :beachball:.',
+        '<@7> has been struck by *30* :beachball:.',
+        '<@8> has been struck by *20* :beachball:.',
+        '<@9> has been struck by *10* :beachball:.'
       ].join('\n'))
     })
 
     it('returns the :beachball: count for a named user', async function () {
       await bot.say('user-3', 'hubot: toppun @user-1')
       expect(bot.response()).to.equal(
-        '<1> has been struck by *90* :beachball:.'
+        '<@1> has been struck by *90* :beachball:.'
       )
     })
   })

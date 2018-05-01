@@ -41,7 +41,7 @@ module.exports = function (robot) {
       uid = msg.message.user.id
     }
 
-    const lines = [`*Top 10 reactions to <${uid}>*`]
+    const lines = [`*Top 10 reactions to <@${uid}>*`]
     TallyMap.reactionsReceived(robot).topForUser(uid, 10, (err, reaction, tally) => {
       if (err) {
         msg.reply(`:boom: \`${err.stack}\``)
@@ -63,7 +63,7 @@ module.exports = function (robot) {
       const uid = user.id
 
       const tally = TallyMap.reactionsReceived(robot).forUser(uid).beachball || 'no'
-      msg.send(`<${uid}> has been struck by *${tally}* :beachball:.`)
+      msg.send(`<@${uid}> has been struck by *${tally}* :beachball:.`)
       return
     }
 
@@ -73,7 +73,7 @@ module.exports = function (robot) {
         msg.reply(`:boom: \`${err.stack}\``)
         return
       }
-      lines.push(`<${uid}> has been struck by *${tally}* :beachball:.`)
+      lines.push(`<@${uid}> has been struck by *${tally}* :beachball:.`)
     })
     msg.send(lines.join('\n'))
   })
