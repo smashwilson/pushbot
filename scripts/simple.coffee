@@ -16,6 +16,7 @@
 #   hubot femshep - Express your rage in a healthy fashion
 #   hubot nope - Just nope the f out of there
 #   hubot fine - Show just how fine it is
+#   hubot embiggen - Tickets... to the gun show
 
 # Configuration:
 #
@@ -284,3 +285,6 @@ module.exports = (robot) ->
 
   robot.hear /\b(?:tit downwards|breasted boobily)\b/i, (msg) ->
     msg.send "http://imgur.com/TRAPYBX"
+    
+  robot.respond /embiggen\s+([^]+)/i, (msg) ->
+    msg.send ":muscle-left: #{msg.match[1]} :muscle-right:"
