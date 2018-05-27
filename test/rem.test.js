@@ -30,13 +30,19 @@ describe('rem', function () {
   })
 
   describe('!remsearch', function () {
-    it('lists matching keys', async function () {
+    it('lists matching keys in a random order', async function () {
       bot.store('rem:0 aa 0', 'A')
       bot.store('rem:1 aa 1', 'B')
       bot.store('rem:2 bb 2', 'C')
 
       await bot.say('admin', '@hubot remsearch aa')
-      await bot.waitForResponse('> 0 aa 0\n> 1 aa 1\n')
+      await bot.waitForResponse()
+
+      const lines = bot.response().split(/\s*\n\s*/).filter(line => line.length > 0)
+      expect(lines).to.have.members([
+        '> 0 aa 0',
+        '> 1 aa 1'
+      ])
     })
 
     it('lists all keys', async function () {
@@ -45,7 +51,14 @@ describe('rem', function () {
       bot.store('rem:2 bb 2', 'C')
 
       await bot.say('admin', '@hubot remsearch')
-      await bot.waitForResponse('> 0 aa 0\n> 1 aa 1\n> 2 bb 2\n')
+      await bot.waitForResponse()
+
+      const lines = bot.response().split(/\s*\n\s*/).filter(line => line.length > 0)
+      expect(lines).to.have.members([
+        '> 0 aa 0',
+        '> 1 aa 1',
+        '> 2 bb 2'
+      ])
     })
 
     it('shows at most ten results', async function () {
@@ -54,13 +67,10 @@ describe('rem', function () {
       }
 
       await bot.say('admin', '@hubot remsearch')
-      await bot.waitForResponse(
-        '> key 0\n> key 1\n' +
-        '> key 2\n> key 3\n' +
-        '> key 4\n> key 5\n' +
-        '> key 6\n> key 7\n' +
-        '> key 8\n> key 9\n'
-      )
+      await bot.waitForResponse()
+
+      const lines = bot.response().split(/\s*\n\s*/).filter(line => line.length > 0)
+      expect(lines).to.have.lengthOf(10)
     })
   })
 })
