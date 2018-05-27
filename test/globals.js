@@ -144,7 +144,7 @@ global.BotContext = class {
       .reduce((acc, line) => acc.concat(line.split(/\n/)), [])
   }
 
-  async waitForResponse (pattern) {
+  async waitForResponse (pattern = /./) {
     const matches = typeof pattern === 'string'
       ? r => r === pattern
       : r => pattern.test(r)
