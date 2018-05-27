@@ -27,15 +27,15 @@ module.exports = function (robot) {
 
   robot.respond(/remsearch(?:\s+([^]*))?/, function (msg) {
     const pattern = (msg.match[1] || '').trim().toLowerCase()
-    const matches = []
+    let matches = []
     for (const key in robot.brain.data._private) {
       if (key.startsWith('rem:') && (!pattern || key.toLowerCase().includes(pattern, 4))) {
         matches.push(key.substring(4))
-        if (matches.length >= 10) {
-          break
-        }
       }
     }
+
+    matches.sort((a, b) => -1 + Math.random() * 2)
+    matches = matches.slice(0, 10)
 
     if (matches.length === 0) {
       msg.send(`No keys match "${pattern}".`)
