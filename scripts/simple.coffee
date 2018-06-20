@@ -288,3 +288,6 @@ module.exports = (robot) ->
     
   robot.respond /embiggen\s+([^]+)/i, (msg) ->
     msg.send ":muscle-left: #{msg.match[1]} :muscle-right:"
+
+  robot.respond /quite/i, (msg) ->
+    msg.reply "Indeed."
