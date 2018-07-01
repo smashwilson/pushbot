@@ -11,7 +11,7 @@ require('hubot-slack')
 
 const Helper = require('hubot-test-helper')
 const moment = require('moment-timezone')
-const ReactionMessage = require('hubot-slack/src/reaction-message')
+const {ReactionMessage} = require('hubot-slack/src/message')
 
 global.expect = require('chai').expect
 
