@@ -15,7 +15,7 @@
     "graphql": "^0.13.1",
     "hubot": "2.19.0",
     "hubot-auth": "2.1.0",
-    "hubot-diagnostics": "0.0.2",
+    "hubot-diagnostics": "1.0.0",
     "hubot-frinkiac": "2.2.0",
     "hubot-google-images": "0.2.7",
     "hubot-google-translate": "0.2.1",
