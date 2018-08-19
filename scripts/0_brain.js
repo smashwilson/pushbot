@@ -3,6 +3,7 @@
 
 'use strict'
 
+const util = require('util')
 const Promise = require('bluebird')
 const pg = require('pg-promise')({
   promiseLib: Promise
@@ -69,6 +70,14 @@ module.exports = function (robot) {
 
     for (let type in data) {
       for (let key in data[type]) {
+        try {
+          JSON.stringify(data[type][key])
+        } catch (e) {
+          // Circular reference most likely
+          robot.logger.error(`Circular reference in brain: ${type} ${util.inspect(key, {depth: 2})}`)
+          continue
+        }
+
         batch.push({type, key, value: data[type][key]})
 
         if (batch.length >= batchSize) {
