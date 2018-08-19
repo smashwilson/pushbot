@@ -17,7 +17,7 @@ describe('GraphQL mutations', function () {
     usesDatabase(this)
     cache.clear()
 
-    room = helper.createRoom({httpd: false})
+    room = helper.createRoom({httpd: false, name: 'C100'})
     room.robot.postgres = global.database
 
     authorized = room.robot.brain.userForId('1', {name: 'authy'})
