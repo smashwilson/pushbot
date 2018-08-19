@@ -13,6 +13,17 @@ const Helper = require('hubot-test-helper')
 const moment = require('moment-timezone')
 const {ReactionMessage} = require('hubot-slack/src/message')
 
+// Patch extention methods added to Hubot.Robot back to the es2015 export
+const {Robot: RobotWrapper} = require('hubot/es2015')
+
+const existingMethodNames = new Set(Object.getOwnPropertyNames(RobotWrapper.prototype))
+for (const methodName of Object.getOwnPropertyNames(Hubot.Robot.prototype)) {
+  if (!existingMethodNames.has(methodName)) {
+    console.log('copying method ' + methodName)
+    RobotWrapper.prototype[methodName] = Hubot.Robot.prototype[methodName]
+  }
+}
+
 global.expect = require('chai').expect
 
 global.sinon = createSandbox()
