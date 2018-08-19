@@ -279,7 +279,7 @@ class Storage {
   }
 
   loadDocumentAttributes (documentSet, documents) {
-    const attributeTableName = documentSet.attributeTableName()    
+    const attributeTableName = documentSet.attributeTableName()
     const ids = documents.map(doc => doc.id)
     const parameters = {attributeTableName, ids}
 
