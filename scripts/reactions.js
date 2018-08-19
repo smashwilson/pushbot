@@ -9,8 +9,9 @@
 const {TallyMap} = require('./models/tally-map')
 
 module.exports = function (robot) {
-  if (robot.react) {
-    robot.react(msg => {
+  if (robot.hearReaction) {
+    robot.hearReaction(msg => {
+      console.log('got reaction message', {msg})
       let delta = 0
       if (msg.message.type === 'added') { delta = 1 }
       if (msg.message.type === 'removed') { delta = -1 }
