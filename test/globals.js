@@ -19,7 +19,6 @@ const {Robot: RobotWrapper} = require('hubot/es2015')
 const existingMethodNames = new Set(Object.getOwnPropertyNames(RobotWrapper.prototype))
 for (const methodName of Object.getOwnPropertyNames(Hubot.Robot.prototype)) {
   if (!existingMethodNames.has(methodName)) {
-    console.log('copying method ' + methodName)
     RobotWrapper.prototype[methodName] = Hubot.Robot.prototype[methodName]
   }
 }
