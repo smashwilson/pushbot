@@ -36,7 +36,7 @@
     "hubot-shipit": "0.2.1",
     "hubot-slack": "4.5.4",
     "hubot-swanson": "1.2.0",
-    "hubot-table-flip": "0.2.0",
+    "hubot-fliptable": "2.0.0",
     "jsdom": "11.12.0",
     "log": "1.4.0",
     "moment": "2.22.2",
