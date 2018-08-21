@@ -19,6 +19,7 @@ before_install:
   -o bin/infra.sh
 - chmod +x bin/infra.sh
 - npm install -g npm@latest greenkeeper-lockfile@1
+install: npm ci || npm install
 before_script: greenkeeper-lockfile-update
 script:
 - bin/ci/test && bin/infra.sh build
