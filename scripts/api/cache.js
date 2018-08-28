@@ -34,7 +34,7 @@ class CacheResolver {
     return lines.map(line => {
       return {
         id: line.id,
-        speaker: userSetResolver.withName({name: line.speaker}, req),
+        speaker: line.speaker ? userSetResolver.withName({name: line.speaker}, req) : null,
         timestamp: line.timestamp.valueOf(),
         text: line.text
       }
