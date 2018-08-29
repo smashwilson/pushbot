@@ -1,5 +1,5 @@
-const {createDocumentSet} = require('../../scripts/documentset')
-const {OnlyMe} = require('./roles')
+const { createDocumentSet } = require('../../scripts/documentset')
+const { OnlyMe } = require('./roles')
 
 describe('DocumentSet count', function () {
   let bot, documentSet
@@ -79,7 +79,7 @@ describe('DocumentSet count', function () {
 
   it('generates default help text', async function () {
     await bot.loadHelp()
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {count: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { count: true })
 
     await bot.say('me', '@hubot help blarfcount')
     await bot.waitForResponse(/blarfcount/)

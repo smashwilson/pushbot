@@ -1,5 +1,5 @@
-const {createDocumentSet} = require('../../scripts/documentset')
-const {OnlyMe} = require('./roles')
+const { createDocumentSet } = require('../../scripts/documentset')
+const { OnlyMe } = require('./roles')
 
 function generateAttributeQueryTests (commandName, attributeName) {
   return function () {
@@ -23,7 +23,7 @@ function generateAttributeQueryTests (commandName, attributeName) {
 
       return Promise.all(
         docs.map(doc => {
-          const attributes = doc.attrs.map(value => ({kind: attributeName, value}))
+          const attributes = doc.attrs.map(value => ({ kind: attributeName, value }))
           return documentSet.add('me', doc.body, attributes)
         })
       )
@@ -32,11 +32,11 @@ function generateAttributeQueryTests (commandName, attributeName) {
     it(`returns a random document ${commandName} the requested speaker`, async function () {
       usesDatabase(this)
       await populate(true, [
-        {body: 'yes 1', attrs: ['aaa', 'bbb']},
-        {body: 'no 1', attrs: ['bbb']},
-        {body: 'yes 2', attrs: ['zzz', 'aaa']},
-        {body: 'no 2', attrs: ['yyy', 'ccc', 'bbb']},
-        {body: 'no 3', attrs: ['qqq']}
+        { body: 'yes 1', attrs: ['aaa', 'bbb'] },
+        { body: 'no 1', attrs: ['bbb'] },
+        { body: 'yes 2', attrs: ['zzz', 'aaa'] },
+        { body: 'no 2', attrs: ['yyy', 'ccc', 'bbb'] },
+        { body: 'no 3', attrs: ['qqq'] }
       ])
 
       await bot.say('me', `@hubot blarf${commandName} aaa`)
@@ -46,11 +46,11 @@ function generateAttributeQueryTests (commandName, attributeName) {
     it(`returns a random document with the requested ${attributeName} matching a query`, async function () {
       usesDatabase(this)
       await populate(true, [
-        {body: 'no 1', attrs: ['aaa', 'bbb']},
-        {body: 'no 2', attrs: ['bbb']},
-        {body: 'yes 1', attrs: ['zzz', 'aaa']},
-        {body: 'no 3', attrs: ['yyy', 'ccc', 'bbb']},
-        {body: 'no 4', attrs: ['aaa']}
+        { body: 'no 1', attrs: ['aaa', 'bbb'] },
+        { body: 'no 2', attrs: ['bbb'] },
+        { body: 'yes 1', attrs: ['zzz', 'aaa'] },
+        { body: 'no 3', attrs: ['yyy', 'ccc', 'bbb'] },
+        { body: 'no 4', attrs: ['aaa'] }
       ])
 
       await bot.say('me', `@hubot blarf${commandName} @aaa yes`)
@@ -60,11 +60,11 @@ function generateAttributeQueryTests (commandName, attributeName) {
     it(`returns a random document with multiple ${attributeName}s`, async function () {
       usesDatabase(this)
       await populate(true, [
-        {body: 'no 1', attrs: ['aaa', 'bbb']},
-        {body: 'no 2', attrs: ['bbb']},
-        {body: 'no 3', attrs: ['zzz', 'aaa']},
-        {body: 'yes 1', attrs: ['yyy', 'ccc', 'bbb']},
-        {body: 'no 4', attrs: ['aaa']}
+        { body: 'no 1', attrs: ['aaa', 'bbb'] },
+        { body: 'no 2', attrs: ['bbb'] },
+        { body: 'no 3', attrs: ['zzz', 'aaa'] },
+        { body: 'yes 1', attrs: ['yyy', 'ccc', 'bbb'] },
+        { body: 'no 4', attrs: ['aaa'] }
       ])
 
       await bot.say('me', `@hubot blarf${commandName} @ccc+yyy`)
@@ -74,11 +74,11 @@ function generateAttributeQueryTests (commandName, attributeName) {
     it(`returns a random document with multiple ${attributeName}s matching a query`, async function () {
       usesDatabase(this)
       await populate(true, [
-        {body: 'no 1', attrs: ['aaa', 'bbb']},
-        {body: 'no 2', attrs: ['bbb']},
-        {body: 'no 3', attrs: ['zzz', 'aaa']},
-        {body: 'no 4', attrs: ['yyy', 'ccc', 'bbb']},
-        {body: 'yes 1', attrs: ['aaa', 'bbb']}
+        { body: 'no 1', attrs: ['aaa', 'bbb'] },
+        { body: 'no 2', attrs: ['bbb'] },
+        { body: 'no 3', attrs: ['zzz', 'aaa'] },
+        { body: 'no 4', attrs: ['yyy', 'ccc', 'bbb'] },
+        { body: 'yes 1', attrs: ['aaa', 'bbb'] }
       ])
 
       await bot.say('me', `@hubot blarf${commandName} @aaa+bbb yes`)
@@ -87,8 +87,8 @@ function generateAttributeQueryTests (commandName, attributeName) {
 
     it("permits access based on the caller's role", async function () {
       usesDatabase(this)
-      await populate({role: OnlyMe}, [
-        {body: 'yes 1', attrs: ['aaa', 'bbb']}
+      await populate({ role: OnlyMe }, [
+        { body: 'yes 1', attrs: ['aaa', 'bbb'] }
       ])
 
       await bot.say('me', `@hubot blarf${commandName} bbb`)
@@ -97,8 +97,8 @@ function generateAttributeQueryTests (commandName, attributeName) {
 
     it("prohibits access based on the caller's role", async function () {
       usesDatabase(this)
-      await populate({role: OnlyMe}, [
-        {body: 'yes 1', attrs: ['aaa', 'bbb']}
+      await populate({ role: OnlyMe }, [
+        { body: 'yes 1', attrs: ['aaa', 'bbb'] }
       ])
 
       await bot.say('you', `@hubot blarf${commandName} bbb`)
@@ -107,7 +107,7 @@ function generateAttributeQueryTests (commandName, attributeName) {
 
     it('generates default help text', async function () {
       await bot.loadHelp()
-      documentSet = createDocumentSet(bot.getRobot(), 'blarf', {[commandName]: true})
+      documentSet = createDocumentSet(bot.getRobot(), 'blarf', { [commandName]: true })
 
       await bot.say('me', `@hubot help blarf${commandName}`)
       await bot.waitForResponse(/blarf/)

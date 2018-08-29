@@ -1,5 +1,5 @@
-const {TallyMap} = require('../models/tally-map')
-const {emojiCacheFor} = require('../models/emoji')
+const { TallyMap } = require('../models/tally-map')
+const { emojiCacheFor } = require('../models/emoji')
 
 class AvatarResolver {
   constructor (profile) {
@@ -46,17 +46,17 @@ class UserResolver {
 
   roles (args, req) {
     return req.robot.auth.userRoles(this.user).map(role => {
-      return {name: role}
+      return { name: role }
     })
   }
 
-  topReactionsGiven ({limit}, req) {
+  topReactionsGiven ({ limit }, req) {
     const emojiCache = emojiCacheFor(req.robot)
 
     const reactions = []
     const emojiPromise = async (name, count) => {
       const url = await emojiCache.get(name)
-      return {count, emoji: {name, url}}
+      return { count, emoji: { name, url } }
     }
 
     TallyMap.reactionsGiven(req.robot).topForUser(this.id, limit, (err, reaction, count) => {
@@ -66,13 +66,13 @@ class UserResolver {
     return Promise.all(reactions)
   }
 
-  topReactionsReceived ({limit}, req) {
+  topReactionsReceived ({ limit }, req) {
     const emojiCache = emojiCacheFor(req.robot)
 
     const reactions = []
     const emojiPromise = async (name, count) => {
       const url = await emojiCache.get(name)
-      return {count, emoji: {name, url}}
+      return { count, emoji: { name, url } }
     }
 
     TallyMap.reactionsReceived(req.robot).topForUser(this.id, limit, (err, reaction, count) => {
@@ -97,10 +97,10 @@ class UserSetResolver {
     return resolvers
   }
 
-  withName ({name}, req) {
+  withName ({ name }, req) {
     const user = req.robot.brain.userForName(name)
     return user && new UserResolver(user)
   }
 }
 
-module.exports = {UserSetResolver, UserResolver}
+module.exports = { UserSetResolver, UserResolver }

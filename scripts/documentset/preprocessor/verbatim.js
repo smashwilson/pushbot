@@ -7,5 +7,5 @@ module.exports = function (robot, text) {
   const mentions = createMentionDetector(robot).scan(text)
   const lines = text.split(/\r?\n/).map(body => new Line(null, null, body))
 
-  return {lines, speakers: [], mentions}
+  return { lines, speakers: [], mentions }
 }

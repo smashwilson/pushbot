@@ -1,4 +1,4 @@
-const {createDocumentSet} = require('../../scripts/documentset')
+const { createDocumentSet } = require('../../scripts/documentset')
 
 describe('DocumentSet stats', function () {
   let bot, documentSet
@@ -23,7 +23,7 @@ describe('DocumentSet stats', function () {
       const attributes = []
       for (const kind in doc.attrs) {
         for (const value of doc.attrs[kind]) {
-          attributes.push({kind, value})
+          attributes.push({ kind, value })
         }
       }
 
@@ -34,10 +34,10 @@ describe('DocumentSet stats', function () {
   it('summarizes all known speaker and mention credits', async function () {
     usesDatabase(this)
     await populate(true, [
-      {body: '0', attrs: {speaker: ['person-one', 'person-two'], mention: ['person-two']}},
-      {body: '1', attrs: {speaker: ['person-one'], mention: ['person-three']}},
-      {body: '2', attrs: {speaker: ['person-two'], mention: ['person-one', 'person-two']}},
-      {body: '3', attrs: {speaker: ['person-one'], mention: ['person-three']}}
+      { body: '0', attrs: { speaker: ['person-one', 'person-two'], mention: ['person-two'] } },
+      { body: '1', attrs: { speaker: ['person-one'], mention: ['person-three'] } },
+      { body: '2', attrs: { speaker: ['person-two'], mention: ['person-one', 'person-two'] } },
+      { body: '3', attrs: { speaker: ['person-one'], mention: ['person-three'] } }
     ])
 
     await bot.say('me', '@hubot blarfstats')
@@ -54,10 +54,10 @@ describe('DocumentSet stats', function () {
   it("summarizes a user's speaker and mention counts", async function () {
     usesDatabase(this)
     await populate(true, [
-      {body: '0', attrs: {speaker: ['person-one'], mention: ['person-two']}},
-      {body: '1', attrs: {speaker: ['person-one'], mention: ['person-three']}},
-      {body: '2', attrs: {speaker: ['person-two'], mention: ['person-one', 'person-two']}},
-      {body: '3', attrs: {speaker: ['person-one'], mention: []}}
+      { body: '0', attrs: { speaker: ['person-one'], mention: ['person-two'] } },
+      { body: '1', attrs: { speaker: ['person-one'], mention: ['person-three'] } },
+      { body: '2', attrs: { speaker: ['person-two'], mention: ['person-one', 'person-two'] } },
+      { body: '3', attrs: { speaker: ['person-one'], mention: [] } }
     ])
 
     await bot.say('me', '@hubot blarfstats @person-two')
@@ -68,7 +68,7 @@ describe('DocumentSet stats', function () {
     usesDatabase(this)
 
     await bot.loadHelp()
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {stats: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { stats: true })
 
     await bot.say('me', '@hubot help blarfstats')
     await bot.waitForResponse(/blarfstats/)

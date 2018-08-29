@@ -21,7 +21,7 @@ class EmojiCache {
     }
 
     if (!payload) {
-      payload = {emoji: {}}
+      payload = { emoji: {} }
     }
 
     return payload.emoji[emojiName] || null
@@ -53,4 +53,4 @@ function emojiCacheFor (robot) {
   return new EmojiCache(robot)
 }
 
-module.exports = {emojiCacheFor}
+module.exports = { emojiCacheFor }

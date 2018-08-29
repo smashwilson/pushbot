@@ -1,13 +1,13 @@
-const {UserSetResolver} = require('./user-set')
-const {DocumentSetResolver, DocumentResolver} = require('./document-set')
-const {CacheResolver} = require('./cache')
-const {BrainResolver, BrainMutator} = require('./brain')
+const { UserSetResolver } = require('./user-set')
+const { DocumentSetResolver, DocumentResolver } = require('./document-set')
+const { CacheResolver } = require('./cache')
+const { BrainResolver, BrainMutator } = require('./brain')
 
 const bufferPreprocessor = require('../documentset/preprocessor/buffer')
 const briefFormatter = require('../documentset/formatter').brief
-const {getDataStore} = require('../helpers')
+const { getDataStore } = require('../helpers')
 const cache = require('../models/cache')
-const {CalendarMap} = require('../models/calendar')
+const { CalendarMap } = require('../models/calendar')
 
 module.exports = {
   me (args, req) {
@@ -22,7 +22,7 @@ module.exports = {
     return Object.keys(req.robot.documentSets || {})
   },
 
-  documents ({set}, req) {
+  documents ({ set }, req) {
     const sets = req.robot.documentSets || {}
     const documentSet = sets[set]
 
@@ -42,7 +42,7 @@ module.exports = {
     return `${process.env.API_BASE_URL}/ical/${calendarId}`
   },
 
-  async createDocument ({set, channel, lines}, req) {
+  async createDocument ({ set, channel, lines }, req) {
     const sets = req.robot.documentSets || {}
     const documentSet = sets[set]
 
@@ -80,10 +80,10 @@ module.exports = {
     const body = formatted.body
     const attributes = []
     for (const value of formatted.speakers) {
-      attributes.push({kind: 'speaker', value})
+      attributes.push({ kind: 'speaker', value })
     }
     for (const value of formatted.mentions) {
-      attributes.push({kind: 'mention', value})
+      attributes.push({ kind: 'mention', value })
     }
 
     const doc = await documentSet.add(req.user.name, body, attributes)

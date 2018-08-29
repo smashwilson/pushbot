@@ -96,10 +96,10 @@ function addCommands (robot, documentSet, spec, feature) {
         body = formatted.body
         attributes = []
         for (const value of formatted.speakers) {
-          attributes.push({kind: 'speaker', value})
+          attributes.push({ kind: 'speaker', value })
         }
         for (const value of formatted.mentions) {
-          attributes.push({kind: 'mention', value})
+          attributes.push({ kind: 'mention', value })
         }
 
         if (spec.features.kov) {
@@ -147,10 +147,10 @@ function setCommand (robot, documentSet, spec, feature) {
     if (!role.verify(robot, msg)) return
 
     const body = msg.match[2].trim()
-    const attribute = {kind: 'subject', value: target}
+    const attribute = { kind: 'subject', value: target }
 
     try {
-      const former = await documentSet.latestMatching({subject: [target]})
+      const former = await documentSet.latestMatching({ subject: [target] })
       const doc = await documentSet.add(submitter, body, [attribute])
       if (former.wasFound()) {
         msg.send(`${target}'s ${spec.name} has been changed from '${former.getBody()}' to '${doc.getBody()}'.`)
@@ -210,8 +210,8 @@ function queryCommand (robot, documentSet, spec, feature) {
 
       try {
         const doc = feature.latest
-          ? await documentSet.latestMatching({subject: [subject]}, query)
-          : await documentSet.randomMatching({subject: [subject]}, query)
+          ? await documentSet.latestMatching({ subject: [subject] }, query)
+          : await documentSet.randomMatching({ subject: [subject] }, query)
         msg.send(doc.getBody())
       } catch (err) {
         errorHandler(msg, err)
@@ -279,7 +279,7 @@ function allCommand (robot, documentSet, spec, feature) {
       if (!role.verify(robot, msg)) return
 
       try {
-        const {documents} = await documentSet.allMatching({subject: [subject]}, query)
+        const { documents } = await documentSet.allMatching({ subject: [subject] }, query)
         msg.send(documents.map(doc => doc.getBody()).join(feature.separator || ', '))
       } catch (err) {
         errorHandler(msg, err)
@@ -299,7 +299,7 @@ function allCommand (robot, documentSet, spec, feature) {
       const query = msg.match[1] || ''
 
       try {
-        const {documents} = await documentSet.allMatching({}, query)
+        const { documents } = await documentSet.allMatching({}, query)
         msg.send(documents.map(doc => doc.getBody()).join(feature.separator || ', '))
       } catch (err) {
         errorHandler(msg, err)
@@ -319,7 +319,7 @@ function attributeQuery (robot, documentSet, spec, feature, patternBase, attrKin
     const subjects = msg.match[1]
       .split(/\+/)
       .map(subject => subject.replace(/^@/, ''))
-    const attributes = {[attrKind]: subjects}
+    const attributes = { [attrKind]: subjects }
     const query = msg.match[2] || ''
 
     try {
@@ -498,7 +498,7 @@ function kovCommands (robot, documentSet, spec, feature) {
 
     robot.markov.createModel(`${spec.name}kov`, {})
 
-    const {documents} = await documentSet.allMatching({}, '')
+    const { documents } = await documentSet.allMatching({}, '')
 
     robot.logger.debug(`Reindexing ${documents.length} ${spec.plural}.`)
     await new Promise((resolve, reject) => {

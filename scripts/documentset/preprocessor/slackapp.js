@@ -71,5 +71,5 @@ module.exports = function (robot, text) {
     result.push(new Line(ts, nick, body))
   }
 
-  return {lines: result, speakers, mentions}
+  return { lines: result, speakers, mentions }
 }

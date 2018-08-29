@@ -11,7 +11,7 @@ module.exports = function (robot) {
 
     request({
       uri: 'https://api.github.com/octocat',
-      qs: {s: message},
+      qs: { s: message },
       headers: {
         'User-Agent': 'smashwilson/pushbot request/2.79.0'
       }

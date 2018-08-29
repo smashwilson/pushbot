@@ -1,4 +1,4 @@
-const {createDocumentSet} = require('../../scripts/documentset')
+const { createDocumentSet } = require('../../scripts/documentset')
 
 describe('DocumentSet markov models', function () {
   let bot, time, documentSet
@@ -29,7 +29,7 @@ describe('DocumentSet markov models', function () {
   it('creates a markov model', async function () {
     expect(() => bot.getRobot().markov.modelNamed('blarfkov', () => {})).to.throw(/Unrecognized model/)
 
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {kov: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { kov: true })
 
     bot.getRobot().markov.modelNamed('blarfkov', model => {
       expect(model).to.not.be.undefined
@@ -37,7 +37,7 @@ describe('DocumentSet markov models', function () {
   })
 
   it('adds new documents to the model', async function () {
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true, kov: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true, kov: true })
 
     const blarfToAdd = 'person-one [2:00 PM] \n' +
       'foo bar baz\n'
@@ -58,7 +58,7 @@ describe('DocumentSet markov models', function () {
   })
 
   it('generates text from the model', async function () {
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {kov: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { kov: true })
 
     await documentSet.whenConnected()
     await new Promise(resolve => {
@@ -79,7 +79,7 @@ describe('DocumentSet markov models', function () {
     await documentSet.add('me', 'aaa bbb ccc', [])
     await documentSet.add('me', 'aaa ddd eee', [])
 
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {kov: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { kov: true })
     await documentSet.whenConnected()
     await bot.say('me', '@hubot reindex blarfkov')
     await bot.waitForResponse('@me Regenerated markov model from 2 blarfs.')

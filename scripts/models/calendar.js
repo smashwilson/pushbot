@@ -17,11 +17,11 @@ class CalendarMap {
     let existing = this.calendars.get(userId)
     if (!existing) {
       const calendarId = uuid()
-      this.calendars.set(userId, {calendarId, userTz})
+      this.calendars.set(userId, { calendarId, userTz })
       this.robot.brain.set('hubot-plan:ical', Array.from(this.calendars))
       return calendarId
     } else if (existing.userTz !== userTz) {
-      this.calendars.set(userId, {calendarId: existing.calendarId, userTz})
+      this.calendars.set(userId, { calendarId: existing.calendarId, userTz })
       this.robot.brain.set('hubot-plan:ical', Array.from(this.calendars))
       return existing.calendarId
     } else {

@@ -1,4 +1,4 @@
-const {emojiCacheFor} = require('../../scripts/models/emoji')
+const { emojiCacheFor } = require('../../scripts/models/emoji')
 
 describe('EmojiCache', function () {
   let bot

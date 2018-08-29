@@ -6,15 +6,15 @@ const Hubot = require('hubot')
 const hubotHelp = require('hubot-help')
 const hubotAuth = require('hubot-auth')
 const hubotMarkov = require('hubot-markov')
-const {createSandbox} = require('sinon')
+const { createSandbox } = require('sinon')
 require('hubot-slack')
 
 const Helper = require('hubot-test-helper')
 const moment = require('moment-timezone')
-const {ReactionMessage} = require('hubot-slack/src/message')
+const { ReactionMessage } = require('hubot-slack/src/message')
 
 // Patch extention methods added to Hubot.Robot back to the es2015 export
-const {Robot: RobotWrapper} = require('hubot/es2015')
+const { Robot: RobotWrapper } = require('hubot/es2015')
 
 const existingMethodNames = new Set(Object.getOwnPropertyNames(RobotWrapper.prototype))
 for (const methodName of Object.getOwnPropertyNames(Hubot.Robot.prototype)) {
@@ -49,7 +49,7 @@ global.message = function (username, line) {
   return {
     message: {
       text: line,
-      user: {name: username}
+      user: { name: username }
     }
   }
 }
@@ -57,7 +57,7 @@ global.message = function (username, line) {
 global.BotContext = class {
   constructor (...scriptPaths) {
     this.helper = new Helper(scriptPaths)
-    this.room = this.helper.createRoom({httpd: false})
+    this.room = this.helper.createRoom({ httpd: false })
 
     if (global.database) {
       this.room.robot.postgres = global.database
@@ -74,7 +74,7 @@ global.BotContext = class {
   }
 
   createUser (uid, username, extra = {}) {
-    const udata = {id: uid, name: username, ...extra}
+    const udata = { id: uid, name: username, ...extra }
     this.room.robot.brain.users()[uid] = udata
     return udata
   }
@@ -96,7 +96,7 @@ global.BotContext = class {
     this.room.receive = async function (userName, message) {
       this.messages.push([userName, message])
       const user = room.robot.brain.userForName(userName) ||
-        room.robot.brain.userForId('0', {name: userName, room})
+        room.robot.brain.userForId('0', { name: userName, room })
       await new Promise(resolve => room.robot.receive(new Hubot.TextMessage(user, message), resolve))
     }
 

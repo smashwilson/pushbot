@@ -1,7 +1,7 @@
 const Helper = require('hubot-test-helper')
 const helper = new Helper([])
 
-const {CacheResolver} = require('../../scripts/api/cache')
+const { CacheResolver } = require('../../scripts/api/cache')
 const cache = require('../../scripts/models/cache')
 
 describe('CacheResolver', function () {
@@ -10,15 +10,15 @@ describe('CacheResolver', function () {
   beforeEach(function () {
     cache.clear()
 
-    room = helper.createRoom({httpd: false})
+    room = helper.createRoom({ httpd: false })
 
     const robot = room.robot
-    user = robot.brain.userForId('1', {name: 'self'})
-    robot.brain.userForId('2', {name: 'aaa'})
-    robot.brain.userForId('3', {name: 'bbb'})
-    robot.brain.userForId('4', {name: 'ccc'})
+    user = robot.brain.userForId('1', { name: 'self' })
+    robot.brain.userForId('2', { name: 'aaa' })
+    robot.brain.userForId('3', { name: 'bbb' })
+    robot.brain.userForId('4', { name: 'ccc' })
 
-    req = {robot, user}
+    req = { robot, user }
     resolver = new CacheResolver()
   })
 
@@ -49,7 +49,7 @@ describe('CacheResolver', function () {
         rtm: {
           dataStore: {
             getChannelGroupOrDMById (id) {
-              if (id === 'C100') return {name: 'general'}
+              if (id === 'C100') return { name: 'general' }
               return undefined
             }
           }
@@ -70,7 +70,7 @@ describe('CacheResolver', function () {
         .append(message('bbb', 'line two\nline three'))
         .append(message('ccc', 'line four'))
 
-      const lines = resolver.linesForChannel({channel: '#general'}, req)
+      const lines = resolver.linesForChannel({ channel: '#general' }, req)
       expect(lines).to.have.length(4)
 
       expect(lines[0].speaker.name).to.equal('aaa')
@@ -89,12 +89,12 @@ describe('CacheResolver', function () {
     it('returns an empty array for an empty cache', function () {
       cache.forChannel(req.robot, '#general')
 
-      const lines = resolver.linesForChannel({channel: '#general'}, req)
+      const lines = resolver.linesForChannel({ channel: '#general' }, req)
       expect(lines).to.eql([])
     })
 
     it('returns null for an unknown channel', function () {
-      const lines = resolver.linesForChannel({channel: '#nope'}, req)
+      const lines = resolver.linesForChannel({ channel: '#nope' }, req)
       expect(lines).to.be.null
     })
   })

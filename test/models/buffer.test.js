@@ -10,7 +10,7 @@ describe('Buffer', function () {
   let room, buffer
 
   beforeEach(function () {
-    room = helper.createRoom({httpd: false})
+    room = helper.createRoom({ httpd: false })
     buffer = Buffer.forUser(room.robot, 'U123')
   })
 
@@ -21,7 +21,7 @@ describe('Buffer', function () {
 
   function makeLine (text, minute, speaker = 'me') {
     return new Line(
-      moment.tz({year: 2017, month: 5, day: 10, hour: 9, minute}, 'America/New_York'),
+      moment.tz({ year: 2017, month: 5, day: 10, hour: 9, minute }, 'America/New_York'),
       speaker,
       text
     )

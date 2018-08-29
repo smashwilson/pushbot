@@ -23,7 +23,7 @@ function fromLines (robot, lines) {
     result.push(line)
   }
 
-  return {lines: result, speakers, mentions}
+  return { lines: result, speakers, mentions }
 }
 
 function preprocess (robot, msg) {

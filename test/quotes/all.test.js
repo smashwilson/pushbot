@@ -1,4 +1,4 @@
-const {createDocumentSet} = require('../../scripts/documentset')
+const { createDocumentSet } = require('../../scripts/documentset')
 
 describe('DocumentSet all', function () {
   let bot, documentSet
@@ -24,7 +24,7 @@ describe('DocumentSet all', function () {
       const attributes = []
       if (doc.body && doc.subject) {
         body = doc.body
-        attributes.push({kind: 'subject', value: doc.subject})
+        attributes.push({ kind: 'subject', value: doc.subject })
       } else {
         body = doc
       }
@@ -49,10 +49,10 @@ describe('DocumentSet all', function () {
 
   it('returns all documents associated with a user', async function () {
     await populate({ userOriented: true }, [
-      {body: '111', subject: 'you'},
-      {body: '222', subject: 'you'},
-      {body: '000', subject: 'nope'},
-      {body: '333', subject: 'you'}
+      { body: '111', subject: 'you' },
+      { body: '222', subject: 'you' },
+      { body: '000', subject: 'nope' },
+      { body: '333', subject: 'you' }
     ], false)
 
     await bot.say('me', '@hubot allblarfs @you')

@@ -1,0 +1,32 @@
+# Rename this to .botrc and fill in missing values to get started.
+
+# Slack adapter
+
+export HUBOT_SLACK_TOKEN=
+export HUBOT_SLACK_TEAM=tilde-s
+export HUBOT_SLACK_BOTNAME=PushBot
+export HUBOT_SLACK_LINK_NAMES=1
+
+# hubot-markov
+
+export HUBOT_MARKOV_LEARN_MIN=2
+export HUBOT_MARKOV_GENERATE_MAX=100
+
+# hubot-quotefile
+
+export HUBOT_QUOTEFILE_PATH=botdata/quotes.txt
+
+# mapping
+
+export HUBOT_MAPPING_DATAROOT=botdata/
+
+# weather
+
+export HUBOT_WEATHER_APIKEY=
+
+# lims
+
+export HUBOT_LISTS_ROOT=botdata/
+
+# debugging
+# export HUBOT_LOG_LEVEL=debug
