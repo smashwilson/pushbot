@@ -50,7 +50,7 @@ class Storage {
     const columnSet = {
       attributeInsert: new pg.helpers.ColumnSet(
         ['document_id', 'kind', 'value'],
-        {table: values.attributeTable}
+        { table: values.attributeTable }
       )
     }
 
@@ -71,13 +71,13 @@ class Storage {
       RETURNING id, created, updated
     `, values)
 
-    const docResult = Object.assign({submitter, body, attributes: []}, row)
+    const docResult = Object.assign({ submitter, body, attributes: [] }, row)
     if (attributes.length === 0) {
       return Promise.resolve([])
     }
 
     const linkedAttributes = attributes
-      .map(attribute => Object.assign({document_id: row.id}, attribute))
+      .map(attribute => Object.assign({ document_id: row.id }, attribute))
 
     const cs = this.columnSets.get(documentSet).attributeInsert
     const query = pg.helpers.insert(linkedAttributes, cs) +
@@ -113,7 +113,7 @@ class Storage {
     }
 
     if (hasQuery) {
-      const {clause, parameters: queryParameters} = createQueryClause(query, 'body', parameters.length + 1)
+      const { clause, parameters: queryParameters } = createQueryClause(query, 'body', parameters.length + 1)
       queryClause = clause
       parameters.push(...queryParameters)
     }
@@ -123,7 +123,7 @@ class Storage {
     }
 
     if (hasAttributes) {
-      const {query, parameters: attrParameters} = createAttributeQuery(attributes, 2, parameters.length + 1)
+      const { query, parameters: attrParameters } = createAttributeQuery(attributes, 2, parameters.length + 1)
       attrClause = `id IN (${query})`
       parameters.push(...attrParameters)
     }
@@ -156,13 +156,13 @@ class Storage {
     const parameters = [documentTableName, attributeTableName]
 
     if (hasQuery) {
-      const {clause, parameters: queryParameters} = createQueryClause(query, 'body', parameters.length + 1)
+      const { clause, parameters: queryParameters } = createQueryClause(query, 'body', parameters.length + 1)
       clauses.push(clause)
       parameters.push(...queryParameters)
     }
 
     if (hasAttributes) {
-      const {query, parameters: attrParameters} = createAttributeQuery(attributes, 2, parameters.length + 1)
+      const { query, parameters: attrParameters } = createAttributeQuery(attributes, 2, parameters.length + 1)
       clauses.push(`id IN (${query})`)
       parameters.push(...attrParameters)
     }
@@ -201,13 +201,13 @@ class Storage {
     const parameters = [documentTableName, attributeTableName]
 
     if (hasQuery) {
-      const {clause, parameters: queryParameters} = createQueryClause(query, 'body', parameters.length + 1)
+      const { clause, parameters: queryParameters } = createQueryClause(query, 'body', parameters.length + 1)
       clauses.push(clause)
       parameters.push(...queryParameters)
     }
 
     if (hasAttributes) {
-      const {query, parameters: attrParameters} = createAttributeQuery(attributes, 2, parameters.length + 1)
+      const { query, parameters: attrParameters } = createAttributeQuery(attributes, 2, parameters.length + 1)
       clauses.push(`id IN (${query})`)
       parameters.push(...attrParameters)
     }
@@ -236,7 +236,7 @@ class Storage {
 
     // Avoid an unnecessary join for attribute-only queries
     if (!hasQuery && hasAttributes) {
-      const {query, parameters: attrParameters} = createAttributeQuery(attributes, 1, 2)
+      const { query, parameters: attrParameters } = createAttributeQuery(attributes, 1, 2)
       const sql = `SELECT COUNT(*) AS count FROM (${query}) AS attrs`
       const parameters = [attributeTableName, ...attrParameters]
 
@@ -254,7 +254,7 @@ class Storage {
     }
 
     if (hasQuery) {
-      const {clause, parameters: queryParameters} = createQueryClause(query, 'body', parameters.length + 1)
+      const { clause, parameters: queryParameters } = createQueryClause(query, 'body', parameters.length + 1)
       queryClause = clause
       parameters.push(...queryParameters)
     }
@@ -264,7 +264,7 @@ class Storage {
     }
 
     if (hasAttributes) {
-      const {query, parameters: attrParameters} = createAttributeQuery(attributes, 2, parameters.length + 1)
+      const { query, parameters: attrParameters } = createAttributeQuery(attributes, 2, parameters.length + 1)
       attrClause = `id IN (${query})`
       parameters.push(...attrParameters)
     }
@@ -281,7 +281,7 @@ class Storage {
   loadDocumentAttributes (documentSet, documents) {
     const attributeTableName = documentSet.attributeTableName()
     const ids = documents.map(doc => doc.id)
-    const parameters = {attributeTableName, ids}
+    const parameters = { attributeTableName, ids }
 
     if (documents.length === 0) {
       return []
@@ -384,7 +384,7 @@ function createAttributeQuery (attributes, attrTablePlaceholder, placeholderBase
     }
   }
 
-  return {query: subSelects.join(' INTERSECT '), parameters}
+  return { query: subSelects.join(' INTERSECT '), parameters }
 }
 
 module.exports = {

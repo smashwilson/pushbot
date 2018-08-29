@@ -72,4 +72,4 @@ class TallyMap {
   }
 }
 
-module.exports = {TallyMap}
+module.exports = { TallyMap }

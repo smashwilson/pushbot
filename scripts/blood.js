@@ -6,8 +6,8 @@
 
 const cheerio = require('cheerio')
 const request = require('request-promise-native')
-const {Admin} = require('./roles')
-const {createDocumentSet} = require('./documentset')
+const { Admin } = require('./roles')
+const { createDocumentSet } = require('./documentset')
 
 module.exports = function (robot) {
   if (!robot.postgres) {

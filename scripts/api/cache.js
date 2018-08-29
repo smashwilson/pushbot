@@ -1,6 +1,6 @@
 const cache = require('../models/cache')
-const {UserSetResolver} = require('./user-set')
-const {getDataStore} = require('../helpers')
+const { UserSetResolver } = require('./user-set')
+const { getDataStore } = require('../helpers')
 
 class CacheResolver {
   knownChannels (options, req) {
@@ -12,7 +12,7 @@ class CacheResolver {
     }).filter(Boolean)
   }
 
-  linesForChannel ({channel}, req) {
+  linesForChannel ({ channel }, req) {
     const dataStore = getDataStore(req.robot)
 
     let existing = cache.forChannel(req.robot, channel, false)
@@ -34,7 +34,7 @@ class CacheResolver {
     return lines.map(line => {
       return {
         id: line.id,
-        speaker: line.speaker ? userSetResolver.withName({name: line.speaker}, req) : null,
+        speaker: line.speaker ? userSetResolver.withName({ name: line.speaker }, req) : null,
         timestamp: line.timestamp.valueOf(),
         text: line.text
       }
@@ -42,4 +42,4 @@ class CacheResolver {
   }
 }
 
-module.exports = {CacheResolver}
+module.exports = { CacheResolver }

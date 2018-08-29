@@ -74,11 +74,11 @@ module.exports = function (robot) {
           JSON.stringify(data[type][key])
         } catch (e) {
           // Circular reference most likely
-          robot.logger.error(`Circular reference in brain: ${type} ${util.inspect(key, {depth: 2})}`)
+          robot.logger.error(`Circular reference in brain: ${type} ${util.inspect(key, { depth: 2 })}`)
           continue
         }
 
-        batch.push({type, key, value: data[type][key]})
+        batch.push({ type, key, value: data[type][key] })
 
         if (batch.length >= batchSize) {
           yield upsertBatch(batch)

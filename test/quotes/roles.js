@@ -15,4 +15,4 @@ const Nobody = {
   }
 }
 
-module.exports = {OnlyMe, Nobody}
+module.exports = { OnlyMe, Nobody }

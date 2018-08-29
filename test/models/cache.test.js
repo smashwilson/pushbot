@@ -7,7 +7,7 @@ describe('Cache', function () {
   let room
 
   beforeEach(function () {
-    room = helper.createRoom({httpd: false})
+    room = helper.createRoom({ httpd: false })
   })
 
   afterEach(function () {
@@ -19,10 +19,10 @@ describe('Cache', function () {
     it('stores a new line', function () {
       const cache = Cache.forChannel(room.robot, 'C12345678')
 
-      cache.append({message: {
+      cache.append({ message: {
         text: 'the text content',
-        user: {name: 'someone'}
-      }})
+        user: { name: 'someone' }
+      } })
 
       expect(cache.lines).to.have.length(1)
 
@@ -35,10 +35,10 @@ describe('Cache', function () {
     it('splits multi-line messages', function () {
       const cache = Cache.forChannel(room.robot, 'C12345678')
 
-      cache.append({message: {
+      cache.append({ message: {
         text: 'multi-line\nmessage',
-        user: {name: 'someone'}
-      }})
+        user: { name: 'someone' }
+      } })
 
       expect(cache.lines).to.have.length(2)
 
@@ -57,10 +57,10 @@ describe('Cache', function () {
       const cache = Cache.forChannel(room.robot, 'C12345678')
 
       for (let i = 0; i < Cache.MAX_SIZE + 100; i++) {
-        cache.append({message: {
+        cache.append({ message: {
           text: `message #${i}`,
-          user: {name: 'someone'}
-        }})
+          user: { name: 'someone' }
+        } })
       }
 
       expect(cache.lines).to.have.length(Cache.MAX_SIZE)
@@ -74,17 +74,17 @@ describe('Cache', function () {
       const cache1a = Cache.forChannel(room.robot, 'C1')
 
       for (let i = 0; i < 5; i++) {
-        cache0a.append({message: {
+        cache0a.append({ message: {
           text: 'in room C0',
-          user: {name: 'someone'}
-        }})
+          user: { name: 'someone' }
+        } })
       }
 
       for (let j = 0; j < 3; j++) {
-        cache1a.append({message: {
+        cache1a.append({ message: {
           text: 'in room C1',
-          user: {name: 'someone'}
-        }})
+          user: { name: 'someone' }
+        } })
       }
 
       Cache.clear()

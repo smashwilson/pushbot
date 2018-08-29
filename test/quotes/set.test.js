@@ -1,6 +1,6 @@
-const {OnlyMe, Nobody} = require('./roles')
+const { OnlyMe, Nobody } = require('./roles')
 
-const {createDocumentSet} = require('../../scripts/documentset')
+const { createDocumentSet } = require('../../scripts/documentset')
 
 describe('DocumentSet set', function () {
   let bot, time, documentSet
@@ -26,7 +26,7 @@ describe('DocumentSet set', function () {
     await bot.say('me', '@hubot setblarf: something embarassing')
     await bot.waitForResponse("me's blarf has been set to 'something embarassing'.")
 
-    const doc = await documentSet.latestMatching({subject: ['me']}, '')
+    const doc = await documentSet.latestMatching({ subject: ['me'] }, '')
     expect(doc.getBody()).to.equal('something embarassing')
   })
 
@@ -38,7 +38,7 @@ describe('DocumentSet set', function () {
     await bot.say('me', '@hubot setblarf @other: something embarassing')
     await bot.waitForResponse("other's blarf has been set to 'something embarassing'.")
 
-    const doc = await documentSet.latestMatching({subject: ['other']}, '')
+    const doc = await documentSet.latestMatching({ subject: ['other'] }, '')
     expect(doc.getBody()).to.equal('something embarassing')
   })
 
@@ -46,13 +46,13 @@ describe('DocumentSet set', function () {
     usesDatabase(this)
     documentSet = createDocumentSet(bot.getRobot(), 'blarf', { set: true })
 
-    await documentSet.add('admin', 'blah', [{kind: 'subject', value: 'me'}])
+    await documentSet.add('admin', 'blah', [{ kind: 'subject', value: 'me' }])
     await bot.say('me', '@hubot setblarf: something better')
     await bot.waitForResponse("me's blarf has been changed from 'blah' to 'something better'.")
 
     const [count, doc] = await Promise.all([
-      documentSet.countMatching({subject: ['me']}, ''),
-      documentSet.latestMatching({subject: ['me']}, '')
+      documentSet.countMatching({ subject: ['me'] }, ''),
+      documentSet.latestMatching({ subject: ['me'] }, '')
     ])
 
     expect(count).to.equal(2)
@@ -63,14 +63,14 @@ describe('DocumentSet set', function () {
     usesDatabase(this)
     documentSet = createDocumentSet(bot.getRobot(), 'blarf', { set: true })
 
-    await documentSet.add('admin', 'blah', [{kind: 'subject', value: 'other'}])
+    await documentSet.add('admin', 'blah', [{ kind: 'subject', value: 'other' }])
 
     await bot.say('me', '@hubot setblarf other: something better')
     await bot.waitForResponse("other's blarf has been changed from 'blah' to 'something better'.")
 
     const [count, doc] = await Promise.all([
-      documentSet.countMatching({subject: ['other']}, ''),
-      documentSet.latestMatching({subject: ['other']}, '')
+      documentSet.countMatching({ subject: ['other'] }, ''),
+      documentSet.latestMatching({ subject: ['other'] }, '')
     ])
     expect(count).to.equal(2)
     expect(doc.getBody()).to.equal('something better')
@@ -91,8 +91,8 @@ describe('DocumentSet set', function () {
     await bot.waitForResponse("me's blarf has been set to 'this works'.")
 
     const [meCount, youCount] = await Promise.all([
-      documentSet.countMatching({subject: ['me']}, ''),
-      documentSet.countMatching({subject: ['you']}, '')
+      documentSet.countMatching({ subject: ['me'] }, ''),
+      documentSet.countMatching({ subject: ['you'] }, '')
     ])
 
     expect(meCount).to.equal(1)
@@ -114,8 +114,8 @@ describe('DocumentSet set', function () {
     await bot.waitForResponse("you's blarf has been set to 'this works'.")
 
     const [meCount, youCount] = await Promise.all([
-      documentSet.countMatching({subject: ['me']}, ''),
-      documentSet.countMatching({subject: ['you']}, '')
+      documentSet.countMatching({ subject: ['me'] }, ''),
+      documentSet.countMatching({ subject: ['you'] }, '')
     ])
 
     expect(meCount).to.equal(0)
@@ -132,14 +132,14 @@ describe('DocumentSet set', function () {
     await bot.say('me', '@hubot setblarf me: this works')
     await bot.waitForResponse("me's blarf has been set to 'this works'.")
 
-    const count = await documentSet.countMatching({subject: ['me']}, '')
+    const count = await documentSet.countMatching({ subject: ['me'] }, '')
     expect(count).to.equal(1)
   })
 
   it('generates default help text', async function () {
     usesDatabase(this)
     await bot.loadHelp()
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {set: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { set: true })
 
     await bot.say('me', '@hubot help')
     await bot.waitForResponse(/hubot setblarf/)

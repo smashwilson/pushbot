@@ -4,7 +4,7 @@
 // Commands:
 //   hubot zing - someone made a terrible joke
 
-const {atRandom} = require('./helpers')
+const { atRandom } = require('./helpers')
 
 const zings = {
   atomicknight: 'https://user-images.githubusercontent.com/17565/27990023-1c97c360-6417-11e7-96b9-aa73761b1a09.jpg',

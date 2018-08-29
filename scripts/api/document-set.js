@@ -48,17 +48,17 @@ class DocumentSetResolver {
     this.statsPromise = null
   }
 
-  async random ({criteria}) {
+  async random ({ criteria }) {
     return new DocumentResolver(
       await this.set.randomMatching(attributesFrom(criteria), criteria.query || '')
     )
   }
 
-  async all ({criteria, first, after}) {
+  async all ({ criteria, first, after }) {
     const attributes = attributesFrom(criteria)
     const query = criteria.query || ''
 
-    const [{hasPreviousPage, hasNextPage, documents}, count] = await Promise.all([
+    const [{ hasPreviousPage, hasNextPage, documents }, count] = await Promise.all([
       this.set.allMatching(attributes, query, first, after),
       this.set.countMatching(attributes, query)
     ])
@@ -72,15 +72,15 @@ class DocumentSetResolver {
 
     return {
       edges,
-      pageInfo: {count, hasPreviousPage, hasNextPage}
+      pageInfo: { count, hasPreviousPage, hasNextPage }
     }
   }
 
   mine (args, req) {
-    return this.random({criteria: {subject: req.user.name}})
+    return this.random({ criteria: { subject: req.user.name } })
   }
 
-  async rank ({speaker}) {
+  async rank ({ speaker }) {
     if (!this.statsPromise) {
       this.statsPromise = this.set.getUserStats(['speaker'])
     }
@@ -93,9 +93,9 @@ class DocumentSetResolver {
     }
   }
 
-  count ({criteria}) {
+  count ({ criteria }) {
     return this.set.countMatching(attributesFrom(criteria), criteria.query || '')
   }
 }
 
-module.exports = {DocumentSetResolver, DocumentResolver}
+module.exports = { DocumentSetResolver, DocumentResolver }

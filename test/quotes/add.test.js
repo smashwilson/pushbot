@@ -1,7 +1,7 @@
 const moment = require('moment-timezone')
 
-const {createDocumentSet} = require('../../scripts/documentset')
-const {OnlyMe} = require('./roles')
+const { createDocumentSet } = require('../../scripts/documentset')
+const { OnlyMe } = require('./roles')
 const Line = require('../../scripts/models/line')
 
 describe('DocumentSet add', function () {
@@ -23,7 +23,7 @@ describe('DocumentSet add', function () {
   it('creates "slackapp blarf:"', async function () {
     usesDatabase(this)
 
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     const blarfToAdd = 'person-one [2:00 PM] \n' +
       'foo bar baz\n' +
@@ -43,7 +43,7 @@ describe('DocumentSet add', function () {
   })
 
   it('extracts "speaker" attributes from slackapp input', async function () {
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     const blarfToAdd = 'person-one [2:00 PM] \n' +
       'one one one' +
@@ -62,14 +62,14 @@ describe('DocumentSet add', function () {
     await bot.say('me', `@hubot slackapp blarf: ${blarfToAdd}`)
     await bot.waitForResponse('1 blarf loaded.')
 
-    const doc = await documentSet.randomMatching({speaker: ['person-one', 'person-two']}, '')
+    const doc = await documentSet.randomMatching({ speaker: ['person-one', 'person-two'] }, '')
     expect(doc.getBody()).to.equal(expectedBlarf)
   })
 
   it('extracts "mention" attributes from slackapp input', async function () {
     usesDatabase(this)
 
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     const blarfToAdd = 'person-one [2:00 PM] \n' +
       'one one one' +
@@ -93,14 +93,14 @@ describe('DocumentSet add', function () {
     await bot.say('me', `@hubot slackapp blarf: ${blarfToAdd}`)
     await bot.waitForResponse('1 blarf loaded.')
 
-    const doc = await documentSet.randomMatching({mention: ['person-two', 'person-three']}, '')
+    const doc = await documentSet.randomMatching({ mention: ['person-two', 'person-three'] }, '')
     expect(doc.getBody()).to.equal(expectedBlarf)
   })
 
   it('removes "new messages" from "slackapp blarf:"', async function () {
     usesDatabase(this)
 
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     const blarfToAdd = 'person-one [2:00 PM] \n' +
       'one one one' +
@@ -127,7 +127,7 @@ describe('DocumentSet add', function () {
 
   it('removes "edited" from "slackapp blarf:"', async function () {
     usesDatabase(this)
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     const blarfToAdd = 'person-one [8:53 PM] \n' +
       'one one one' +
@@ -153,7 +153,7 @@ describe('DocumentSet add', function () {
 
   it('removes APP from integration output in "slackapp blarf:"', async function () {
     usesDatabase(this)
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     const blarfToAdd = 'me [1:10 PM]\n' +
       '!quote\n' +
@@ -179,7 +179,7 @@ describe('DocumentSet add', function () {
 
   it('rejects malformed "slackapp blarf:" input', async function () {
     usesDatabase(this)
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     const malformedBlarf = '!quote\n' +
       '\n' +
@@ -193,7 +193,7 @@ describe('DocumentSet add', function () {
 
   it('creates "verbatim blarf:"', async function () {
     usesDatabase(this)
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     const verbatimBlarf = 'look ma\n' +
       'no formatting'
@@ -208,7 +208,7 @@ describe('DocumentSet add', function () {
 
   it('extracts "mention" attributes from verbatim input', async function () {
     usesDatabase(this)
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     const verbatimBlarf = 'something about person-four\n' +
       'and @person-two with an @\n' +
@@ -223,13 +223,13 @@ describe('DocumentSet add', function () {
     await bot.say('me', `@hubot verbatim blarf: ${verbatimBlarf}`)
     await bot.waitForResponse('1 blarf loaded.')
 
-    const doc = await documentSet.randomMatching({mention: ['person-two', 'person-four']}, '')
+    const doc = await documentSet.randomMatching({ mention: ['person-two', 'person-four'] }, '')
     expect(doc.getBody()).to.equal(verbatimBlarf)
   })
 
   it('creates "buffer blarf"', async function () {
     usesDatabase(this)
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     bot.load('buffer.js')
 
@@ -255,7 +255,7 @@ describe('DocumentSet add', function () {
 
   it('extracts "speaker" attributes from buffer input', async function () {
     usesDatabase(this)
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     bot.load('buffer.js')
 
@@ -275,13 +275,13 @@ describe('DocumentSet add', function () {
     await bot.say('me', '@hubot buffer blarf')
     await bot.waitForResponse(/1 blarf loaded\./)
 
-    const doc = await documentSet.randomMatching({speaker: ['person-one', 'person-two']}, '')
+    const doc = await documentSet.randomMatching({ speaker: ['person-one', 'person-two'] }, '')
     expect(doc.getBody()).to.equal(expectedBlarf)
   })
 
   it('extracts "mention" attributes from buffer input', async function () {
     usesDatabase(this)
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
 
     bot.load('buffer.js')
 
@@ -306,7 +306,7 @@ describe('DocumentSet add', function () {
     await bot.say('me', '@hubot buffer blarf')
     await bot.waitForResponse(/1 blarf loaded\./)
 
-    const doc = await documentSet.randomMatching({mention: ['person-two', 'person-three']}, '')
+    const doc = await documentSet.randomMatching({ mention: ['person-two', 'person-three'] }, '')
     expect(doc.getBody()).to.equal(expectedBlarf)
   })
 
@@ -338,7 +338,7 @@ describe('DocumentSet add', function () {
     await bot.say('me', `@hubot slackapp blarf: ${source}`)
     await bot.waitForResponse('1 blarf loaded.')
 
-    const doc = await documentSet.randomMatching({speaker: ['person-one', 'person-two']}, '')
+    const doc = await documentSet.randomMatching({ speaker: ['person-one', 'person-two'] }, '')
     expect(doc.getBody()).to.equal(expected)
   })
 
@@ -358,7 +358,7 @@ describe('DocumentSet add', function () {
     usesDatabase(this)
     await bot.loadHelp()
 
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {add: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { add: true })
     await bot.say('me', '@hubot help blarf')
     await bot.waitForResponse(/buffer blarf/)
 

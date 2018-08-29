@@ -8,7 +8,7 @@ describe('!buffer', function () {
   let room, dm
 
   beforeEach(function () {
-    room = helper.createRoom({httpd: false})
+    room = helper.createRoom({ httpd: false })
   })
 
   afterEach(function () {
@@ -54,7 +54,7 @@ describe('!buffer', function () {
     })
 
     it('dumps a bunch of text in DM', async function () {
-      dm = helper.createRoom({name: 'D100', httpd: false})
+      dm = helper.createRoom({ name: 'D100', httpd: false })
       await dm.user.say('me', '@hubot buffer help')
       await delay()
 

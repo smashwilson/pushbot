@@ -1,6 +1,6 @@
 // Model classes for quotefile entries
 
-const {BEFORE, AFTER, RANDOM, LATEST} = require('./storage')
+const { BEFORE, AFTER, RANDOM, LATEST } = require('./storage')
 
 // A queryable collection of related documents.
 class DocumentSet {

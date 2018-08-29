@@ -2,10 +2,10 @@
 
 // Entry point for the database-backed "quotefile" management API.
 
-const {DocumentSet} = require('./model')
-const {Storage} = require('./storage')
-const {generate} = require('./commands')
-const {Anyone} = require('../roles')
+const { DocumentSet } = require('./model')
+const { Storage } = require('./storage')
+const { generate } = require('./commands')
+const { Anyone } = require('../roles')
 
 function populateCommand (name, command, alwaysUserOriented = false) {
   if (command === undefined || command === null || command === false) {
@@ -57,7 +57,7 @@ exports.createDocumentSet = function createDocumentSet (robot, name, commands) {
     }
   }
 
-  const storage = new Storage({db: robot.postgres})
+  const storage = new Storage({ db: robot.postgres })
   const documentSet = new DocumentSet(storage, spec)
 
   if (spec.features.kov) {

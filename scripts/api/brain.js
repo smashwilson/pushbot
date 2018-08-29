@@ -1,6 +1,6 @@
 const util = require('util')
 
-const {Admin} = require('../roles')
+const { Admin } = require('../roles')
 
 function adminOnly (req) {
   if (!Admin.isAllowed(req.robot, req.user)) throw new Error('You must be an admin to perform brain surgery')
@@ -27,7 +27,7 @@ class EntryResolver {
     this.target = target
   }
 
-  children ({limit, prefix}, req) {
+  children ({ limit, prefix }, req) {
     adminOnly(req)
 
     const ks = Object.keys(this.target).filter(each => each.startsWith(prefix))
@@ -35,7 +35,7 @@ class EntryResolver {
     return ks.slice(0, limit)
   }
 
-  inspect ({depth}, req) {
+  inspect ({ depth }, req) {
     adminOnly(req)
 
     return util.inspect(this.target, {
@@ -47,7 +47,7 @@ class EntryResolver {
     })
   }
 
-  json ({pretty}, req) {
+  json ({ pretty }, req) {
     adminOnly(req)
 
     return JSON.stringify(this.target, null, '  ')
@@ -55,7 +55,7 @@ class EntryResolver {
 }
 
 class BrainResolver {
-  keys ({limit, prefix}, req) {
+  keys ({ limit, prefix }, req) {
     adminOnly(req)
 
     const kvs = req.robot.brain.data._private
@@ -64,7 +64,7 @@ class BrainResolver {
     return ks.slice(0, limit)
   }
 
-  key ({name, property}, req) {
+  key ({ name, property }, req) {
     adminOnly(req)
     const target = targetFrom(req, name, property)
     return new EntryResolver(target)
@@ -72,7 +72,7 @@ class BrainResolver {
 }
 
 const BrainMutator = {
-  set ({name, property, value}, req) {
+  set ({ name, property, value }, req) {
     adminOnly(req)
 
     const parsed = JSON.parse(value)
@@ -90,4 +90,4 @@ const BrainMutator = {
   }
 }
 
-module.exports = {BrainResolver, BrainMutator}
+module.exports = { BrainResolver, BrainMutator }

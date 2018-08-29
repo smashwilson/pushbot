@@ -5,9 +5,9 @@ describe('mappings', function () {
     bot = new BotContext('../scripts/mapping.js')
     await bot.loadAuth('1')
 
-    bot.createUser('1', 'admin', {roles: ['mapmaker']})
-    bot.createUser('2', 'fancy', {roles: ['fancy lad']})
-    bot.createUser('3', 'dandy', {roles: ['dandy lad']})
+    bot.createUser('1', 'admin', { roles: ['mapmaker'] })
+    bot.createUser('2', 'fancy', { roles: ['fancy lad'] })
+    bot.createUser('3', 'dandy', { roles: ['dandy lad'] })
   })
 
   afterEach(async function () {

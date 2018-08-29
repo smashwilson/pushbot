@@ -12,7 +12,7 @@ module.exports = function (robot) {
       return
     }
 
-    const {documents} = await ds.allMatching([], '')
+    const { documents } = await ds.allMatching([], '')
 
     let longestUsername = 0
     for (const document of documents) {

@@ -6,12 +6,12 @@
 //   hubot toppun - Show the top 10 :beachball: receivers.
 //   hubot toppun @username - Show the number of :beachball: reactions given to each user.
 
-const {TallyMap} = require('./models/tally-map')
+const { TallyMap } = require('./models/tally-map')
 
 module.exports = function (robot) {
   if (robot.hearReaction) {
     robot.hearReaction(msg => {
-      console.log('got reaction message', {msg})
+      console.log('got reaction message', { msg })
       let delta = 0
       if (msg.message.type === 'added') { delta = 1 }
       if (msg.message.type === 'removed') { delta = -1 }

@@ -1,4 +1,4 @@
-const {UserSetResolver} = require('../../scripts/api/user-set')
+const { UserSetResolver } = require('../../scripts/api/user-set')
 
 describe('UserSetResolver', function () {
   let bot, self, req, resolver
@@ -7,11 +7,11 @@ describe('UserSetResolver', function () {
     bot = new BotContext()
     await bot.loadAuth('1')
 
-    self = bot.createUser('1', 'self', {roles: ['role one', 'role two']})
+    self = bot.createUser('1', 'self', { roles: ['role one', 'role two'] })
     bot.createUser('2', 'two')
     bot.createUser('3', 'three')
 
-    req = {robot: bot.getRobot(), user: self}
+    req = { robot: bot.getRobot(), user: self }
     resolver = new UserSetResolver()
   })
 
@@ -30,21 +30,21 @@ describe('UserSetResolver', function () {
     it('returns resolvers for all users', function () {
       const results = resolver.all({}, req)
       expect(results.map(each => each.user)).to.have.deep.members([
-        {id: '1', name: 'self', roles: ['role one', 'role two']},
-        {id: '2', name: 'two'},
-        {id: '3', name: 'three'}
+        { id: '1', name: 'self', roles: ['role one', 'role two'] },
+        { id: '2', name: 'two' },
+        { id: '3', name: 'three' }
       ])
     })
   })
 
   describe('withName', function () {
     it('returns a resolver for a user by name', function () {
-      const result = resolver.withName({name: 'two'}, req)
+      const result = resolver.withName({ name: 'two' }, req)
       expect(result.user.id).to.eql('2')
     })
 
     it('return null if no such user exists', function () {
-      const result = resolver.withName({name: 'snorgle'}, req)
+      const result = resolver.withName({ name: 'snorgle' }, req)
       expect(result).to.eql(null)
     })
   })
@@ -52,7 +52,7 @@ describe('UserSetResolver', function () {
   describe('UserResolver', function () {
     it('reports static properties directly from the User model', function () {
       self.real_name = 'Real Name'
-      self.slack = {tz: 'America/New_York', presence: 'active'}
+      self.slack = { tz: 'America/New_York', presence: 'active' }
 
       const userResolver = resolver.me({}, req)
 
@@ -138,9 +138,9 @@ describe('UserSetResolver', function () {
       const userResolver = resolver.me({}, req)
       const roles = userResolver.roles({}, req)
       expect(roles).to.eql([
-        {name: 'admin'},
-        {name: 'role one'},
-        {name: 'role two'}
+        { name: 'admin' },
+        { name: 'role one' },
+        { name: 'role two' }
       ])
     })
 
@@ -153,10 +153,10 @@ describe('UserSetResolver', function () {
         }
       })
 
-      const given = await resolver.me({}, req).topReactionsGiven({limit: 2}, req)
+      const given = await resolver.me({}, req).topReactionsGiven({ limit: 2 }, req)
       expect(given).to.deep.equal([
-        {count: 10, emoji: {name: 'yellow_heart', url: null}},
-        {count: 7, emoji: {name: 'sparkles', url: null}}
+        { count: 10, emoji: { name: 'yellow_heart', url: null } },
+        { count: 7, emoji: { name: 'sparkles', url: null } }
       ])
     })
 
@@ -169,10 +169,10 @@ describe('UserSetResolver', function () {
         }
       })
 
-      const received = await resolver.me({}, req).topReactionsReceived({limit: 2}, req)
+      const received = await resolver.me({}, req).topReactionsReceived({ limit: 2 }, req)
       expect(received).to.deep.equal([
-        {count: 50, emoji: {name: 'boom', url: null}},
-        {count: 18, emoji: {name: 'heart', url: null}}
+        { count: 50, emoji: { name: 'boom', url: null } },
+        { count: 18, emoji: { name: 'heart', url: null } }
       ])
     })
   })

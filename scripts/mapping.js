@@ -1,17 +1,17 @@
 // Description:
 //   Maintain arbitrary sets of username => text mappings.
 
-const {parseArguments} = require('./helpers')
+const { parseArguments } = require('./helpers')
 
-const {createDocumentSet} = require('./documentset')
-const {MapMaker, withName} = require('./roles')
+const { createDocumentSet } = require('./documentset')
+const { MapMaker, withName } = require('./roles')
 
 const mappings = new Map()
 
 module.exports = function (robot) {
   function persistMappings () {
     const payload = {}
-    for (const [name, {options}] of mappings) {
+    for (const [name, { options }] of mappings) {
       payload[name] = options
     }
     robot.brain.set('mappingMeta', payload)
@@ -115,10 +115,10 @@ module.exports = function (robot) {
       return
     }
 
-    const {documentSet, options} = mappings.get(name)
+    const { documentSet, options } = mappings.get(name)
 
     if (args.null) {
-      documentSet.change({nullBody: args.null})
+      documentSet.change({ nullBody: args.null })
       options.null = args.null
     }
 

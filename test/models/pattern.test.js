@@ -82,7 +82,7 @@ describe('Pattern', function () {
     let room, cache
 
     beforeEach(async function () {
-      room = helper.createRoom({httpd: false})
+      room = helper.createRoom({ httpd: false })
 
       cache = Cache.forChannel(room.robot, 'C12345678')
       const lines = [
@@ -90,10 +90,10 @@ describe('Pattern', function () {
         'aaa 111', 'bbb 111', 'ccc 111', 'ddd 111', 'eee 111'
       ]
       for (const line of lines) {
-        cache.append({message: {
+        cache.append({ message: {
           text: line,
-          user: {name: 'someone'}
-        }})
+          user: { name: 'someone' }
+        } })
       }
     })
 

@@ -1,6 +1,6 @@
-const {OnlyMe} = require('./roles')
+const { OnlyMe } = require('./roles')
 
-const {createDocumentSet} = require('../../scripts/documentset')
+const { createDocumentSet } = require('../../scripts/documentset')
 
 describe('DocumentSet query', function () {
   let bot, documentSet
@@ -27,7 +27,7 @@ describe('DocumentSet query', function () {
         const attributes = []
         if (doc.body && doc.subject) {
           body = doc.body
-          attributes.push({kind: 'subject', value: doc.subject})
+          attributes.push({ kind: 'subject', value: doc.subject })
         } else {
           body = doc
         }
@@ -117,9 +117,9 @@ describe('DocumentSet query', function () {
     usesDatabase(this)
 
     await populate({ userOriented: true }, [
-      {body: 'wrong 1', subject: 'me'},
-      {body: 'correct', subject: 'you'},
-      {body: 'wrong 2', subject: 'other'}
+      { body: 'wrong 1', subject: 'me' },
+      { body: 'correct', subject: 'you' },
+      { body: 'wrong 2', subject: 'other' }
     ])
     await bot.say('me', '@hubot blarf @you')
     await bot.waitForResponse('correct')
@@ -129,11 +129,11 @@ describe('DocumentSet query', function () {
     usesDatabase(this)
 
     await populate({ userOriented: true }, [
-      {body: 'wrong 1', subject: 'you'},
-      {body: 'wrong 2', subject: 'you'},
-      {body: 'correct', subject: 'me'},
-      {body: 'wrong 3', subject: 'other'},
-      {body: 'wrong 4', subject: 'person-four'}
+      { body: 'wrong 1', subject: 'you' },
+      { body: 'wrong 2', subject: 'you' },
+      { body: 'correct', subject: 'me' },
+      { body: 'wrong 3', subject: 'other' },
+      { body: 'wrong 4', subject: 'person-four' }
     ])
     await bot.say('me', '@hubot blarf')
     await bot.waitForResponse('correct')
@@ -147,9 +147,9 @@ describe('DocumentSet query', function () {
     })
 
     for (let i = 0; i < 10; i++) {
-      await documentSet.add('me', `document #${i}`, [{kind: 'subject', value: 'me'}])
+      await documentSet.add('me', `document #${i}`, [{ kind: 'subject', value: 'me' }])
     }
-    await documentSet.add('me', 'latest', [{kind: 'subject', value: 'me'}])
+    await documentSet.add('me', 'latest', [{ kind: 'subject', value: 'me' }])
 
     await bot.say('me', '@hubot blarf')
     await bot.waitForResponse('latest')
@@ -157,7 +157,7 @@ describe('DocumentSet query', function () {
 
   it('generates default help text', async function () {
     await bot.loadHelp()
-    documentSet = createDocumentSet(bot.getRobot(), 'blarf', {query: true})
+    documentSet = createDocumentSet(bot.getRobot(), 'blarf', { query: true })
     await bot.say('me', '@hubot help blarf')
     await bot.waitForResponse(/blarf/)
 

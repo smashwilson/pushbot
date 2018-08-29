@@ -7,14 +7,14 @@ const express = require('express')
 const cookieSession = require('cookie-session')
 const request = require('request')
 const graphqlHTTP = require('express-graphql')
-const {buildSchema} = require('graphql')
+const { buildSchema } = require('graphql')
 const passport = require('passport')
 const cors = require('cors')
 const SlackStrategy = require('passport-slack').Strategy
 const BasicStrategy = require('passport-http').BasicStrategy
 
 const root = require('./api/root')
-const {CalendarMap} = require('./models/calendar')
+const { CalendarMap } = require('./models/calendar')
 
 const PORT = 8080
 const MAGICAL_WEAK_SPOT_TOKEN = process.env.MAGICAL_WEAK_SPOT_TOKEN || 'ni'
@@ -43,11 +43,11 @@ class Status {
     this.killed = false
 
     this.databasePromise = new Promise((resolve, reject) => {
-      this.databaseCallbacks = {resolve, reject}
+      this.databaseCallbacks = { resolve, reject }
     })
 
     this.stonithPromise = new Promise((resolve, reject) => {
-      this.stonithCallbacks = {resolve, reject}
+      this.stonithCallbacks = { resolve, reject }
     })
   }
 
@@ -137,7 +137,7 @@ module.exports = function (robot) {
     passport.use(new BasicStrategy(
       (username, password, done) => {
         if (username !== DEV_USERNAME) {
-          return done(null, false, {message: 'Incorrect username.'})
+          return done(null, false, { message: 'Incorrect username.' })
         }
 
         const existing = robot.brain.userForName(username)
@@ -146,7 +146,7 @@ module.exports = function (robot) {
         }
 
         const uid = require('crypto').randomBytes(32).toString('hex')
-        const created = robot.brain.userForId(uid, {name: username, room: username})
+        const created = robot.brain.userForId(uid, { name: username, room: username })
         done(null, created)
       }
     ))
@@ -243,7 +243,7 @@ module.exports = function (robot) {
   // GraphQL
 
   const schemaPath = path.join(__dirname, 'api', 'schema.graphql')
-  const schema = buildSchema(fs.readFileSync(schemaPath, {encoding: 'utf8'}))
+  const schema = buildSchema(fs.readFileSync(schemaPath, { encoding: 'utf8' }))
 
   app.options('/graphql', cors(CORS_OPTIONS))
   app.use('/graphql', cors(CORS_OPTIONS), ensureAuthenticated, graphqlHTTP({
@@ -321,7 +321,7 @@ module.exports = function (robot) {
             return new Error(`Invalid certificate for ${addr}: ${altNames}`)
           }
         },
-        headers: {'x-token': MAGICAL_WEAK_SPOT_TOKEN},
+        headers: { 'x-token': MAGICAL_WEAK_SPOT_TOKEN },
         timeout: 30
       }, (error, response, body) => {
         if (error) {
@@ -353,7 +353,7 @@ module.exports = function (robot) {
 
     const store = robot['hubot-events'].getStore()
     const events = store.search({})
-    const feed = events.renderICal({calendarName: '#~s events', userTz: 'America/New_York'})
+    const feed = events.renderICal({ calendarName: '#~s events', userTz: 'America/New_York' })
 
     res.type('text/calendar')
     res.send(feed)

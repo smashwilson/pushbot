@@ -137,22 +137,22 @@ describe('reactions', function () {
   describe('!toppun', function () {
     beforeEach(function () {
       bot.store('reactionsReceived', {
-        '0': {beachball: 100},
-        '1': {beachball: 90, thumbsup: 76},
-        '2': {beachball: 80},
-        '3': {beachball: 70},
-        '4': {beachball: 60},
-        '5': {beachball: 50},
-        '6': {beachball: 40},
-        '7': {beachball: 30},
-        '8': {beachball: 20},
-        '9': {beachball: 10},
-        '10': {beachball: 9},
-        '11': {beachball: 8},
-        '12': {beachball: 7},
-        '13': {beachball: 6},
-        '14': {beachball: 5},
-        '15': {beachball: 4}
+        '0': { beachball: 100 },
+        '1': { beachball: 90, thumbsup: 76 },
+        '2': { beachball: 80 },
+        '3': { beachball: 70 },
+        '4': { beachball: 60 },
+        '5': { beachball: 50 },
+        '6': { beachball: 40 },
+        '7': { beachball: 30 },
+        '8': { beachball: 20 },
+        '9': { beachball: 10 },
+        '10': { beachball: 9 },
+        '11': { beachball: 8 },
+        '12': { beachball: 7 },
+        '13': { beachball: 6 },
+        '14': { beachball: 5 },
+        '15': { beachball: 4 }
       })
     })
 

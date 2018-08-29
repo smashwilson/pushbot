@@ -2,7 +2,7 @@
 //   View or change the current log level.
 
 const levels = require('log')
-const {Admin} = require('./roles')
+const { Admin } = require('./roles')
 
 module.exports = function (robot) {
   robot.respond(/log level(?: (\S+))?/, msg => {

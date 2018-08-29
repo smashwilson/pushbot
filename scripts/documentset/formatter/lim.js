@@ -21,5 +21,5 @@ module.exports = function (lines, speakers, mentions) {
       break
   }
 
-  return {body, speakers, mentions: []}
+  return { body, speakers, mentions: [] }
 }

@@ -1,8 +1,8 @@
 // Description:
 //   Quotefile central dispatch.
 
-const {createDocumentSet} = require('./documentset')
-const {Admin, QuotePontiff, PoetLaureate} = require('./roles')
+const { createDocumentSet } = require('./documentset')
+const { Admin, QuotePontiff, PoetLaureate } = require('./roles')
 const formatter = require('./documentset/formatter')
 
 module.exports = function (robot) {
