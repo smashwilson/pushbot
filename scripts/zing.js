@@ -7,6 +7,7 @@
 const { atRandom } = require('./helpers')
 
 const zings = {
+  aschwa2: 'https://user-images.githubusercontent.com/17565/45127811-20bfc300-b148-11e8-930b-0c8be7d0521f.jpg',
   atomicknight: 'https://user-images.githubusercontent.com/17565/27990023-1c97c360-6417-11e7-96b9-aa73761b1a09.jpg',
   femshep: 'https://user-images.githubusercontent.com/17565/27990024-1e83c4f8-6417-11e7-9a49-3292c761110f.jpg',
   fenris: 'https://user-images.githubusercontent.com/17565/27990025-20754778-6417-11e7-992e-377d82831c8c.jpg',
