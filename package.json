@@ -12,7 +12,7 @@
     "cors": "2.8.4",
     "express": "4.16.3",
     "express-graphql": "0.6.12",
-    "graphql": "0.13.2",
+    "graphql": "14.0.2",
     "hubot": "3.1.1",
     "hubot-auth": "2.1.0",
     "hubot-diagnostics": "1.0.0",
