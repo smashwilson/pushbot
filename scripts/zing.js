@@ -20,7 +20,8 @@ const zings = {
   phbarna: 'https://user-images.githubusercontent.com/17565/28244206-7ec77720-69b1-11e7-8456-dd0aa5055511.png',
   earmuffs: 'https://user-images.githubusercontent.com/17565/32245435-241aedde-be52-11e7-862d-eac1615022c7.jpg',
   frey: 'https://user-images.githubusercontent.com/17565/32245443-2836eb84-be52-11e7-8ef4-6aec7b1af49b.jpg',
-  haus: 'https://user-images.githubusercontent.com/17565/32245445-29e0105a-be52-11e7-90bf-1b868bbab590.jpg'
+  haus: 'https://user-images.githubusercontent.com/17565/32245445-29e0105a-be52-11e7-90bf-1b868bbab590.jpg',
+  wrbritt: 'https://user-images.githubusercontent.com/17565/47888710-4c93b800-de1c-11e8-9142-e69bfb582407.jpeg'
 }
 
 module.exports = function (robot) {
