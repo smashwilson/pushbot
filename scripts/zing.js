@@ -7,6 +7,7 @@
 const { atRandom } = require('./helpers')
 
 const zings = {
+  aschwa2: 'https://user-images.githubusercontent.com/17565/45127811-20bfc300-b148-11e8-930b-0c8be7d0521f.jpg',
   atomicknight: 'https://user-images.githubusercontent.com/17565/27990023-1c97c360-6417-11e7-96b9-aa73761b1a09.jpg',
   femshep: 'https://user-images.githubusercontent.com/17565/27990024-1e83c4f8-6417-11e7-9a49-3292c761110f.jpg',
   fenris: 'https://user-images.githubusercontent.com/17565/27990025-20754778-6417-11e7-992e-377d82831c8c.jpg',
@@ -19,7 +20,10 @@ const zings = {
   phbarna: 'https://user-images.githubusercontent.com/17565/28244206-7ec77720-69b1-11e7-8456-dd0aa5055511.png',
   earmuffs: 'https://user-images.githubusercontent.com/17565/32245435-241aedde-be52-11e7-862d-eac1615022c7.jpg',
   frey: 'https://user-images.githubusercontent.com/17565/32245443-2836eb84-be52-11e7-8ef4-6aec7b1af49b.jpg',
-  haus: 'https://user-images.githubusercontent.com/17565/32245445-29e0105a-be52-11e7-90bf-1b868bbab590.jpg'
+  haus: 'https://user-images.githubusercontent.com/17565/32245445-29e0105a-be52-11e7-90bf-1b868bbab590.jpg',
+  wrbritt: 'https://user-images.githubusercontent.com/17565/47888710-4c93b800-de1c-11e8-9142-e69bfb582407.jpeg',
+  rachel: 'https://user-images.githubusercontent.com/17565/48202207-390fb200-e332-11e8-9168-f7e29b4fac3a.jpg',
+  shepard: 'https://user-images.githubusercontent.com/17565/48202235-517fcc80-e332-11e8-80ea-53804ab9c1d8.jpg'
 }
 
 module.exports = function (robot) {

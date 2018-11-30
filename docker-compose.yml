@@ -29,6 +29,7 @@ services:
       HUBOT_WEATHER_APIKEY:
       API_BASE_URL: http://localhost:8080
       WEB_BASE_URL:
+      HUBOT_LOG_LEVEL:
     ports:
     - '8080:8080'
     depends_on:
