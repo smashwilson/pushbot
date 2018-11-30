@@ -66,6 +66,7 @@ module.exports = (robot) ->
       "https://media.giphy.com/media/OIoQ9FzLel1qo/giphy.gif"
       "https://media.giphy.com/media/l4FGzzKKoxuv7AaL6/giphy.gif"
       "https://i.imgur.com/MAiIwW8.gifv"
+      "https://i.imgur.com/mGXdpdp.gif"
     ]
 
   robot.respond /magic8/i, (msg) ->
