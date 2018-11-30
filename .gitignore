@@ -3,6 +3,7 @@ node_modules
 .env
 .hubot_history
 botrc.sh
-shovebotrc.sh
-botrc.ps1
-shovebotrc.ps1
+botrc.*.sh
+!botrc.example.sh
+botrc.*.ps1
+!botrc.example.ps1
