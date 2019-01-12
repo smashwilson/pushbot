@@ -47,12 +47,12 @@ module.exports = function (robot) {
   const allUsers = function () {
     const userMap = robot.brain.users()
     const ids = Object.keys(userMap)
-    return Array.from(ids).map((id) => userMap[id])
+    return Array.from(ids, id => userMap[id])
   }
 
   robot.respond(/hug(?: (.*))?/i, function (msg) {
     const target = targetFrom(msg)
-    return msg.emote(`compresses ${target} in a cold, metallic embrace`)
+    msg.emote(`compresses ${target} in a cold, metallic embrace`)
   })
 
   robot.respond(/hi5(?: (.*)?)/i, function (msg) {
@@ -128,99 +128,74 @@ module.exports = function (robot) {
       'INSUFFICIENT DATA FOR MEANINGFUL ANSWER'
     ]
 
-    const all = positive
-    all.push(...Array.from(negative || []))
-    all.push(...Array.from(neutral || []))
-
-    return msg.reply(atRandom(all))
+    const all = [...positive, ...negative, ...neutral]
+    msg.reply(atRandom(all))
   })
 
   robot.respond(/judge/i, function (msg) {
     const chance = _.random(100)
-    return msg.reply(chance < 80 ? 'HARSH' : 'Lenient.')
+    msg.reply(chance < 80 ? 'HARSH' : 'Lenient.')
   })
 
   robot.respond(/win/i, msg => msg.reply('You win!'))
 
-  robot.respond(/barf *(.*)/i, function (msg) {
-    let text
-    let n
-    if (!msg.match[1]) {
-      text = 'barf'
-    } else {
-      text = msg.match[1]
-    }
-    text = text.toUpperCase()
+  robot.respond(/barf\s*([^]*)/i, function (msg) {
+    const text = (!msg.match[1] ? 'barf' : msg.match[1]).toUpperCase()
 
     const barfify = function (letter) {
-      if (['A', 'E', 'F', 'H', 'I',
-        'J', 'L', 'M', 'N', 'O', 'R',
-        'S', 'U', 'V', 'W', 'Y', 'Z'].includes(letter)) {
-        return ([1, 2, 3, 4, 5].map((n) => letter))
+      if ('AEFHIJKLMNORSUVWYZ'.includes(letter)) {
+        let expanded = ''
+        for (let i = 0; i < 5; i++) {
+          expanded += letter
+        }
+        return expanded
+      } else {
+        return letter
       }
-      return [letter]
     }
-    const line = (Array.from(text).map((char) => (barfify(char)).join(''))).join('')
-    const lines = ((() => {
-      const result = []
-      for (n = 1; n <= 5; n++) {
-        result.push(line)
-      }
-      return result
-    })())
-    return msg.send(lines.join('\n'))
+
+    let line = ''
+    for (let i = 0; i < text.length; i++) {
+      line += barfify(text[i])
+    }
+
+    const lines = []
+    for (let i = 0; i < 5; i++) {
+      lines.push(line)
+    }
+    msg.send(lines.join('\n'))
   })
 
-  robot.respond(/sde *(.*)/i, function (msg) {
-    let text = msg.match[1] ? msg.match[1] : 'shut down everything'
-    const lines = text.split(' ')
+  robot.respond(/sde\s*([^]*)/i, async function (msg) {
+    const text = msg.match[1] || 'shut down everything'
+    const lines = text.split(/\s+/)
     if (lines.length > 10) {
       msg.send("Ain't nobody got time for that!")
       return
     }
 
-    var sendThenWait = function (portion, rest) {
-      text = rest.length > 0
-        ? `${portion}.`
-        : `${portion.toUpperCase()}!`
-      msg.send(text)
-      if (rest.length > 0) {
-        return setTimeout(() => {
-          return sendThenWait(rest.shift(), rest)
-        }
-        , 1000)
-      }
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i]
+      msg.send(i === lines.length - 1 ? `${line.toUpperCase()}!` : `${line}.`)
+      await new Promise(resolve => setTimeout(resolve, 1000))
     }
-    return sendThenWait(lines.shift(), lines)
   })
 
   robot.respond(/(?:harm|betray)(?: (\S+))?/i, function (msg) {
-    let backfire, target
-    if (Array.from(betrayImmune).includes(msg.message.user.id)) {
-      backfire = false
-    } else {
-      backfire = _.random(100) < 10
-    }
+    const backfire = betrayImmune.includes(msg.message.user.id) || _.random(100) < 10
 
+    let target
     if (backfire) {
       target = msg.message.user.name
     } else if (msg.match[1]) {
-      let needle
       target = targetFrom(msg)
       const tname = target.replace(/^@/, '')
       const tu = robot.brain.userForName(tname)
-      if ((tu != null) && (needle = tu.id.toString(), Array.from(betrayImmune).includes(needle))) { target = msg.message.user.name }
+      if (tu && betrayImmune.includes(tu.id)) {
+        target = msg.message.user.name
+      }
     } else {
-      const potential = ((() => {
-        const result = []
-        for (let u of Array.from(allUsers())) {
-          var needle1
-          if ((needle1 = u.id.toString(), !Array.from(betrayImmune).includes(needle1))) {
-            result.push(u.name)
-          }
-        }
-        return result
-      })())
+      const potential = allUsers().filter(u => !betrayImmune.includes(u.id)).map(u => u.name)
       if (potential.length > 0) {
         target = atRandom(potential)
       } else {
@@ -229,7 +204,7 @@ module.exports = function (robot) {
       }
     }
 
-    return msg.emote(atRandom([
+    msg.emote(atRandom([
       `stabs @${target} in the back!`,
       `stabs @${target} in the front!`,
       `stabs @${target} in the spleen!`,
@@ -240,19 +215,16 @@ module.exports = function (robot) {
   })
 
   robot.respond(/\S+hose(?: (@?\w+))?/i, function (msg) {
-    let prefix
     msg.send('_doof doof doof_')
-
-    if (msg.match[1] != null) { prefix = `${msg.match[1]}: ` }
-    if (prefix == null) { prefix = '' }
+    const prefix = msg.match[1] ? `${msg.match[1]}: ` : ''
 
     const fn = () => msg.send(`${prefix}_splat splat splat_`)
-    return setTimeout(fn, _.random(3000, 5000))
+    setTimeout(fn, _.random(3000, 5000))
   })
 
   robot.respond(/welcome(?: +(@?\w+))?/i, function (msg) {
     const target = msg.match[1] ? `, ${msg.match[1]}` : ''
-    return msg.send(`\
+    msg.send(`\
 Welcome to #~s${target}! Here's a quick intro to Slack and me:
 https://gist.github.com/smashwilson/325d444e7a080906f8b9\
 `
@@ -292,19 +264,19 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
 
   robot.respond(/pokemonsay ([^]*)/i, function (msg) {
     const unownify = function (c) {
-      if (Array.from('abcdefghijklmnopqrstuvwxyz').includes(c)) {
+      if ('abcdefghijklmnopqrstuvwxyz'.includes(c)) {
         return `:unown-${c}:`
-      } else if (Array.from('!').includes(c)) {
+      } else if (c === '!') {
         return ':unown-ex:'
-      } else if (Array.from('?').includes(c)) {
+      } else if (c === '?') {
         return ':unown-qu:'
       } else {
         return c
       }
     }
-    const lower_string = msg.match[1].toLowerCase()
-    const unown_string = lower_string.split('').map(unownify).join('')
-    return msg.send(unown_string)
+    const lowerString = msg.match[1].toLowerCase()
+    const unownString = lowerString.split('').map(unownify).join('')
+    return msg.send(unownString)
   })
 
   robot.hear(/(^|[^0-9])69([^0-9]|$)/, msg => msg.send('https://thats.thesexnumber.fyi/'))
@@ -343,7 +315,7 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
 
   robot.respond(/quite/i, msg => msg.reply('Indeed.'))
 
-  return robot.respond(/clap\s+([^]+)/i, function (msg) {
+  return robot.respond(/clap\s*([^]+)/i, function (msg) {
     const words = msg.match[1].split(/\W+/).filter(word => word.length > 0)
     return msg.send(words.join(' :clap: '))
   })
