@@ -17,6 +17,7 @@
 #   hubot nope - Just nope the f out of there
 #   hubot fine - Show just how fine it is
 #   hubot embiggen - Tickets... to the gun show
+#   hubot clap - Give :clap: your :clap: words :clap: some :clap: emphasis
 
 # Configuration:
 #
@@ -255,7 +256,7 @@ module.exports = (robot) ->
 
   robot.hear /(^|[^0-9])69([^0-9]|$)/, (msg) ->
     msg.send "https://thats.thesexnumber.fyi/"
-    
+
   robot.respond /femshep/i, (msg) ->
     msg.send atRandom [
       "http://media.tumblr.com/tumblr_lsxdm7yONC1qbplir.gif"
@@ -286,9 +287,13 @@ module.exports = (robot) ->
 
   robot.hear /\b(?:tit downwards|breasted boobily)\b/i, (msg) ->
     msg.send "http://imgur.com/TRAPYBX"
-    
+
   robot.respond /embiggen\s+([^]+)/i, (msg) ->
     msg.send ":muscle-left: #{msg.match[1]} :muscle-right:"
 
   robot.respond /quite/i, (msg) ->
     msg.reply "Indeed."
+
+  robot.respond /clap\s+([^]+)/i, (msg) ->
+    words = msg.match[1].split(/\W+/).filter (word) -> word.length > 0
+    msg.send words.join " :clap: "
