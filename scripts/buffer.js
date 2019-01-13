@@ -36,6 +36,10 @@ module.exports = function (robot) {
   robot.mostRecent = msg => {
     return robot.cacheForChannel(robot, msg.message.room).mostRecent()
   }
+  robot.mostRecentText = msg => {
+    const payload = robot.mostRecent(msg)
+    return !payload ? null : payload.text
+  }
 
   // Accumulate messages into the appropriate cache for each channel.
   robot.catchAll(msg => {
