@@ -295,5 +295,5 @@ module.exports = (robot) ->
     msg.reply "Indeed."
 
   robot.respond /clap\s+([^]+)/i, (msg) ->
-    words = msg.match[1].split(/\W+/).filter (word) -> word.length > 0
+    words = msg.match[1].split(/\s+/).filter (word) -> word.length > 0
     msg.send words.join " :clap: "
