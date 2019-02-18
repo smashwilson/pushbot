@@ -70,7 +70,7 @@
     "hubot-test-helper": "1.9.0",
     "json-stable-stringify": "1.0.1",
     "mocha": "5.2.0",
-    "sinon": "7.2.2"
+    "sinon": "7.2.4"
   },
   "scripts": {
     "lint": "eslint scripts/ test/",
