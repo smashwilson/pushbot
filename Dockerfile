@@ -10,6 +10,7 @@ RUN adduser -s /bin/false -D pushbot
 
 WORKDIR /usr/src/app
 ADD package.json /usr/src/app/package.json
+ADD package-lock.json /usr/src/app/package-lock.json
 RUN npm ci .
 ADD . /usr/src/app
 RUN chown -R pushbot:pushbot /usr/src/app
