@@ -83,7 +83,8 @@ module.exports = function (robot) {
         return
       }
 
-      const { lat, lng, formatted_address: address } = geocodeResult.results[0]
+      const { lat, lng } = geocodeResult.results[0].geometry.location
+      const address = geocodeResult.results[0].formatted_address
 
       const forecastURL = `https://api.darksky.net/forecast/${FORECAST_APIKEY}/${lat},${lng}`
       const forecastResult = await request({ uri: forecastURL, json: true })
