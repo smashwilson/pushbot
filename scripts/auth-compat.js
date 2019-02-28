@@ -36,7 +36,7 @@ module.exports = function (robot) {
   const reloadUsers = function () {
     if (!robot.adapter.client) { return }
     if (!robot.adapter.client.rtm) { return }
-    if (!robot.adapter.cliemt.rtm.dataStore) { return }
+    if (!robot.adapter.client.rtm.dataStore) { return }
 
     let count = 0
     for (let id in robot.adapter.client.rtm.dataStore.users) {

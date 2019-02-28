@@ -1,7 +1,10 @@
-# Rename this to botrc.sh and fill in missing values to get started.
+#!/bin/sh
+#
+# Rename this file to secrets/botrc.sh and fill in missing values to get started.
 
 # User ID settings
 
+# Set to the user ID of the bot's primary admin. On Slack, you'll need to look this up manually.
 export HUBOT_AUTH_ADMIN=1
 export HUBOT_BETRAY_IMMUNE=1
 
