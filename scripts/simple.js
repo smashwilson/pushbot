@@ -1,13 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS204: Change includes calls to have a more natural evaluation order
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
 // Description:
 //   Simple "pick one of these random responses"-style commands.
 //
@@ -316,7 +306,7 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
   robot.respond(/quite/i, msg => msg.reply('Indeed.'))
 
   return robot.respond(/clap\s*([^]+)/i, function (msg) {
-    const words = msg.match[1].split(/\W+/).filter(word => word.length > 0)
+    const words = msg.match[1].split(/\s+/).filter(word => word.length > 0)
     return msg.send(words.join(' :clap: '))
   })
 }

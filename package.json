@@ -12,7 +12,7 @@
     "cors": "2.8.5",
     "express": "4.16.4",
     "express-graphql": "0.7.1",
-    "graphql": "14.0.2",
+    "graphql": "14.1.1",
     "hubot": "3.2.0",
     "hubot-auth": "2.1.0",
     "hubot-diagnostics": "1.0.0",
@@ -24,7 +24,7 @@
     "hubot-help": "1.0.1",
     "hubot-heroku-keepalive": "1.0.3",
     "hubot-maps": "0.0.3",
-    "hubot-markov": "2.1.0",
+    "hubot-markov": "2.1.2",
     "hubot-pipe": "0.0.6",
     "hubot-pipe-scripts": "0.0.2",
     "hubot-plan": "1.0.0",
@@ -33,7 +33,7 @@
     "hubot-roller": "0.2.0",
     "hubot-rules": "1.0.0",
     "hubot-scripts": "2.17.2",
-    "hubot-shellish": "1.0.0",
+    "hubot-shellish": "2.0.0",
     "hubot-shipit": "0.2.1",
     "hubot-slack": "4.6.0",
     "hubot-swanson": "1.2.0",
@@ -46,21 +46,21 @@
     "passport": "0.4.0",
     "passport-http": "0.3.0",
     "passport-slack": "0.0.7",
-    "pg-promise": "8.5.4",
+    "pg-promise": "8.5.6",
     "request": "2.88.0",
-    "request-promise-native": "1.0.5",
+    "request-promise-native": "1.0.7",
     "tinycolor2": "1.4.1",
     "twit": "2.2.11",
     "underscore": "1.9.1",
     "uuid": "3.3.2",
-    "yargs": "^12.0.5"
+    "yargs": "^13.1.0"
   },
   "engines": {
     "node": "0.10.x"
   },
   "devDependencies": {
     "chai": "4.2.0",
-    "eslint": "5.12.0",
+    "eslint": "5.14.1",
     "eslint-config-standard": "12.0.0",
     "eslint-plugin-import": "2.14.0",
     "eslint-plugin-node": "8.0.1",
@@ -69,8 +69,8 @@
     "fs-promise": "2.0.3",
     "hubot-test-helper": "1.9.0",
     "json-stable-stringify": "1.0.1",
-    "mocha": "5.2.0",
-    "sinon": "7.2.2"
+    "mocha": "6.0.2",
+    "sinon": "7.2.5"
   },
   "scripts": {
     "lint": "eslint scripts/ test/",
