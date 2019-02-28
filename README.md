@@ -14,19 +14,14 @@ Once Docker is installed and running, build and pull containers with:
 
 ```bash
 # One-time setup
-docker-compose build
-docker-compose pull
-touch .hubot_history
-chmod 666 .hubot_history
+script/bootstrap
 ```
 
 Then, to run pushbot with a shell adapter in the current terminal window:
 
 ```bash
-docker-compose run --service-ports pushbot
+bin/bot
 ```
-
-If you need to test admin-only functionality, set the environment variable `HUBOT_AUTH_ADMIN` to `"1"`. The `--service-ports` argument is only strictly necessary if you wish to exercise the web API.
 
 ### References
 
@@ -36,7 +31,6 @@ Want to contribute scripts? Here are a few references that might be handy.
  * The core node.js API is documented at [the official node website](https://nodejs.org/dist/latest-v7.x/docs/api/). Pushbot is currently running on node 7.9.
  * You can use modern JavaScript here, including class expressions, let and const, and async/await. I like to use [node.green](http://node.green/) to see what JavaScript features are available natively.
  * Non-core packages, like `request`, can be found on [npm](https://www.npmjs.com/).
- * Some older scripts are written in a language called [CoffeeScript](http://coffeescript.org/), a JavaScript transpiler.
  * Hubot's scripting API is documented [in the hubot repo](https://github.com/github/hubot/blob/master/docs/scripting.md). You can also use the other scripts in `scripts/` for reference, of course.
 
 If your script starts to become big and complicated, you should consider extracting it to its own npm package. I did this for [hubot-markov](https://github.com/smashwilson/hubot-markov) if you'd like to see an example. [hubot-example](https://github.com/hubot-scripts/hubot-example) is a template library that you can clone as a starting point: make sure you edit the `package.json` info before you publish!
