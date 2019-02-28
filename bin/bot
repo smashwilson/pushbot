@@ -1,0 +1,45 @@
+#!/bin/bash
+
+set -eu
+
+SECRETS=
+
+if [ -f secrets/botrc.sh ]; then
+  SECRETS=secrets/botrc.sh
+else
+  SECRETS=secrets/botrc.example.sh
+fi
+
+if [ $# -gt 0 ]; then
+  ARG=$1
+  shift
+
+  if [ "${ARG}" = "--help" ] || [ "${ARG}" = "-h" ] || [ "${ARG}" = "help" ]; then
+    echo "Usage: $0 [configuration]"
+    echo
+    echo "Run the bot within a Docker container. Environment variables will be loaded"
+    echo "from secrets/botrc.sh or secrets/botrc.example.sh if not present."
+    echo
+    echo "Options:"
+    echo "  -h|--help        Show this message."
+    echo "  [configuration]  Load the environment variables from secrets/botrc.[configuration].sh."
+    exit 0
+  fi
+
+  SECRETS="secrets/botrc.${ARG}.sh"
+
+  if [ ! -f "${SECRETS}" ]; then
+    echo "The configuration file ${SECRETS} doesn't exist." >&2
+    exit 1
+  fi
+fi
+
+# shellcheck disable=SC1090
+source ${SECRETS}
+
+export DEV_USERNAME=${DEV_USERNAME:-${USER}}
+
+case "${OSTYPE}" in
+  linux*) sudo -E docker-compose run --service-ports pushbot ;;
+  *) exec docker-compose run --service-ports pushbot ;;
+esac

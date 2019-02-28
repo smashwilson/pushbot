@@ -1,4 +1,4 @@
-FROM node:8-alpine
+FROM node:10-alpine
 LABEL maintainer "Ash Wilson <smashwilson@gmail.com>"
 
 ENV NPM_CONFIG_LOGLEVEL warn
@@ -10,7 +10,8 @@ RUN adduser -s /bin/false -D pushbot
 
 WORKDIR /usr/src/app
 ADD package.json /usr/src/app/package.json
-RUN npm install .
+ADD package-lock.json /usr/src/app/package-lock.json
+RUN npm ci .
 ADD . /usr/src/app
 RUN chown -R pushbot:pushbot /usr/src/app
 

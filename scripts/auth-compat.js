@@ -46,7 +46,7 @@ module.exports = function(robot) {
     if (!robot.adapter.client.rtm) {
       return;
     }
-    if (!robot.adapter.cliemt.rtm.dataStore) {
+    if (!robot.adapter.client.rtm.dataStore) {
       return;
     }
 
