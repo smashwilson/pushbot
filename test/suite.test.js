@@ -1,3 +1,3 @@
-afterEach(function () {
-  sinon.restore()
-})
+afterEach(function() {
+  sinon.restore();
+});
