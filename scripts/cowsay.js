@@ -3,29 +3,29 @@
 // Commands:
 //   hubot cowsay <text> - Makes a cow say <text>
 
-module.exports = function (robot) {
-  robot.respond(/cowsay( me)?\s*([^]*)/i, function (msg) {
-    let message = ''
+module.exports = function(robot) {
+  robot.respond(/cowsay( me)?\s*([^]*)/i, function(msg) {
+    let message = "";
     if (msg.match[2].trim().length > 0) {
-      message = msg.match[2]
+      message = msg.match[2];
     } else {
-      const m = robot.mostRecent(msg)
+      const m = robot.mostRecent(msg);
       if (m) {
-        message = m.text
+        message = m.text;
       } else {
-        return
+        return;
       }
     }
 
     msg
-      .http('http://cowsay.morecode.org/say')
-      .query({ format: 'text', message })
+      .http("http://cowsay.morecode.org/say")
+      .query({format: "text", message})
       .get()((err, _res, body) => {
-        if (err) {
-          msg.reply(`\`\`\`${err}\n\`\`\``)
-        } else {
-          msg.send(`\`\`\`${body}\n\`\`\``)
-        }
-      })
-  })
-}
+      if (err) {
+        msg.reply(`\`\`\`${err}\n\`\`\``);
+      } else {
+        msg.send(`\`\`\`${body}\n\`\`\``);
+      }
+    });
+  });
+};
