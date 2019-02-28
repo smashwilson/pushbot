@@ -11,7 +11,8 @@ else
 fi
 
 if [ $# -gt 0 ]; then
-  ARG=$(shift)
+  ARG=$1
+  shift
 
   if [ "${ARG}" = "--help" ] || [ "${ARG}" = "-h" ] || [ "${ARG}" = "help" ]; then
     echo "Usage: $0 [configuration]"
