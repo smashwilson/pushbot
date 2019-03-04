@@ -46,7 +46,7 @@
     "passport": "0.4.0",
     "passport-http": "0.3.0",
     "passport-slack": "0.0.7",
-    "pg-promise": "8.6.0",
+    "pg-promise": "8.6.1",
     "request": "2.88.0",
     "request-promise-native": "1.0.7",
     "tinycolor2": "1.4.1",
