@@ -76,5 +76,17 @@ describe("rem", function() {
         .filter(line => line.length > 0);
       expect(lines).to.have.lengthOf(10);
     });
+
+    it("automatically fetches if there is exactly one result", async function() {
+      bot.store("rem:0 aa 0", "A");
+
+      await bot.say("admin", "@hubot remsearch aa");
+      await bot.waitForResponse();
+      const lines = bot
+        .response()
+        .split(/\s*\n\s*/)
+        .filter(line => line.length > 0);
+      expect(lines).to.have.members(["A"]);
+    });
   });
 });

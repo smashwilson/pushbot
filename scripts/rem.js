@@ -7,6 +7,10 @@
 //   hubot remsearch key - List all known keys containing a case-insensitive substring.
 //   hubot forget key - Forget a previously stored key.
 
+function remget(robot, key) {
+  return robot.brain.get(`rem:${key}`);
+}
+
 module.exports = function(robot) {
   robot.respond(/rem(?:ember)?\s+([^=]+)(?:=([^]+))?/, function(msg) {
     const key = msg.match[1].trim();
@@ -16,7 +20,7 @@ module.exports = function(robot) {
       robot.brain.set(`rem:${key}`, value);
       msg.reply(`:ok_hand: I've learned "${key}".`);
     } else {
-      const value = robot.brain.get(`rem:${key}`);
+      const value = remget(robot, key);
       if (value) {
         msg.send(value);
       } else {
@@ -42,6 +46,10 @@ module.exports = function(robot) {
 
     if (matches.length === 0) {
       msg.send(`No keys match "${pattern}".`);
+      return;
+    } else if (matches.length === 1) {
+      value = remget(robot, matches[0]);
+      msg.send(value);
       return;
     }
 
