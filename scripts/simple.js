@@ -63,7 +63,6 @@ module.exports = function(robot) {
         `high-fives ${target} with glee!`,
         `rocket-jumps off of an exploding helicopter to high-five ${target} in midair!`,
         `high-fives ${target}... with dire consequences`,
-        "http://gifsec.com/wp-content/uploads/GIF/2014/04/GIF-Baby-high-five-cat.gif",
         "http://www.survivingcollege.com/wp-content/uploads/2014/04/stephen-colbert-high-five-gif.gif",
         "http://giphy.com/gifs/just-hooray-PCBJRuJbMYzLi#.gif",
         "http://media.giphy.com/media/dLuI7v4QXx5SM/giphy.gif",
