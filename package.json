@@ -10,7 +10,7 @@
     "coffee-script": "1.12.7",
     "cookie-session": "2.0.0-beta.3",
     "cors": "2.8.5",
-    "express": "4.17.0",
+    "express": "4.17.1",
     "express-graphql": "0.8.0",
     "graphql": "14.3.1",
     "hubot": "3.2.0",
