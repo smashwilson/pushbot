@@ -1,6 +1,6 @@
 const {RemResolver} = require("../../scripts/api/rem");
 
-describe.only("RemResolver", function() {
+describe("RemResolver", function() {
   let bot, resolver, req;
   let authorized, unauthorized;
 
