@@ -1,37 +1,37 @@
 // Accept the current contents of the user's buffer.
 
-const createMentionDetector = require('./mentions')
+const createMentionDetector = require("./mentions");
 
-function fromLines (robot, lines) {
-  const detector = createMentionDetector(robot)
+function fromLines(robot, lines) {
+  const detector = createMentionDetector(robot);
 
-  const result = []
-  const speakers = new Set()
-  const mentions = new Set()
+  const result = [];
+  const speakers = new Set();
+  const mentions = new Set();
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
+    const line = lines[i];
 
     for (const mention of detector.scan(line.text)) {
-      mentions.add(mention)
+      mentions.add(mention);
     }
 
     if (!line.isRaw()) {
-      speakers.add(line.speaker)
+      speakers.add(line.speaker);
     }
 
-    result.push(line)
+    result.push(line);
   }
 
-  return { lines: result, speakers, mentions }
+  return {lines: result, speakers, mentions};
 }
 
-function preprocess (robot, msg) {
-  const buffer = robot.bufferForUserId(msg.message.user.id)
-  const lines = buffer.commit()
+function preprocess(robot, msg) {
+  const buffer = robot.bufferForUserId(msg.message.user.id);
+  const lines = buffer.commit();
 
-  return fromLines(robot, lines)
+  return fromLines(robot, lines);
 }
 
-preprocess.fromLines = fromLines
-module.exports = preprocess
+preprocess.fromLines = fromLines;
+module.exports = preprocess;

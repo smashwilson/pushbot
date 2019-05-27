@@ -2,8 +2,8 @@
 // an object with the spec {body, speakers, mentions}.
 
 module.exports = {
-  quote: require('./quote'),
-  markov: require('./markov'),
-  lim: require('./lim'),
-  brief: require('./brief')
-}
+  quote: require("./quote"),
+  markov: require("./markov"),
+  lim: require("./lim"),
+  brief: require("./brief"),
+};

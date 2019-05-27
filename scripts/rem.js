@@ -7,20 +7,43 @@
 //   hubot remsearch key - List all known keys containing a case-insensitive substring.
 //   hubot forget key - Forget a previously stored key.
 
-function remget(robot, key) {
-  return robot.brain.get(`rem:${key}`);
-}
-
 module.exports = function(robot) {
+  robot.rem = {
+    get(key) {
+      return robot.brain.get(`rem:${key}`);
+    },
+
+    set(key, value) {
+      robot.brain.set(`rem:${key}`, value);
+    },
+
+    unset(key) {
+      robot.brain.remove(`rem:${key}`);
+    },
+
+    search(query) {
+      let matches = [];
+      for (const key in robot.brain.data._private) {
+        if (
+          key.startsWith("rem:") &&
+          (!query || key.toLowerCase().includes(query, 4))
+        ) {
+          matches.push(key.substring(4));
+        }
+      }
+      return matches;
+    },
+  };
+
   robot.respond(/rem(?:ember)?\s+([^=]+)(?:=([^]+))?/, function(msg) {
     const key = msg.match[1].trim();
     if (msg.match[2]) {
       const value = msg.match[2].trim();
 
-      robot.brain.set(`rem:${key}`, value);
+      robot.rem.set(key, value);
       msg.reply(`:ok_hand: I've learned "${key}".`);
     } else {
-      const value = remget(robot, key);
+      const value = robot.rem.get(key);
       if (value) {
         msg.send(value);
       } else {
@@ -31,16 +54,8 @@ module.exports = function(robot) {
 
   robot.respond(/remsearch(?:\s+([^]*))?/, function(msg) {
     const pattern = (msg.match[1] || "").trim().toLowerCase();
-    let matches = [];
-    for (const key in robot.brain.data._private) {
-      if (
-        key.startsWith("rem:") &&
-        (!pattern || key.toLowerCase().includes(pattern, 4))
-      ) {
-        matches.push(key.substring(4));
-      }
-    }
 
+    let matches = robot.rem.search(pattern);
     matches.sort((a, b) => -1 + Math.random() * 2);
     matches = matches.slice(0, 10);
 
@@ -48,7 +63,7 @@ module.exports = function(robot) {
       msg.send(`No keys match "${pattern}".`);
       return;
     } else if (matches.length === 1) {
-      value = remget(robot, matches[0]);
+      value = robot.rem.get(matches[0]);
       msg.send(value);
       return;
     }
@@ -58,7 +73,7 @@ module.exports = function(robot) {
 
   robot.respond(/forget([^]+)/, function(msg) {
     const key = msg.match[1].trim();
-    robot.brain.remove(`rem:${key}`);
+    robot.rem.unset(`rem:${key}`);
     msg.reply(`:dusty_stick: "${key}" has been forgotten.`);
   });
 };

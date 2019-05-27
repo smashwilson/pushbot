@@ -18,6 +18,9 @@ type Query {
   # Go digging around in pushbot's gooey grey matter. Admin-only.
   brain: Brain!
 
+  # Free-for-all key-value store.
+  rem: Rem!
+
   # URL at which your personal iCal feed is found.
   calendarURL: String!
 }
@@ -30,6 +33,20 @@ type Mutation {
   # Modify a value within the robot's internal storage. Very dangerous. And yes, this accepts a JSON-encoded
   # string as an argument: don't @ me.
   setBrainKey(name: String!, property: [String!] = [], value: String!): Entry!
+}
+
+# Metadata about the current page of results and its relationship with the full
+# result set.
+type PageInfo {
+  # The total number of results that were matched by the Criteria constraints
+  # across all possible pages.
+  count: Int!
+
+  # True if there is a page of results before this one.
+  hasPreviousPage: Boolean!
+
+  # True if there is a page of results after this one.
+  hasNextPage: Boolean!
 }
 
 type UserSet {
@@ -201,20 +218,6 @@ type Document {
   mentions: [String!]!
 }
 
-# Metadata about the current page of results and its relationship with the full
-# result set.
-type PageInfo {
-  # The total number of results that were matched by the Criteria constraints
-  # across all possible pages.
-  count: Int!
-
-  # True if there is a page of results before this one.
-  hasPreviousPage: Boolean!
-
-  # True if there is a page of results after this one.
-  hasNextPage: Boolean!
-}
-
 # Line of spoken text within a Cache collected by the bot from one of the channels the bot belongs to. Messages
 # that contain newlines are split into multiple Lines.
 type Line {
@@ -261,6 +264,44 @@ type Brain {
   # Access a top-level storage value at a named key. Optionally, descend into the object tree
   # by following named properties. Admin-only.
   key(name: String!, property: [String!] = []): Entry!
+}
+
+# Free-for-all key-value store
+type Rem {
+  get(key: String!): Memory
+
+  search(query: String, first: Int, after: String): MemoryConnection
+}
+
+# Paginated collection of Memories within Rem. As specified by:
+# https://facebook.github.io/relay/graphql/connections.htm
+type MemoryConnection {
+  # Paging support information.
+  pageInfo: PageInfo!
+
+  # Containers for results on the current page.
+  edges: [MemoryEdge!]!
+}
+
+# Paginated Memory result within Rem. As specified by:
+# https://facebook.github.io/relay/graphql/connections.htm
+type MemoryEdge {
+  # Opaque identifier used for paging. Supply the "cursor" of the final result
+  # in one page as the "after" parameter to the next query to retrieve the
+  # next page of results.
+  cursor: String!
+
+  # Single matching Memory.
+  node: Memory!
+}
+
+# Key-value pair stored by any User.
+type Memory {
+  # The full, exact key used to identify this Memory.
+  key: String!
+
+  # This Memory's value.
+  value: String!
 }
 
 # Constraints on the Documents to be included in a query, count, or random
