@@ -49,6 +49,15 @@ type PageInfo {
   hasNextPage: Boolean!
 }
 
+# Common search result sort order values.
+enum SortDirection {
+  # Oldest to newest, lowest to highest, ...
+  ASCENDING
+
+  # Newest to oldest, highest to lowest, ...
+  DESCENDING
+}
+
 type UserSet {
   # Profile for the currently logged-in User.
   me: User!
@@ -266,11 +275,24 @@ type Brain {
   key(name: String!, property: [String!] = []): Entry!
 }
 
+enum RemOrderField {
+  KEY
+  RANDOM
+}
+
 # Free-for-all key-value store
 type Rem {
+  # Choose a specific key by exact, case-sensitive match. Return `null` if it does not exist.
   get(key: String!): Memory
 
-  search(query: String, first: Int, after: String): MemoryConnection
+  # Paginated, ordered search over all stored Memories.
+  search(
+    query: String
+    first: Int
+    after: String
+    orderField: RemOrderField! = KEY
+    orderDirection: SortOrder! = ASCENDING
+  ): MemoryConnection
 }
 
 # Paginated collection of Memories within Rem. As specified by:

@@ -8,11 +8,14 @@ class RemResolver {
     }
   }
 
-  search({query, first, after}, {robot}) {
+  search({query, first, after, orderField, orderDirection}, {robot}) {
     const limit = first || 100;
     const afterInd = after ? parseInt(after, 10) + 1 : 0;
+    const field = orderField || "KEY";
+    const direction = orderDirection || "ASCENDING";
 
     const keys = robot.rem.search(query);
+    keys.sort(getComparator(field, direction));
 
     return {
       pageInfo: {
@@ -27,6 +30,18 @@ class RemResolver {
         };
       }),
     };
+  }
+}
+
+function getComparator(field, direction) {
+  if (field === "RANDOM") {
+    return () => Math.random() * 2 + -1;
+  } else if (field === "KEY") {
+    const adjust = direction === "ASCENDING" ? 1 : -1;
+    return (a, b) =>
+      a.localeCompare(b, undefined, {sensitivity: "base"}) * adjust;
+  } else {
+    throw new Error(`Invalid order field: ${field}`);
   }
 }
 
