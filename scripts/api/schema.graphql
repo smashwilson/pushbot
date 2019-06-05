@@ -290,8 +290,8 @@ type Rem {
     query: String
     first: Int
     after: String
-    orderField: RemOrderField! = KEY
-    orderDirection: SortOrder! = ASCENDING
+    orderField: RemOrderField = KEY
+    orderDirection: SortDirection = ASCENDING
   ): MemoryConnection
 }
 
