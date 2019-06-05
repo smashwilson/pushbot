@@ -19,7 +19,7 @@ class RemResolver {
 
     return {
       pageInfo: {
-        total: keys.length,
+        count: keys.length,
         hasPreviousPage: afterInd > 0,
         hasNextPage: keys.length - afterInd > limit,
       },

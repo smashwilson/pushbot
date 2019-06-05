@@ -58,7 +58,7 @@ describe("RemResolver", function() {
         pageInfo: {
           hasPreviousPage: false,
           hasNextPage: false,
-          total: 2,
+          count: 2,
         },
         edges: [
           {cursor: "0", node: {key: "aaa 111", value: "value 1"}},
@@ -73,7 +73,7 @@ describe("RemResolver", function() {
         pageInfo: {
           hasPreviousPage: false,
           hasNextPage: true,
-          total: 6,
+          count: 6,
         },
         edges: [
           {cursor: "0", node: {key: "aaa 000", value: "value 0"}},
@@ -89,7 +89,7 @@ describe("RemResolver", function() {
         pageInfo: {
           hasPreviousPage: true,
           hasNextPage: false,
-          total: 6,
+          count: 6,
         },
         edges: [{cursor: "5", node: {key: "bbb 222", value: "value 5"}}],
       });
@@ -106,7 +106,7 @@ describe("RemResolver", function() {
           pageInfo: {
             hasPreviousPage: false,
             hasNextPage: true,
-            total: 6,
+            count: 6,
           },
           edges: [
             {cursor: "0", node: {key: "aaa 000", value: "value 0"}},
@@ -127,7 +127,7 @@ describe("RemResolver", function() {
           pageInfo: {
             hasPreviousPage: true,
             hasNextPage: true,
-            total: 6,
+            count: 6,
           },
           edges: [
             {cursor: "2", node: {key: "aaa 222", value: "value 2"}},
@@ -148,7 +148,7 @@ describe("RemResolver", function() {
           pageInfo: {
             hasPreviousPage: true,
             hasNextPage: false,
-            total: 6,
+            count: 6,
           },
           edges: [
             {cursor: "4", node: {key: "bbb 111", value: "value 4"}},
@@ -167,7 +167,7 @@ describe("RemResolver", function() {
           pageInfo: {
             hasPreviousPage: false,
             hasNextPage: true,
-            total: 6,
+            count: 6,
           },
           edges: [
             {cursor: "0", node: {key: "bbb 222", value: "value 5"}},
@@ -189,7 +189,7 @@ describe("RemResolver", function() {
           pageInfo: {
             hasPreviousPage: true,
             hasNextPage: false,
-            total: 6,
+            count: 6,
           },
           edges: [
             {cursor: "3", node: {key: "aaa 222", value: "value 2"}},
@@ -206,7 +206,7 @@ describe("RemResolver", function() {
       expect(page0.pageInfo).to.deep.equal({
         hasPreviousPage: false,
         hasNextPage: false,
-        total: 6,
+        count: 6,
       });
       expect(page0.edges).to.have.length(6);
       const nodes = page0.edges.map(e => e.node);
