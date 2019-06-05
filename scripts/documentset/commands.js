@@ -1,173 +1,193 @@
-'use strict'
+"use strict";
 
 // Dynamically generate message handlers to interact with a document set
 // based on a spec.
 
-const util = require('util')
-const preprocessors = require('./preprocessor')
-const formatters = require('./formatter')
+const util = require("util");
+const preprocessors = require("./preprocessor");
+const formatters = require("./formatter");
 
-exports.generate = function (robot, documentSet, spec) {
+exports.generate = function(robot, documentSet, spec) {
   if (spec.features.add !== null) {
-    addCommands(robot, documentSet, spec, spec.features.add)
+    addCommands(robot, documentSet, spec, spec.features.add);
   }
 
   if (spec.features.set !== null) {
-    setCommand(robot, documentSet, spec, spec.features.set)
+    setCommand(robot, documentSet, spec, spec.features.set);
   }
 
   if (spec.features.query !== null) {
-    queryCommand(robot, documentSet, spec, spec.features.query)
+    queryCommand(robot, documentSet, spec, spec.features.query);
   }
 
   if (spec.features.all !== null) {
-    allCommand(robot, documentSet, spec, spec.features.all)
+    allCommand(robot, documentSet, spec, spec.features.all);
   }
 
   if (spec.features.count !== null) {
-    countCommand(robot, documentSet, spec, spec.features.count)
+    countCommand(robot, documentSet, spec, spec.features.count);
   }
 
   if (spec.features.stats !== null) {
-    statsCommand(robot, documentSet, spec, spec.features.stats)
+    statsCommand(robot, documentSet, spec, spec.features.stats);
   }
 
   if (spec.features.by !== null) {
-    byQueryCommand(robot, documentSet, spec, spec.features.by)
+    byQueryCommand(robot, documentSet, spec, spec.features.by);
   }
 
   if (spec.features.about !== null) {
-    aboutQueryCommand(robot, documentSet, spec, spec.features.about)
+    aboutQueryCommand(robot, documentSet, spec, spec.features.about);
   }
 
   if (spec.features.kov !== null) {
-    kovCommands(robot, documentSet, spec, spec.features.kov)
+    kovCommands(robot, documentSet, spec, spec.features.kov);
   }
+};
+
+function errorHandler(msg, error) {
+  console.error(error.stack);
+  msg.reply(`:boom: Something went wrong!\n\`\`\`\n${error.stack}\n\`\`\`\n`);
 }
 
-function errorHandler (msg, error) {
-  console.error(error.stack)
-  msg.reply(`:boom: Something went wrong!\n\`\`\`\n${error.stack}\n\`\`\`\n`)
-}
-
-function addCommands (robot, documentSet, spec, feature) {
+function addCommands(robot, documentSet, spec, feature) {
   if (feature.helpText) {
-    robot.commands.push(...feature.helpText)
+    robot.commands.push(...feature.helpText);
   }
 
   if (!feature.formatter) {
-    feature.formatter = formatters.quote
+    feature.formatter = formatters.quote;
   }
 
   if (spec.features.kov && !spec.features.kov.formatter) {
-    spec.features.kov.formatter = formatters.markov
+    spec.features.kov.formatter = formatters.markov;
   }
 
-  const preprocessorNames = Object.keys(preprocessors)
+  const preprocessorNames = Object.keys(preprocessors);
   for (let i = 0; i < preprocessorNames.length; i++) {
-    const preprocessorName = preprocessorNames[i]
-    const preprocessor = preprocessors[preprocessorName]
-    const argumentPattern = preprocessor.argument ? ':\\s*([^]+)' : ''
+    const preprocessorName = preprocessorNames[i];
+    const preprocessor = preprocessors[preprocessorName];
+    const argumentPattern = preprocessor.argument ? ":\\s*([^]+)" : "";
 
     if (feature.helpText === undefined) {
       robot.commands.push(
-        `hubot ${preprocessorName} ${spec.name}${preprocessor.argument ? ': <source>' : ''} - ` +
-        util.format(preprocessor.defaultHelpText, spec.name)
-      )
+        `hubot ${preprocessorName} ${spec.name}${
+          preprocessor.argument ? ": <source>" : ""
+        } - ` + util.format(preprocessor.defaultHelpText, spec.name)
+      );
     }
 
     // "slackapp quote: ..."
-    const pattern = new RegExp(`${preprocessorName}\\s+${spec.name}${argumentPattern}\\s*$`)
+    const pattern = new RegExp(
+      `${preprocessorName}\\s+${spec.name}${argumentPattern}\\s*$`
+    );
     robot.respond(pattern, async msg => {
-      if (!feature.role.verify(robot, msg)) return
+      if (!feature.role.verify(robot, msg)) return;
 
-      const submitter = msg.message.user.name
-      let body, attributes, processed
+      const submitter = msg.message.user.name;
+      let body, attributes, processed;
       try {
-        processed = preprocessor.call(robot, msg)
+        processed = preprocessor.call(robot, msg);
       } catch (err) {
-        msg.reply(`http://sadtrombone.com/\n${err.stack}`)
-        return
+        msg.reply(`http://sadtrombone.com/\n${err.stack}`);
+        return;
       }
 
       try {
-        const formatted = feature.formatter(processed.lines, processed.speakers, processed.mentions)
+        const formatted = feature.formatter(
+          processed.lines,
+          processed.speakers,
+          processed.mentions
+        );
 
-        body = formatted.body
-        attributes = []
+        body = formatted.body;
+        attributes = [];
         for (const value of formatted.speakers) {
-          attributes.push({ kind: 'speaker', value })
+          attributes.push({kind: "speaker", value});
         }
         for (const value of formatted.mentions) {
-          attributes.push({ kind: 'mention', value })
+          attributes.push({kind: "mention", value});
         }
 
         if (spec.features.kov) {
-          const markovInput = spec.features.kov.formatter(processed.lines, processed.speakers, processed.mentions)
+          const markovInput = spec.features.kov.formatter(
+            processed.lines,
+            processed.speakers,
+            processed.mentions
+          );
 
           await new Promise((resolve, reject) => {
             robot.markov.modelNamed(`${spec.name}kov`, model => {
               model.learn(markovInput.body, err => {
-                if (err) return reject(err)
-                resolve()
-              })
-            })
-          })
+                if (err) return reject(err);
+                resolve();
+              });
+            });
+          });
         }
 
-        const doc = await documentSet.add(submitter, body, attributes)
-        preprocessor.echo && msg.send(doc.getBody())
+        const doc = await documentSet.add(submitter, body, attributes);
+        preprocessor.echo && msg.send(doc.getBody());
 
-        const count = await documentSet.countMatching([], '')
-        const noun = count === 1 ? spec.name : spec.plural
-        msg.send(`${count} ${noun} loaded.`)
+        const count = await documentSet.countMatching([], "");
+        const noun = count === 1 ? spec.name : spec.plural;
+        msg.send(`${count} ${noun} loaded.`);
       } catch (err) {
-        errorHandler(msg, err)
+        errorHandler(msg, err);
       }
-    })
+    });
   }
 }
 
-function setCommand (robot, documentSet, spec, feature) {
+function setCommand(robot, documentSet, spec, feature) {
   if (feature.helpText) {
-    robot.commands.push(...feature.helpText)
+    robot.commands.push(...feature.helpText);
   } else {
     robot.commands.push(
-      `hubot set${spec.name} <user>: <source> - Set user's ${spec.name} to <source>.`,
+      `hubot set${spec.name} <user>: <source> - Set user's ${
+        spec.name
+      } to <source>.`,
       `hubot set${spec.name}: <source> - Set your own ${spec.name} to <source>.`
-    )
+    );
   }
 
-  const pattern = new RegExp(`set${spec.name}(?:\\s+@?([^:]+))?:\\s*([^]+)$`)
+  const pattern = new RegExp(`set${spec.name}(?:\\s+@?([^:]+))?:\\s*([^]+)$`);
   robot.respond(pattern, async msg => {
-    const submitter = msg.message.user.name
-    const target = (msg.match[1] || submitter).trim()
+    const submitter = msg.message.user.name;
+    const target = (msg.match[1] || submitter).trim();
 
-    const role = submitter === target ? feature.roleForSelf : feature.roleForOther
-    if (!role.verify(robot, msg)) return
+    const role =
+      submitter === target ? feature.roleForSelf : feature.roleForOther;
+    if (!role.verify(robot, msg)) return;
 
-    const body = msg.match[2].trim()
-    const attribute = { kind: 'subject', value: target }
+    const body = msg.match[2].trim();
+    const attribute = {kind: "subject", value: target};
 
     try {
-      const former = await documentSet.latestMatching({ subject: [target] })
-      const doc = await documentSet.add(submitter, body, [attribute])
+      const former = await documentSet.latestMatching({subject: [target]});
+      const doc = await documentSet.add(submitter, body, [attribute]);
       if (former.wasFound()) {
-        msg.send(`${target}'s ${spec.name} has been changed from '${former.getBody()}' to '${doc.getBody()}'.`)
+        msg.send(
+          `${target}'s ${
+            spec.name
+          } has been changed from '${former.getBody()}' to '${doc.getBody()}'.`
+        );
       } else {
-        msg.send(`${target}'s ${spec.name} has been set to '${doc.getBody()}'.`)
+        msg.send(
+          `${target}'s ${spec.name} has been set to '${doc.getBody()}'.`
+        );
       }
     } catch (err) {
-      errorHandler(msg, err)
+      errorHandler(msg, err);
     }
-  })
+  });
 }
 
-function queryCommand (robot, documentSet, spec, feature) {
-  const pattern = new RegExp(`${spec.name}(\\s+[^]+)?$`)
+function queryCommand(robot, documentSet, spec, feature) {
+  const pattern = new RegExp(`${spec.name}(\\s+[^]+)?$`);
 
   if (feature.helpText) {
-    robot.commands.push(...feature.helpText)
+    robot.commands.push(...feature.helpText);
   }
 
   if (feature.userOriented) {
@@ -176,354 +196,439 @@ function queryCommand (robot, documentSet, spec, feature) {
         robot.commands.push(
           `hubot ${spec.name} - Return your current ${spec.name}.`,
           `hubot ${spec.name} @<user> - Return <user>'s current ${spec.name}.`,
-          `hubot ${spec.name} <query> - Return your most recent ${spec.name} that matches <query>.`,
-          `hubot ${spec.name} @<user> <query> - Return <user>'s most recent ${spec.name} that matches <query>.`
-        )
+          `hubot ${spec.name} <query> - Return your most recent ${
+            spec.name
+          } that matches <query>.`,
+          `hubot ${spec.name} @<user> <query> - Return <user>'s most recent ${
+            spec.name
+          } that matches <query>.`
+        );
       } else {
         robot.commands.push(
           `hubot ${spec.name} - Return one of your ${spec.plural} at random.`,
-          `hubot ${spec.name} @<user> - Return one of <user>'s ${spec.plural} at random.`,
-          `hubot ${spec.name} <query> - Return one of your ${spec.plural} that matches <query>.`,
-          `hubot ${spec.name} @<user> <query> - Return one of <user>'s ${spec.plural} that matches <query>.`
-        )
+          `hubot ${spec.name} @<user> - Return one of <user>'s ${
+            spec.plural
+          } at random.`,
+          `hubot ${spec.name} <query> - Return one of your ${
+            spec.plural
+          } that matches <query>.`,
+          `hubot ${spec.name} @<user> <query> - Return one of <user>'s ${
+            spec.plural
+          } that matches <query>.`
+        );
       }
     }
 
     robot.respond(pattern, async msg => {
-      const requester = msg.message.user.name
-      const input = (msg.match[1] || '').trim()
+      const requester = msg.message.user.name;
+      const input = (msg.match[1] || "").trim();
 
-      let query = ''
-      let subject = ''
+      let query = "";
+      let subject = "";
 
-      const usernameMatch = /^@?(\S+)\b/.exec(input)
+      const usernameMatch = /^@?(\S+)\b/.exec(input);
       if (usernameMatch) {
-        subject = usernameMatch[1]
-        query = input.substring(usernameMatch[0].length)
+        subject = usernameMatch[1];
+        query = input.substring(usernameMatch[0].length);
       } else {
-        subject = msg.message.user.name
-        query = input
+        subject = msg.message.user.name;
+        query = input;
       }
 
-      const role = requester === subject ? feature.roleForSelf : feature.roleForOther
-      if (!role.verify(robot, msg)) return
+      const role =
+        requester === subject ? feature.roleForSelf : feature.roleForOther;
+      if (!role.verify(robot, msg)) return;
 
       try {
         const doc = feature.latest
-          ? await documentSet.latestMatching({ subject: [subject] }, query)
-          : await documentSet.randomMatching({ subject: [subject] }, query)
-        msg.send(doc.getBody())
+          ? await documentSet.latestMatching({subject: [subject]}, query)
+          : await documentSet.randomMatching({subject: [subject]}, query);
+        msg.send(doc.getBody());
       } catch (err) {
-        errorHandler(msg, err)
+        errorHandler(msg, err);
       }
-    })
+    });
   } else {
     if (!feature.helpText) {
       robot.commands.push(
         `hubot ${spec.name} - Return a ${spec.name} at random.`,
-        `hubot ${spec.name} <query> - Return a ${spec.name} that matches <query>.`
-      )
+        `hubot ${spec.name} <query> - Return a ${
+          spec.name
+        } that matches <query>.`
+      );
     }
 
     robot.respond(pattern, async msg => {
-      if (!feature.role.verify(robot, msg)) return
+      if (!feature.role.verify(robot, msg)) return;
 
-      const query = msg.match[1] || ''
+      const query = msg.match[1] || "";
 
       try {
         const doc = feature.latest
           ? await documentSet.latestMatching({}, query)
-          : await documentSet.randomMatching({}, query)
-        msg.send(doc.getBody())
+          : await documentSet.randomMatching({}, query);
+        msg.send(doc.getBody());
       } catch (err) {
-        errorHandler(msg, err)
+        errorHandler(msg, err);
       }
-    })
+    });
   }
 }
 
-function allCommand (robot, documentSet, spec, feature) {
-  const pattern = new RegExp(`all${spec.plural}(\\s+[^]+)?$`)
+function allCommand(robot, documentSet, spec, feature) {
+  const pattern = new RegExp(`all${spec.plural}(\\s+[^]+)?$`);
 
   if (feature.helpText) {
-    robot.commands.push(...feature.helpText)
+    robot.commands.push(...feature.helpText);
   }
 
   if (feature.userOriented) {
     if (!feature.helpText) {
       robot.commands.push(
         `hubot all${spec.plural} - Return all of your ${spec.plural}.`,
-        `hubot all${spec.plural} @<user> - Return all of <user>'s ${spec.plural}.`,
-        `hubot all${spec.plural} <query> - Return all of your ${spec.plural} that match <query>.`,
-        `hubot all${spec.plural} @<user> <query> - Return <user>'s ${spec.plural} that match <query>.`
-      )
+        `hubot all${spec.plural} @<user> - Return all of <user>'s ${
+          spec.plural
+        }.`,
+        `hubot all${spec.plural} <query> - Return all of your ${
+          spec.plural
+        } that match <query>.`,
+        `hubot all${spec.plural} @<user> <query> - Return <user>'s ${
+          spec.plural
+        } that match <query>.`
+      );
     }
 
     robot.respond(pattern, async msg => {
-      const requester = msg.message.user.name
-      const input = (msg.match[1] || '').trim()
+      const requester = msg.message.user.name;
+      const input = (msg.match[1] || "").trim();
 
-      let query = ''
-      let subject = ''
+      let query = "";
+      let subject = "";
 
-      const usernameMatch = /^@?(\S+)\b/.exec(input)
+      const usernameMatch = /^@?(\S+)\b/.exec(input);
       if (usernameMatch) {
-        subject = usernameMatch[1]
-        query = input.substring(usernameMatch[0].length)
+        subject = usernameMatch[1];
+        query = input.substring(usernameMatch[0].length);
       } else {
-        subject = msg.message.user.name
-        query = input
+        subject = msg.message.user.name;
+        query = input;
       }
 
-      const role = requester === subject ? feature.roleForSelf : feature.roleForOther
-      if (!role.verify(robot, msg)) return
+      const role =
+        requester === subject ? feature.roleForSelf : feature.roleForOther;
+      if (!role.verify(robot, msg)) return;
 
       try {
-        const { documents } = await documentSet.allMatching({ subject: [subject] }, query)
-        msg.send(documents.map(doc => doc.getBody()).join(feature.separator || ', '))
+        const {documents} = await documentSet.allMatching(
+          {subject: [subject]},
+          query
+        );
+        msg.send(
+          documents.map(doc => doc.getBody()).join(feature.separator || ", ")
+        );
       } catch (err) {
-        errorHandler(msg, err)
+        errorHandler(msg, err);
       }
-    })
+    });
   } else {
     if (!feature.helpText) {
       robot.commands.push(
         `hubot all${spec.plural} - Return all ${spec.plural}.`,
-        `hubot all${spec.plural} <query> - Return all ${spec.plural} that match <query>.`
-      )
+        `hubot all${spec.plural} <query> - Return all ${
+          spec.plural
+        } that match <query>.`
+      );
     }
 
     robot.respond(pattern, async msg => {
-      if (!feature.role.verify(robot, msg)) return
+      if (!feature.role.verify(robot, msg)) return;
 
-      const query = msg.match[1] || ''
+      const query = msg.match[1] || "";
 
       try {
-        const { documents } = await documentSet.allMatching({}, query)
-        msg.send(documents.map(doc => doc.getBody()).join(feature.separator || ', '))
+        const {documents} = await documentSet.allMatching({}, query);
+        msg.send(
+          documents.map(doc => doc.getBody()).join(feature.separator || ", ")
+        );
       } catch (err) {
-        errorHandler(msg, err)
+        errorHandler(msg, err);
       }
-    })
+    });
   }
 }
 
-function attributeQuery (robot, documentSet, spec, feature, patternBase, attrKind) {
-  robot.commands.push(...feature.helpText)
+function attributeQuery(
+  robot,
+  documentSet,
+  spec,
+  feature,
+  patternBase,
+  attrKind
+) {
+  robot.commands.push(...feature.helpText);
 
-  const pattern = new RegExp(`${patternBase}\\s+(\\S+)\\s*([^]+)?$`, 'i')
+  const pattern = new RegExp(`${patternBase}\\s+(\\S+)\\s*([^]+)?$`, "i");
 
   robot.respond(pattern, async msg => {
-    if (!feature.role.verify(robot, msg)) return
+    if (!feature.role.verify(robot, msg)) return;
 
     const subjects = msg.match[1]
       .split(/\+/)
-      .map(subject => subject.replace(/^@/, ''))
-    const attributes = { [attrKind]: subjects }
-    const query = msg.match[2] || ''
+      .map(subject => subject.replace(/^@/, ""));
+    const attributes = {[attrKind]: subjects};
+    const query = msg.match[2] || "";
 
     try {
-      const doc = await documentSet.randomMatching(attributes, query)
-      msg.send(doc.getBody())
+      const doc = await documentSet.randomMatching(attributes, query);
+      msg.send(doc.getBody());
     } catch (err) {
-      errorHandler(msg, err)
+      errorHandler(msg, err);
     }
-  })
+  });
 }
 
-function byQueryCommand (robot, documentSet, spec, feature) {
+function byQueryCommand(robot, documentSet, spec, feature) {
   if (!feature.helpText) {
     feature.helpText = [
-      `hubot ${spec.name}by @<user> - Random ${spec.name} in which <user> speaks.`,
-      `hubot ${spec.name}by @<user1+user2...> - A ${spec.name} spoken by all users.`,
-      `hubot ${spec.name}by @<user> <query> - A ${spec.name} by <user> that matches <query>.`
-    ]
+      `hubot ${spec.name}by @<user> - Random ${
+        spec.name
+      } in which <user> speaks.`,
+      `hubot ${spec.name}by @<user1+user2...> - A ${
+        spec.name
+      } spoken by all users.`,
+      `hubot ${spec.name}by @<user> <query> - A ${
+        spec.name
+      } by <user> that matches <query>.`,
+    ];
   }
 
-  attributeQuery(robot, documentSet, spec, feature, `${spec.name}by`, 'speaker')
+  attributeQuery(
+    robot,
+    documentSet,
+    spec,
+    feature,
+    `${spec.name}by`,
+    "speaker"
+  );
 }
 
-function aboutQueryCommand (robot, documentSet, spec, feature) {
+function aboutQueryCommand(robot, documentSet, spec, feature) {
   if (!feature.helpText) {
     feature.helpText = [
-      `hubot ${spec.name}about @<user> - Random ${spec.name} that mentions <user>.`,
-      `hubot ${spec.name}about @<user1+user2...> - A ${spec.name} that mentions by all users.`,
-      `hubot ${spec.name}about @<user> <query> - A ${spec.name} mentioning <user> that matches <query>.`
-    ]
+      `hubot ${spec.name}about @<user> - Random ${
+        spec.name
+      } that mentions <user>.`,
+      `hubot ${spec.name}about @<user1+user2...> - A ${
+        spec.name
+      } that mentions by all users.`,
+      `hubot ${spec.name}about @<user> <query> - A ${
+        spec.name
+      } mentioning <user> that matches <query>.`,
+    ];
   }
 
-  attributeQuery(robot, documentSet, spec, feature, `${spec.name}about`, 'mention')
+  attributeQuery(
+    robot,
+    documentSet,
+    spec,
+    feature,
+    `${spec.name}about`,
+    "mention"
+  );
 }
 
-function countCommand (robot, documentSet, spec, feature) {
+function countCommand(robot, documentSet, spec, feature) {
   if (feature.helpText) {
-    robot.commands.push(...feature.helpText)
+    robot.commands.push(...feature.helpText);
   } else {
     robot.commands.push(
       `hubot ${spec.name}count - Total number of ${spec.plural}.`,
-      `hubot ${spec.name}count <query> - Number of ${spec.plural} matching <query>.`
-    )
+      `hubot ${spec.name}count <query> - Number of ${
+        spec.plural
+      } matching <query>.`
+    );
   }
 
-  const pattern = new RegExp(`${spec.name}count(\\s+[^]+)?$`, 'i')
+  const pattern = new RegExp(`${spec.name}count(\\s+[^]+)?$`, "i");
 
   robot.respond(pattern, async msg => {
-    if (!feature.role.verify(robot, msg)) return
+    if (!feature.role.verify(robot, msg)) return;
 
-    const query = msg.match[1] || ''
-    const hasQuery = query.trim().length > 0
+    const query = msg.match[1] || "";
+    const hasQuery = query.trim().length > 0;
 
     try {
-      const count = await documentSet.countMatching({}, query)
-      const verb = count === 1 ? 'is' : 'are'
-      const noun = count === 1 ? spec.name : spec.plural
-      const matching = hasQuery ? ` matching \`${query.trim()}\`` : ''
+      const count = await documentSet.countMatching({}, query);
+      const verb = count === 1 ? "is" : "are";
+      const noun = count === 1 ? spec.name : spec.plural;
+      const matching = hasQuery ? ` matching \`${query.trim()}\`` : "";
 
-      msg.reply(`there ${verb} ${count} ${noun}${matching}.`)
+      msg.reply(`there ${verb} ${count} ${noun}${matching}.`);
     } catch (err) {
-      errorHandler(msg, err)
+      errorHandler(msg, err);
     }
-  })
+  });
 }
 
-function statsCommand (robot, documentSet, spec, feature) {
+function statsCommand(robot, documentSet, spec, feature) {
   if (feature.helpText) {
-    robot.commands.push(...feature.helpText)
+    robot.commands.push(...feature.helpText);
   } else {
     robot.commands.push(
       `hubot ${spec.name}stats - See who has the most ${spec.plural}.`,
-      `hubot ${spec.name}stats <user> - See the number of ${spec.plural} attributed to <user>.`
-    )
+      `hubot ${spec.name}stats <user> - See the number of ${
+        spec.plural
+      } attributed to <user>.`
+    );
   }
 
-  const pattern = new RegExp(`${spec.name}stats(?:\\s+@?(\\S+))?\\s*$`, 'i')
+  const pattern = new RegExp(`${spec.name}stats(?:\\s+@?(\\S+))?\\s*$`, "i");
   robot.respond(pattern, async msg => {
-    if (!feature.role.verify(robot, msg)) return
+    if (!feature.role.verify(robot, msg)) return;
 
-    const target = msg.match[1] || ''
-    const hasTarget = target.trim().length > 0
+    const target = msg.match[1] || "";
+    const hasTarget = target.trim().length > 0;
 
     try {
-      const table = await documentSet.getUserStats(['speaker', 'mention'])
+      const table = await documentSet.getUserStats(["speaker", "mention"]);
       if (hasTarget) {
-        const stat = table.getStats().find(stat => stat.getUsername() === target)
+        const stat = table
+          .getStats()
+          .find(stat => stat.getUsername() === target);
         if (stat === undefined) {
-          msg.send(`${target} has no ${spec.plural} at all. The shame!`)
-          return
+          msg.send(`${target} has no ${spec.plural} at all. The shame!`);
+          return;
         }
 
-        const plural = countStr => `*${countStr}* ${countStr === '1' ? spec.name : spec.plural}`
+        const plural = countStr =>
+          `*${countStr}* ${countStr === "1" ? spec.name : spec.plural}`;
 
-        msg.send(`${target} is *#${stat.getRank()}*, having spoken in ${plural(stat.getSpokenCount())} ` +
-          `and being mentioned in *${stat.getMentionCount()}*.`)
+        msg.send(
+          `${target} is *#${stat.getRank()}*, having spoken in ${plural(
+            stat.getSpokenCount()
+          )} ` + `and being mentioned in *${stat.getMentionCount()}*.`
+        );
       } else {
-        let output = '```\n'
+        let output = "```\n";
 
-        const usernameHeader = 'Username'
-        const usernameColumnWidth = Math.max(table.longestUsername, usernameHeader.length) + 1
+        const usernameHeader = "Username";
+        const usernameColumnWidth =
+          Math.max(table.longestUsername, usernameHeader.length) + 1;
 
-        const spokeHeader = 'Spoke'
-        const spokeColumnWidth = Math.max(table.longestSpoken, spokeHeader.length) + 1
+        const spokeHeader = "Spoke";
+        const spokeColumnWidth =
+          Math.max(table.longestSpoken, spokeHeader.length) + 1;
 
-        const mentionHeader = 'Mentioned'
-        const mentionColumnWidth = Math.max(table.longestMention, mentionHeader.length) + 1
+        const mentionHeader = "Mentioned";
+        const mentionColumnWidth =
+          Math.max(table.longestMention, mentionHeader.length) + 1;
 
-        output += `${table.pad(usernameHeader, usernameColumnWidth)}| `
-        output += `${table.pad(spokeHeader, spokeColumnWidth)}| `
-        output += `${mentionHeader}\n`
-        output += ('-'.repeat(usernameColumnWidth + spokeColumnWidth + mentionColumnWidth + 3)) + '\n'
+        output += `${table.pad(usernameHeader, usernameColumnWidth)}| `;
+        output += `${table.pad(spokeHeader, spokeColumnWidth)}| `;
+        output += `${mentionHeader}\n`;
+        output +=
+          "-".repeat(
+            usernameColumnWidth + spokeColumnWidth + mentionColumnWidth + 3
+          ) + "\n";
 
         for (const stat of table.getStats()) {
-          output += `${stat.getUsername(usernameColumnWidth)}| `
-          output += `${stat.getSpokenCount(spokeColumnWidth)}| `
-          output += `${stat.getMentionCount()}\n`
+          output += `${stat.getUsername(usernameColumnWidth)}| `;
+          output += `${stat.getSpokenCount(spokeColumnWidth)}| `;
+          output += `${stat.getMentionCount()}\n`;
         }
 
-        output += '```\n'
-        msg.send(output)
+        output += "```\n";
+        msg.send(output);
       }
     } catch (err) {
-      errorHandler(msg, err)
+      errorHandler(msg, err);
     }
-  })
+  });
 }
 
-function kovCommands (robot, documentSet, spec, feature) {
+function kovCommands(robot, documentSet, spec, feature) {
   if (feature.helpText) {
-    robot.commands.push(...feature.helpText)
+    robot.commands.push(...feature.helpText);
   } else {
     robot.commands.push(
-      `hubot ${spec.name}kov - Generate a ${spec.name} using a model built from real ${spec.plural}.`,
-      `hubot ${spec.name}kov <seed> - Generate a ${spec.name} beginning with seed text.`
-    )
+      `hubot ${spec.name}kov - Generate a ${
+        spec.name
+      } using a model built from real ${spec.plural}.`,
+      `hubot ${spec.name}kov <seed> - Generate a ${
+        spec.name
+      } beginning with seed text.`
+    );
   }
 
-  const pattern = new RegExp(`${spec.name}kov(\\s+[^]+)?$`, 'i')
+  const pattern = new RegExp(`${spec.name}kov(\\s+[^]+)?$`, "i");
   robot.respond(pattern, async msg => {
-    if (!feature.role.verify(robot, msg)) return
+    if (!feature.role.verify(robot, msg)) return;
 
     try {
       robot.markov.modelNamed(`${spec.name}kov`, model => {
-        model.generate(msg.match[1] || '', 100, (err, output) => {
+        model.generate(msg.match[1] || "", 100, (err, output) => {
           if (err) {
-            errorHandler(msg, err)
-            return
+            errorHandler(msg, err);
+            return;
           }
 
-          msg.send(output)
-        })
-      })
+          msg.send(output);
+        });
+      });
     } catch (e) {
-      errorHandler(msg, e)
+      errorHandler(msg, e);
     }
-  })
+  });
 
-  robot.respond(new RegExp(`reindex\\s+${spec.name}kov`, 'i'), async msg => {
-    robot.logger.debug(`Reindexing ${spec.name}kov model.`)
+  robot.respond(new RegExp(`reindex\\s+${spec.name}kov`, "i"), async msg => {
+    robot.logger.debug(`Reindexing ${spec.name}kov model.`);
     await new Promise((resolve, reject) => {
       try {
         robot.markov.modelNamed(`${spec.name}kov`, model => {
           model.destroy(err => {
-            delete robot.markov.byName[`${spec.name}kov`]
-            if (err) return reject(err)
-            robot.logger.info(`Model ${spec.name}kov destroyed.`)
-            resolve()
-          })
-        })
+            delete robot.markov.byName[`${spec.name}kov`];
+            if (err) return reject(err);
+            robot.logger.info(`Model ${spec.name}kov destroyed.`);
+            resolve();
+          });
+        });
       } catch (e) {
-        robot.logger.info(`No model yet for ${spec.name}kov.`)
-        resolve()
+        robot.logger.info(`No model yet for ${spec.name}kov.`);
+        resolve();
       }
-    })
+    });
 
-    robot.markov.createModel(`${spec.name}kov`, {})
+    robot.markov.createModel(`${spec.name}kov`, {});
 
-    const { documents } = await documentSet.allMatching({}, '')
+    const {documents} = await documentSet.allMatching({}, "");
 
-    robot.logger.debug(`Reindexing ${documents.length} ${spec.plural}.`)
+    robot.logger.debug(`Reindexing ${documents.length} ${spec.plural}.`);
     await new Promise((resolve, reject) => {
       robot.markov.modelNamed(`${spec.name}kov`, async model => {
-        let count = 0
+        let count = 0;
         for (const document of documents) {
           await new Promise((resolve, reject) => {
-            const body = document.getBody()
-              .replace(/\[[^\]]+\]\s+/g, '')
-              .replace(/(^|\n)>\s+/g, ' ')
+            const body = document
+              .getBody()
+              .replace(/\[[^\]]+\]\s+/g, "")
+              .replace(/(^|\n)>\s+/g, " ");
 
             model.learn(body, err => {
-              if (err) return reject(err)
-              resolve()
-            })
-          })
-          count++
+              if (err) return reject(err);
+              resolve();
+            });
+          });
+          count++;
 
           if (count % 100 === 0) {
-            robot.logger.debug(`Indexed ${count} ${spec.plural}.`)
+            robot.logger.debug(`Indexed ${count} ${spec.plural}.`);
           }
         }
-        resolve()
-      })
-    })
-    msg.reply(`Regenerated markov model from ${documents.length} ${spec.plural}.`)
-  })
+        resolve();
+      });
+    });
+    msg.reply(
+      `Regenerated markov model from ${documents.length} ${spec.plural}.`
+    );
+  });
 }
