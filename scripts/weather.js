@@ -114,27 +114,15 @@ module.exports = function(robot) {
         fields: [
           {
             title: "Currently",
-            value: `${forecastResult.minutely.summary} ${
-              forecastResult.currently.temperature
-            } °F, feels like ${
-              forecastResult.currently.apparentTemperature
-            } °F. :${currentlyEmoji}:`,
+            value: `${forecastResult.minutely.summary} ${forecastResult.currently.temperature} °F, feels like ${forecastResult.currently.apparentTemperature} °F. :${currentlyEmoji}:`,
           },
           {
             title: "Today",
-            value: `${forecastResult.daily.data[0].summary} High: ${
-              forecastResult.daily.data[0].temperatureMax
-            } °F Low: ${
-              forecastResult.daily.data[0].temperatureMin
-            } °F. :${todayEmoji}:`,
+            value: `${forecastResult.daily.data[0].summary} High: ${forecastResult.daily.data[0].temperatureMax} °F Low: ${forecastResult.daily.data[0].temperatureMin} °F. :${todayEmoji}:`,
           },
           {
             title: "Tomorrow",
-            value: ` ${forecastResult.daily.data[1].summary} High: ${
-              forecastResult.daily.data[1].temperatureMax
-            } °F Low: ${
-              forecastResult.daily.data[1].temperatureMin
-            } °F. :${tomorrowEmoji}:`,
+            value: ` ${forecastResult.daily.data[1].summary} High: ${forecastResult.daily.data[1].temperatureMax} °F Low: ${forecastResult.daily.data[1].temperatureMin} °F. :${tomorrowEmoji}:`,
           },
         ],
         footer: "Powered by Dark Sky | https://darksky.net/poweredby/",
