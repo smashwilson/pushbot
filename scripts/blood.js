@@ -72,9 +72,7 @@ module.exports = function(robot) {
       );
     } catch (err) {
       msg.reply(
-        `I couldn't get to the page on Obsidian portal:\n\`\`\`\n${
-          err.stack
-        }\n\`\`\`\n`
+        `I couldn't get to the page on Obsidian portal:\n\`\`\`\n${err.stack}\n\`\`\`\n`
       );
     }
   });

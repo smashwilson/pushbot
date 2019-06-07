@@ -113,9 +113,7 @@ module.exports = function(robot) {
     } catch (e) {
       msg.reply(
         `:no_entry_sign: ${e.message}\n` +
-          `Call \`/dm ${
-            robot.name
-          } buffer help\` for a pattern syntax refresher.`
+          `Call \`/dm ${robot.name} buffer help\` for a pattern syntax refresher.`
       );
     }
   });

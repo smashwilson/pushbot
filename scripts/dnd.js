@@ -43,9 +43,7 @@ module.exports = function(robot) {
   function dmOnlyError(msg) {
     return [
       `You can't do that! You're not a *${DM_ROLE}*.`,
-      `Ask an admin to run \`${robot.name} grant ${
-        msg.message.user.name
-      } the ${DM_ROLE} role\`.`,
+      `Ask an admin to run \`${robot.name} grant ${msg.message.user.name} the ${DM_ROLE} role\`.`,
     ].join("\n");
   }
 
@@ -276,9 +274,7 @@ module.exports = function(robot) {
       // Query only
       if (!amount) {
         msg.send(
-          `@${character.username}'s current HP is ${inithp} / ${
-            character.maxhp
-          }.`
+          `@${character.username}'s current HP is ${inithp} / ${character.maxhp}.`
         );
         return;
       }
@@ -300,9 +296,7 @@ module.exports = function(robot) {
       character.currenthp = finalhp;
 
       const lines = [
-        `@${character.username}'s HP: ${inithp} :point_right: ${finalhp} / ${
-          character.maxhp
-        }`,
+        `@${character.username}'s HP: ${inithp} :point_right: ${finalhp} / ${character.maxhp}`,
       ];
       if (finalhp <= 0) {
         lines.push(`@${character.username} is KO'ed!`);
