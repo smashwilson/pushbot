@@ -29,8 +29,8 @@ global.expect = require("chai").expect;
 
 global.sinon = createSandbox();
 
-global.database = process.env.DATABASE_URL
-  ? pg(process.env.DATABASE_URL)
+global.database = process.env.PUSHBOT_DATABASE_URL
+  ? pg(process.env.PUSHBOT_DATABASE_URL)
   : null;
 
 global.delay = function(timeoutMs) {

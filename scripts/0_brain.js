@@ -9,7 +9,7 @@ const pg = require("pg-promise")({
   promiseLib: Promise,
 });
 
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = process.env.PUSHBOT_DATABASE_URL;
 const batchSize = parseInt(process.env.BATCH_SIZE || "1000");
 
 const columnSet = new pg.helpers.ColumnSet(["type", "key", "value:json"], {
