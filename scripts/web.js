@@ -17,11 +17,6 @@ const root = require("./api/root");
 const {CalendarMap} = require("./models/calendar");
 
 const PORT = 8080;
-const PRIOR_ADDRESSES = (process.env.PRIOR_ADDRESSES || "")
-  .split(/,/)
-  .filter(address => address.length > 0);
-const PRIOR_SCHEME = process.env.PRIOR_SCHEME || "https";
-const PRIOR_PORT = parseInt(process.env.PRIOR_PORT || "443");
 
 const SESSION_SECRET = process.env.SESSION_SECRET || "shhh";
 const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID;
