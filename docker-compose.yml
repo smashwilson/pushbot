@@ -12,7 +12,7 @@ services:
     volumes:
     - ".:/usr/src/app/"
     environment:
-      DATABASE_URL: postgres://pushbot:shhh@postgres/pushbot
+      PUSHBOT_DATABASE_URL: postgres://pushbot:shhh@postgres/pushbot
       HUBOT_SLACK_TOKEN:
       SLACK_CLIENT_ID:
       SLACK_CLIENT_SECRET:
