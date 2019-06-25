@@ -1,5 +1,6 @@
 const {TallyMap} = require("../models/tally-map");
 const {emojiCacheFor} = require("../models/emoji");
+const {Admin} = require("../roles");
 
 class AvatarResolver {
   constructor(profile) {
@@ -44,7 +45,7 @@ class UserResolver {
     return new AvatarResolver(this.profile);
   }
 
-  roles(args, req) {
+  roles(_args, req) {
     return req.robot.auth.userRoles(this.user).map(role => {
       return {name: role};
     });
@@ -89,14 +90,22 @@ class UserResolver {
     );
     return Promise.all(reactions);
   }
+
+  coordinatorToken(_args, req) {
+    if (req.user !== this.user || !Admin.isAllowed(req.robot, req.user)) {
+      return null;
+    }
+
+    return process.env.AZ_COORDINATOR_TOKEN;
+  }
 }
 
 class UserSetResolver {
-  me(args, req) {
+  me(_args, req) {
     return new UserResolver(req.user);
   }
 
-  all(args, req) {
+  all(_args, req) {
     const resolvers = [];
     const userMap = req.robot.brain.users();
     for (const uid of Object.keys(userMap)) {

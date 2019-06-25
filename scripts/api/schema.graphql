@@ -101,6 +101,10 @@ type User {
 
   # Return the reaction emoji that this user most frequently gives to others.
   topReactionsReceived(limit: Int = 10): [EmojiCount!]!
+
+  # A token that may be used to make authenticated requests against the az-coordinator server. Only present if this
+  # user is the logged-in user and is an administrator.
+  coordinatorToken: String
 }
 
 # Graphic this user has chosen to represent themselves.
