@@ -1,14 +1,14 @@
 const {UserSetResolver} = require("../../scripts/api/user-set");
 
 describe("UserSetResolver", function() {
-  let bot, self, req, resolver;
+  let bot, self, admin, req, resolver;
 
   beforeEach(async function() {
     bot = new BotContext();
-    await bot.loadAuth("1");
+    await bot.loadAuth("2");
 
     self = bot.createUser("1", "self", {roles: ["role one", "role two"]});
-    bot.createUser("2", "two");
+    admin = bot.createUser("2", "two");
     bot.createUser("3", "three");
 
     req = {robot: bot.getRobot(), user: self};
@@ -24,13 +24,30 @@ describe("UserSetResolver", function() {
       const result = resolver.me({}, req);
       expect(result.user).to.eql(self);
     });
+
+    it("includes the coordinator auth token if the user is an admin", function() {
+      process.env.AZ_COORDINATOR_TOKEN = "shhh";
+      const adminReq = {robot: bot.getRobot(), user: admin};
+      const userResolver = resolver.me({}, adminReq);
+      expect(userResolver.coordinatorToken({}, adminReq)).to.eql("shhh");
+    });
+
+    it("omits the coordinator auth token for non-admins", function() {
+      process.env.AZ_COORDINATOR_TOKEN = "shhh";
+      const userResolver = resolver.me({}, req);
+      expect(userResolver.coordinatorToken({}, req)).to.be.null;
+    });
   });
 
   describe("all", function() {
     it("returns resolvers for all users", function() {
       const results = resolver.all({}, req);
       expect(results.map(each => each.user)).to.have.deep.members([
-        {id: "1", name: "self", roles: ["role one", "role two"]},
+        {
+          id: "1",
+          name: "self",
+          roles: ["role one", "role two"],
+        },
         {id: "2", name: "two"},
         {id: "3", name: "three"},
       ]);
@@ -139,11 +156,7 @@ describe("UserSetResolver", function() {
     it("accesses currently assigned roles", function() {
       const userResolver = resolver.me({}, req);
       const roles = userResolver.roles({}, req);
-      expect(roles).to.eql([
-        {name: "admin"},
-        {name: "role one"},
-        {name: "role two"},
-      ]);
+      expect(roles).to.eql([{name: "role one"}, {name: "role two"}]);
     });
 
     it("accesses counts of reactions given", async function() {
