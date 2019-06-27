@@ -40,6 +40,6 @@ source ${SECRETS}
 export DEV_USERNAME=${DEV_USERNAME:-${USER}}
 
 case "${OSTYPE}" in
-  linux*) sudo -E docker-compose run --service-ports pushbot ;;
-  *) exec docker-compose run --service-ports pushbot ;;
+  linux*) sudo -E docker-compose run --rm --service-ports pushbot ;;
+  *) exec docker-compose run --rm --service-ports pushbot ;;
 esac
