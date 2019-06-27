@@ -37,5 +37,9 @@ $env:HUBOT_GEOCODING_APIKEY = ''
 $env:API_BASE_URL = ''
 $env:WEB_BASE_URL = ''
 
+# Coordinator
+
+$env:AZ_COORDINATOR_TOKEN = ''
+
 # Debugging
 # $env:HUBOT_LOG_LEVEL = 'debug'

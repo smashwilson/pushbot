@@ -40,5 +40,9 @@ export HUBOT_GEOCODING_APIKEY=
 export API_BASE_URL=
 export WEB_BASE_URL=
 
+# Coordinator
+
+export AZ_COORDINATOR_TOKEN
+
 # debugging
 # export HUBOT_LOG_LEVEL=debug

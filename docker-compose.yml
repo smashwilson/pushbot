@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   postgres:
     image: postgres:9.6
@@ -6,11 +6,11 @@ services:
       POSTGRES_USER: pushbot
       POSTGRES_PASSWORD: shhh
     ports:
-    - '5432'
+      - "5432"
   pushbot:
     build: .
     volumes:
-    - ".:/usr/src/app/"
+      - ".:/usr/src/app/"
     environment:
       PUSHBOT_DATABASE_URL: postgres://pushbot:shhh@postgres/pushbot
       HUBOT_SLACK_TOKEN:
@@ -30,7 +30,8 @@ services:
       API_BASE_URL: http://localhost:8080
       WEB_BASE_URL:
       HUBOT_LOG_LEVEL:
+      AZ_COORDINATOR_TOKEN:
     ports:
-    - '8080:8080'
+      - "8080:8080"
     depends_on:
-    - postgres
+      - postgres
