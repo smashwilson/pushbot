@@ -2,10 +2,6 @@ param (
     [string]$configuration = ""
 )
 
-if (!$env:DEV_USERNAME) {
-    $env:DEV_USERNAME = $env:USERNAME
-}
-
 if (Test-Path -Path "secrets\botrc.ps1") {
     $secrets = "secrets\botrc.ps1"
 }
