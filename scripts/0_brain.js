@@ -3,6 +3,11 @@
 
 "use strict";
 
+process.on("SIGINT", () => {
+  console.error("SIGINT received.");
+  process.exit(130);
+});
+
 const util = require("util");
 const Promise = require("bluebird");
 const pg = require("pg-promise")({
