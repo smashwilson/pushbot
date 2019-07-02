@@ -82,8 +82,7 @@ describe("rem", function() {
       bot.store("rem:1 bb 1", "B");
 
       await bot.say("admin", "@hubot remsearch aa");
-      await bot.waitForResponse("showing _0 aa 0_");
-      await bot.waitForResponse("A");
+      await bot.waitForResponse("showing _0 aa 0_\nA");
     });
   });
 });
