@@ -64,7 +64,7 @@ module.exports = function(robot) {
       return;
     } else if (matches.length === 1) {
       value = robot.rem.get(matches[0]);
-      msg.send(value);
+      msg.send(`showing _${matches[0]}_\n${value}`);
       return;
     }
 
