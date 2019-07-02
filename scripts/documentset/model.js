@@ -105,6 +105,7 @@ class DocumentSet {
       hasPreviousPage,
       hasNextPage,
       documents,
+      endCursor: lastId,
     };
   }
 

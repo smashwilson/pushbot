@@ -63,7 +63,7 @@ class DocumentSetResolver {
     const query = criteria.query || "";
 
     const [
-      {hasPreviousPage, hasNextPage, documents},
+      {hasPreviousPage, hasNextPage, documents, endCursor},
       count,
     ] = await Promise.all([
       this.set.allMatching(attributes, query, first, after),
@@ -79,11 +79,11 @@ class DocumentSetResolver {
 
     return {
       edges,
-      pageInfo: {count, hasPreviousPage, hasNextPage},
+      pageInfo: {count, hasPreviousPage, hasNextPage, endCursor},
     };
   }
 
-  mine(args, req) {
+  mine(_args, req) {
     return this.random({criteria: {subject: req.user.name}});
   }
 
