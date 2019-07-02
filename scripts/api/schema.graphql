@@ -48,6 +48,9 @@ type PageInfo {
   # True if there is a page of results after this one.
   hasNextPage: Boolean!
 
+  # Cursor of the first result from this page.
+  startCursor: String!
+
   # Cursor of the final result from this page.
   endCursor: String!
 }

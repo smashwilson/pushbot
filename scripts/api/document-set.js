@@ -63,7 +63,7 @@ class DocumentSetResolver {
     const query = criteria.query || "";
 
     const [
-      {hasPreviousPage, hasNextPage, documents, endCursor},
+      {hasPreviousPage, hasNextPage, documents, startCursor, endCursor},
       count,
     ] = await Promise.all([
       this.set.allMatching(attributes, query, first, after),
@@ -79,7 +79,7 @@ class DocumentSetResolver {
 
     return {
       edges,
-      pageInfo: {count, hasPreviousPage, hasNextPage, endCursor},
+      pageInfo: {count, hasPreviousPage, hasNextPage, startCursor, endCursor},
     };
   }
 

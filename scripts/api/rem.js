@@ -23,6 +23,7 @@ class RemResolver {
         count: keys.length,
         hasPreviousPage: afterInd > 0,
         hasNextPage: keys.length - afterInd > limit,
+        startCursor: afterInd.toString(),
         endCursor: (afterInd + page.length - 1).toString(),
       },
       edges: page.map((key, i) => {

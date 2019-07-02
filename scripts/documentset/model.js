@@ -72,6 +72,7 @@ class DocumentSet {
     ]);
 
     const documents = rows.map(row => new Document(this, row));
+    const firstId = documents.length > 0 ? documents[0].id : cursor;
     const lastId =
       documents.length > 0 ? documents[documents.length - 1].id : cursor;
     const byId = new Map(documents.map(doc => [doc.id, doc]));
@@ -105,6 +106,7 @@ class DocumentSet {
       hasPreviousPage,
       hasNextPage,
       documents,
+      startCursor: firstId,
       endCursor: lastId,
     };
   }

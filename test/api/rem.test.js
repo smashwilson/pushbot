@@ -59,6 +59,7 @@ describe("RemResolver", function() {
           hasPreviousPage: false,
           hasNextPage: false,
           count: 2,
+          startCursor: "0",
           endCursor: "1",
         },
         edges: [
@@ -75,6 +76,7 @@ describe("RemResolver", function() {
           hasPreviousPage: false,
           hasNextPage: true,
           count: 6,
+          startCursor: "0",
           endCursor: "4",
         },
         edges: [
@@ -92,6 +94,7 @@ describe("RemResolver", function() {
           hasPreviousPage: true,
           hasNextPage: false,
           count: 6,
+          startCursor: "5",
           endCursor: "5",
         },
         edges: [{cursor: "5", node: {key: "bbb 222", value: "value 5"}}],
@@ -110,6 +113,7 @@ describe("RemResolver", function() {
             hasPreviousPage: false,
             hasNextPage: true,
             count: 6,
+            startCursor: "0",
             endCursor: "1",
           },
           edges: [
@@ -132,6 +136,7 @@ describe("RemResolver", function() {
             hasPreviousPage: true,
             hasNextPage: true,
             count: 6,
+            startCursor: "2",
             endCursor: "3",
           },
           edges: [
@@ -154,6 +159,7 @@ describe("RemResolver", function() {
             hasPreviousPage: true,
             hasNextPage: false,
             count: 6,
+            startCursor: "4",
             endCursor: "5",
           },
           edges: [
@@ -174,6 +180,7 @@ describe("RemResolver", function() {
             hasPreviousPage: false,
             hasNextPage: true,
             count: 6,
+            startCursor: "0",
             endCursor: "2",
           },
           edges: [
@@ -197,6 +204,7 @@ describe("RemResolver", function() {
             hasPreviousPage: true,
             hasNextPage: false,
             count: 6,
+            startCursor: "3",
             endCursor: "5",
           },
           edges: [
@@ -215,6 +223,7 @@ describe("RemResolver", function() {
         hasPreviousPage: false,
         hasNextPage: false,
         count: 6,
+        startCursor: "0",
         endCursor: "5",
       });
       expect(page0.edges).to.have.length(6);
