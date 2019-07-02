@@ -79,14 +79,11 @@ describe("rem", function() {
 
     it("automatically fetches if there is exactly one result", async function() {
       bot.store("rem:0 aa 0", "A");
+      bot.store("rem:1 bb 1", "B");
 
       await bot.say("admin", "@hubot remsearch aa");
-      await bot.waitForResponse();
-      const lines = bot
-        .response()
-        .split(/\s*\n\s*/)
-        .filter(line => line.length > 0);
-      expect(lines).to.have.members(["A"]);
+      await bot.waitForResponse("showing _0 aa 0_");
+      await bot.waitForResponse("A");
     });
   });
 });
