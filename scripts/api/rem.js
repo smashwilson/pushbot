@@ -16,14 +16,16 @@ class RemResolver {
 
     const keys = robot.rem.search(query);
     keys.sort(getComparator(field, direction));
+    const page = keys.slice(afterInd, afterInd + limit);
 
     return {
       pageInfo: {
         count: keys.length,
         hasPreviousPage: afterInd > 0,
         hasNextPage: keys.length - afterInd > limit,
+        endCursor: (afterInd + page.length - 1).toString(),
       },
-      edges: keys.slice(afterInd, afterInd + limit).map((key, i) => {
+      edges: page.map((key, i) => {
         return {
           cursor: (i + afterInd).toString(),
           node: {key, value: robot.rem.get(key)},

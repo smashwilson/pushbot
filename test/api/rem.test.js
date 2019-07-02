@@ -2,7 +2,7 @@ const {RemResolver} = require("../../scripts/api/rem");
 
 describe("RemResolver", function() {
   let bot, resolver, req;
-  let authorized, unauthorized;
+  let authorized;
 
   beforeEach(async function() {
     bot = new BotContext("../scripts/rem.js");
@@ -59,6 +59,7 @@ describe("RemResolver", function() {
           hasPreviousPage: false,
           hasNextPage: false,
           count: 2,
+          endCursor: "1",
         },
         edges: [
           {cursor: "0", node: {key: "aaa 111", value: "value 1"}},
@@ -74,6 +75,7 @@ describe("RemResolver", function() {
           hasPreviousPage: false,
           hasNextPage: true,
           count: 6,
+          endCursor: "4",
         },
         edges: [
           {cursor: "0", node: {key: "aaa 000", value: "value 0"}},
@@ -90,6 +92,7 @@ describe("RemResolver", function() {
           hasPreviousPage: true,
           hasNextPage: false,
           count: 6,
+          endCursor: "5",
         },
         edges: [{cursor: "5", node: {key: "bbb 222", value: "value 5"}}],
       });
@@ -107,6 +110,7 @@ describe("RemResolver", function() {
             hasPreviousPage: false,
             hasNextPage: true,
             count: 6,
+            endCursor: "1",
           },
           edges: [
             {cursor: "0", node: {key: "aaa 000", value: "value 0"}},
@@ -128,6 +132,7 @@ describe("RemResolver", function() {
             hasPreviousPage: true,
             hasNextPage: true,
             count: 6,
+            endCursor: "3",
           },
           edges: [
             {cursor: "2", node: {key: "aaa 222", value: "value 2"}},
@@ -149,6 +154,7 @@ describe("RemResolver", function() {
             hasPreviousPage: true,
             hasNextPage: false,
             count: 6,
+            endCursor: "5",
           },
           edges: [
             {cursor: "4", node: {key: "bbb 111", value: "value 4"}},
@@ -168,6 +174,7 @@ describe("RemResolver", function() {
             hasPreviousPage: false,
             hasNextPage: true,
             count: 6,
+            endCursor: "2",
           },
           edges: [
             {cursor: "0", node: {key: "bbb 222", value: "value 5"}},
@@ -190,6 +197,7 @@ describe("RemResolver", function() {
             hasPreviousPage: true,
             hasNextPage: false,
             count: 6,
+            endCursor: "5",
           },
           edges: [
             {cursor: "3", node: {key: "aaa 222", value: "value 2"}},
@@ -207,6 +215,7 @@ describe("RemResolver", function() {
         hasPreviousPage: false,
         hasNextPage: false,
         count: 6,
+        endCursor: "5",
       });
       expect(page0.edges).to.have.length(6);
       const nodes = page0.edges.map(e => e.node);

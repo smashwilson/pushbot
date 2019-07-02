@@ -47,6 +47,9 @@ type PageInfo {
 
   # True if there is a page of results after this one.
   hasNextPage: Boolean!
+
+  # Cursor of the final result from this page.
+  endCursor: String!
 }
 
 # Common search result sort order values.
@@ -296,7 +299,7 @@ type Rem {
     after: String
     orderField: RemOrderField = KEY
     orderDirection: SortDirection = ASCENDING
-  ): MemoryConnection
+  ): MemoryConnection!
 }
 
 # Paginated collection of Memories within Rem. As specified by:
