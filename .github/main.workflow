@@ -1,6 +1,6 @@
 workflow "Build and push Docker container" {
   on = "push"
-  resolves = ["Build"]
+  resolves = ["Synchronize"]
 }
 
 action "Build" {
@@ -9,4 +9,10 @@ action "Build" {
   env = {
     IMAGE_NAME = "quay.io/smashwilson/az-pushbot"
   }
+}
+
+action "Synchronize" {
+  needs = "Build"
+  uses = "smashwilson/az-infra/actions/azsync@master"
+  secrets = ["AZ_COORDINATOR_TOKEN"]
 }
