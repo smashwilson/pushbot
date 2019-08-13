@@ -1,0 +1,19 @@
+on: push
+name: Build and push Docker container
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Build
+      uses: smashwilson/az-infra/actions/azbuild@master
+      env:
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKER_REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        IMAGE_NAME: quay.io/smashwilson/az-pushbot
+    - name: Synchronize
+      uses: smashwilson/az-infra/actions/azsync@master
+      env:
+        AZ_COORDINATOR_TOKEN: ${{ secrets.AZ_COORDINATOR_TOKEN }}
