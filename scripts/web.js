@@ -23,6 +23,7 @@ const SLACK_CLIENT_ID = process.env.SLACK_CLIENT_ID;
 const SLACK_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET;
 const SLACK_TEAM_ID = process.env.SLACK_TEAM_ID;
 const DEV_USERNAME = process.env.DEV_USERNAME;
+const COOKIE_AGE = 30 * 24 * 60 * 60 * 1000;
 
 const CORS_OPTIONS = {
   origin: process.env.WEB_BASE_URL,
@@ -170,10 +171,15 @@ module.exports = function(robot) {
     cookieSession({
       secret: SESSION_SECRET,
       cookie: {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
+        maxAge: COOKIE_AGE,
       },
     })
   );
+
+  app.use((req, res, next) => {
+    req.sessionOptions.expires = new Date(Date.now() + COOKIE_AGE);
+    return next();
+  });
 
   app.use(passport.initialize());
   app.use(passport.session());
