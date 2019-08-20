@@ -52,7 +52,7 @@
     "tinycolor2": "1.4.1",
     "twit": "2.2.11",
     "underscore": "1.9.1",
-    "uuid": "3.3.2",
+    "uuid": "3.3.3",
     "yargs": "14.0.0"
   },
   "engines": {
