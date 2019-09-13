@@ -54,7 +54,7 @@ module.exports = function(robot) {
     msg.emote(`compresses ${target} in a cold, metallic embrace`);
   });
 
-  robot.respond(/hi5(?: (.*)?)/i, function(msg) {
+  robot.respond(/hi5(?: (.*))?/i, function(msg) {
     const target = targetFrom(msg);
     return msg.emote(
       atRandom([
