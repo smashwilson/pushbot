@@ -53,7 +53,7 @@
     "twit": "2.2.11",
     "underscore": "1.9.1",
     "uuid": "3.3.3",
-    "yargs": "14.0.0"
+    "yargs": "14.2.0"
   },
   "engines": {
     "node": "0.10.x"
