@@ -18,6 +18,7 @@
 //   hubot fine - Show just how fine it is
 //   hubot embiggen - Tickets... to the gun show
 //   hubot clap - Give :clap: your :clap: words :clap: some :clap: emphasis
+//   hubot honk - Honk. Honk honk. Hoooonk
 
 // Configuration:
 //
@@ -337,9 +338,13 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
   );
 
   robot.respond(/quite/i, msg => msg.reply("Indeed."));
-
-  return robot.respond(/clap\s*([^]+)/i, function(msg) {
+  
+  robot.respond(/clap\s*([^]+)/i, function(msg) {
     const words = msg.match[1].split(/\s+/).filter(word => word.length > 0);
     return msg.send(words.join(" :clap: "));
+  });
+  
+  robot.respond(/honk/i, msg => {
+    msg.send("Honk. Honk. HOOOOOOOOONK");
   });
 };
