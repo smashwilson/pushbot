@@ -338,12 +338,12 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
   );
 
   robot.respond(/quite/i, msg => msg.reply("Indeed."));
-  
+
   robot.respond(/clap\s*([^]+)/i, function(msg) {
     const words = msg.match[1].split(/\s+/).filter(word => word.length > 0);
     return msg.send(words.join(" :clap: "));
   });
-  
+
   robot.respond(/honk/i, msg => {
     msg.send("Honk. Honk. HOOOOOOOOONK");
   });
