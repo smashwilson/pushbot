@@ -41,7 +41,7 @@
     "log": "1.4.0",
     "moment": "2.24.0",
     "moment-precise-range-plugin": "1.3.0",
-    "moment-timezone": "0.5.26",
+    "moment-timezone": "0.5.27",
     "morse": "0.1.0",
     "passport": "0.4.0",
     "passport-http": "0.3.0",
