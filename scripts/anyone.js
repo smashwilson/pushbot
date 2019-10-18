@@ -6,6 +6,8 @@
 //   hubot anyone here - Return the username of any user that's currently online.
 //   hubot anyone here but me - Return the username of any user that's currently online, except the caller.
 
+// Some kind of change so I have a different container to branch-ship.
+
 module.exports = function(robot) {
   function allUserNames(filter) {
     const userNames = [];
