@@ -37,7 +37,7 @@
     "hubot-shipit": "0.2.1",
     "hubot-slack": "4.7.1",
     "hubot-swanson": "1.2.0",
-    "jsdom": "15.1.1",
+    "jsdom": "15.2.1",
     "log": "1.4.0",
     "moment": "2.24.0",
     "moment-precise-range-plugin": "1.3.0",
