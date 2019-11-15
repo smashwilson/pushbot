@@ -1,14 +1,15 @@
 // Description:
-//   Special-case !allswitchcodes.
+//   Special-case !allswitchcodes and !allpsn to return all known codes at once.
 //
 // Commands:
 //   hubot allswitchcodes - Dump everyone's Switch friend code.
+//   hubot allpsn - Dump everyone's PSN username.
 
 module.exports = function(robot) {
-  robot.respond(/allswitchcodes\b/i, async msg => {
-    const ds = robot.documentSets.switchcode;
+  async function allCodes(msg, dsName, {missing, header}) {
+    const ds = robot.documentSets[dsName];
     if (!ds) {
-      msg.reply("No switchcode mappings present.");
+      msg.reply(missing);
       return;
     }
 
@@ -26,8 +27,8 @@ module.exports = function(robot) {
 
     let response = "";
 
-    response +=
-      ":switch_left: Nintendo Switch Friend Codes :switch_right:\n```\n";
+    response += header;
+    response += "\n```\n";
     for (const document of documents) {
       const subject = document
         .getAttributes()
@@ -44,5 +45,26 @@ module.exports = function(robot) {
     response += "\n```\n";
 
     msg.send(response);
+  }
+
+  robot.respond(/allswitchcodes\b/i, async msg => {
+    await allCodes(msg, "switchcode", {
+      missing: "No switchcode mappings present.",
+      header: ":switch_left: Nintendo Switch Friend Codes :switch_right:",
+    });
+  });
+
+  robot.respond(/allpsns\b/i, async msg => {
+    await allCodes(msg, "psn", {
+      missing: "No PSN mappings present.",
+      header: ":psn: PlayStation Network usernames :psn:",
+    });
+  });
+
+  robot.respond(/allxboxes\b/i, async msg => {
+    await allCodes(msg, "xbox", {
+      missing: "No XBox mappings present.",
+      header: ":xbox: XBox gamertags :xbox:",
+    });
   });
 };
