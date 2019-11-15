@@ -42,7 +42,7 @@ module.exports = function(robot) {
       response += document.getBody();
       response += "\n";
     }
-    response += "\n```\n";
+    response += "```\n";
 
     msg.send(response);
   }
