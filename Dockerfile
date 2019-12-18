@@ -3,7 +3,7 @@ LABEL maintainer "Ash Wilson <smashwilson@gmail.com>"
 
 ENV NPM_CONFIG_LOGLEVEL warn
 
-RUN apk add --no-cache bash postgresql-client
+RUN apk add --no-cache bash postgresql-client imagemagick
 RUN npm install -g coffee-script
 RUN mkdir -p /usr/src/app
 RUN adduser -s /bin/false -D pushbot
