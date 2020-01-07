@@ -51,7 +51,7 @@
     "request-promise-native": "1.0.8",
     "tinycolor2": "1.4.1",
     "twit": "2.2.11",
-    "underscore": "1.9.1",
+    "underscore": "1.9.2",
     "uuid": "3.3.3",
     "yargs": "15.1.0"
   },
