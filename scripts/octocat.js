@@ -3,31 +3,40 @@
 // Commands:
 //   hubot octosay <text> - Makes Mona Lisa say <text>
 
-const request = require("request");
+const {URL} = require("url");
+const fetch = require("node-fetch");
 
 module.exports = function(robot) {
-  robot.respond(/octosay( me)?\s*([^]*)/i, msg => {
+  robot.respond(/octosay( me)?\s*([^]*)/i, async msg => {
     const message =
       msg.match[2].trim().length > 0
         ? msg.match[2]
         : robot.mostRecent(msg).text;
 
-    request(
-      {
-        uri: "https://api.github.com/octocat",
-        qs: {s: message},
+    const u = new URL("https://api.github.com/octocat");
+    u.searchParams.set("s", message);
+    try {
+      const response = await fetch(u.href, {
         headers: {
-          "User-Agent": "smashwilson/pushbot request/2.79.0",
+          "User-Agent": "smashwilson/pushbot node-fetch/1.0",
         },
-      },
-      (err, response, body) => {
-        if (err) {
-          msg.reply(":boom:\n```\n" + err.stack + "\n```\n");
-          return;
-        }
+      });
 
+      const body = await response.text();
+
+      if (!response.ok) {
+        msg.reply(
+          ":boom: Unsuccessful response from the GitHub API:\n" +
+            `${response.status}: ${response.statusText}\n` +
+            "\n```\n" +
+            body +
+            "\n```\n"
+        );
+      } else {
         msg.send("\n```\n" + body + "\n```\n");
       }
-    );
+    } catch (err) {
+      msg.reply(":boom:\n```\n" + err.stack + "\n```\n");
+    }
   });
 };
