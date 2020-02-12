@@ -9,14 +9,15 @@
 //
 // HUBOT_HEARTHSTONE_LOOKUP - URL to look up the cards
 
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 
 module.exports = function(robot) {
   robot.respond(/hspopulate(?: (.*))?/i, async function(msg) {
     try {
       const uri =
         msg.match[1] || "http://hearthstonejson.com/json/AllSets.json";
-      const json = await request({uri, json: true});
+      const response = await fetch(uri);
+      const json = await response.json();
 
       robot.brain.data.hearthstone = {};
 

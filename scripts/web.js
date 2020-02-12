@@ -5,7 +5,6 @@ const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const cookieSession = require("cookie-session");
-const request = require("request");
 const graphqlHTTP = require("express-graphql");
 const {buildSchema} = require("graphql");
 const passport = require("passport");

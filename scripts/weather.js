@@ -11,7 +11,7 @@
 // HUBOT_WEATHER_APIKEY = forecast.io api key
 //
 
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 const tinycolor = require("tinycolor2");
 
 const MAPS_APIKEY = process.env.HUBOT_GEOCODING_APIKEY;
@@ -89,8 +89,21 @@ module.exports = function(robot) {
     try {
       const location = encodeURIComponent(msg.match[1]);
       const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=${MAPS_APIKEY}`;
-      const geocodeResult = await request({uri: geocodeURL, json: true});
 
+      const response = await fetch(geocodeURL, {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        msg.send(
+          `Error geocoding location:\n${response.status} ${response.statusText}\n\`\`\`\n${text}\n\`\`\`\n`
+        );
+        return;
+      }
+
+      const geocodeResult = await response.json();
       if (geocodeResult.status !== "OK") {
         msg.send(`Error geocoding location: \`${geocodeResult.status}\``);
         return;
@@ -100,7 +113,20 @@ module.exports = function(robot) {
       const address = geocodeResult.results[0].formatted_address;
 
       const forecastURL = `https://api.darksky.net/forecast/${FORECAST_APIKEY}/${lat},${lng}`;
-      const forecastResult = await request({uri: forecastURL, json: true});
+      const forecastResponse = await fetch(forecastURL, {
+        headers: {
+          Accept: "application/json",
+        },
+      });
+      if (!forecastResponse.ok) {
+        const text = await forecastResponse.text();
+        msg.send(
+          `Error accessing forecast:\n${forecastResponse.status} ${forecastResponse.statusText}\n\`\`\`\n${text}\n\`\`\`\n`
+        );
+        return;
+      }
+
+      const forecastResult = await forecastResponse.json();
 
       const currentlyEmoji = iconToEmoji(forecastResult.currently.icon);
       const todayEmoji = iconToEmoji(forecastResult.daily.data[0].icon);
