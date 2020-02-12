@@ -5,7 +5,7 @@
 //   hubot pour blood down our gullets - Update the !blood list from the Obsidian Portal adventure log
 
 const cheerio = require("cheerio");
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 const {Admin} = require("./roles");
 const {createDocumentSet} = require("./documentset");
 
@@ -30,10 +30,17 @@ module.exports = function(robot) {
     try {
       await bloodSet.truncate();
 
-      const $ = await request({
-        uri: "https://blood-down-the-gullet.obsidianportal.com/adventure-log",
-        transform: body => cheerio.load(body),
-      });
+      const response = await fetch(
+        "https://blood-down-the-gullet.obsidianportal.com/adventure-log"
+      );
+      const body = await response.text();
+      if (!response.ok) {
+        msg.reply(
+          `I couldn't get to the page on Obsidian portal:\n${response.status}: ${response.statusText}\n\`\`\`\n${body}\n\`\`\`\n`
+        );
+        return;
+      }
+      const $ = cheerio.load(body);
 
       const tracks = [];
       $(".adventure-log-post .post-content").each((i, e) => {
