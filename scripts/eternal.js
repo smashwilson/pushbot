@@ -9,13 +9,14 @@
 //
 // process.env.HUBOT_ETERNAL_LOOKUP - URL to look up the cards, replace on <card_name>
 
-const request = require("request-promise-native");
+const fetch = require("node-fetch");
 
 module.exports = function(robot) {
   robot.respond(/etload(?: (.*))?/i, async function(msg) {
     const uri = msg.match[1] || "https://www.eternaljson.com/eternal.json";
     try {
-      const json = await request({uri, json: true});
+      const response = await fetch(uri);
+      const json = await response.json();
       robot.brain.data.eternal = {};
       for (const card of json) {
         robot.brain.data.eternal[card.name.toLowerCase()] = card;
