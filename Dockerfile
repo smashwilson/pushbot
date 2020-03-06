@@ -1,4 +1,4 @@
-FROM node:13.8.0-alpine
+FROM node:13.10.1-alpine
 LABEL maintainer "Ash Wilson <smashwilson@gmail.com>"
 
 ENV NPM_CONFIG_LOGLEVEL warn
