@@ -39,7 +39,7 @@ function modifierStr(score) {
   return m < 0 ? m.toString() : `+${m}`;
 }
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   function dmOnlyError(msg) {
     return [
       `You can't do that! You're not a *${DM_ROLE}*.`,
@@ -179,7 +179,7 @@ module.exports = function(robot) {
   }
 
   function hasInitiativeTie(initiativeMap, username) {
-    return Object.keys(initiativeMap.unresolvedTies).some(score =>
+    return Object.keys(initiativeMap.unresolvedTies).some((score) =>
       initiativeMap[score].includes(username)
     );
   }
@@ -203,7 +203,7 @@ module.exports = function(robot) {
     return false;
   }
 
-  robot.respond(/attr\s+(?:@(\S+)\s+)?(\w+)(?:\s+(\d+))?/i, function(msg) {
+  robot.respond(/attr\s+(?:@(\S+)\s+)?(\w+)(?:\s+(\d+))?/i, function (msg) {
     const attrName = msg.match[2];
     let score = null;
 
@@ -247,7 +247,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/hp(?:\s+@(\S+))?(?:\s+(\+|-)?\s*(\d+))?/i, function(msg) {
+  robot.respond(/hp(?:\s+@(\S+))?(?:\s+(\+|-)?\s*(\d+))?/i, function (msg) {
     let amount;
     const op = msg.match[2] || "=";
     const amountStr = msg.match[3];
@@ -305,12 +305,12 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/init\s+clear/i, function(msg) {
+  robot.respond(/init\s+clear/i, function (msg) {
     robot.brain.set("dnd:initiativeMap", INITIATIVE_MAP_DEFAULT);
     msg.reply("All initiative counts cleared.");
   });
 
-  robot.respond(/init(?:\s+@(\S+))?\s+(-?\d+)/, function(msg) {
+  robot.respond(/init(?:\s+@(\S+))?\s+(-?\d+)/, function (msg) {
     if (!pmOnlyFromDM(msg)) {
       return;
     }
@@ -320,7 +320,7 @@ module.exports = function(robot) {
       robot.brain.get("dnd:initiativeMap") || INITIATIVE_MAP_DEFAULT;
     withCharacter(msg, (_existing, character) => {
       const existing = initiativeMap.scores.find(
-        each => each.username === character.username
+        (each) => each.username === character.username
       );
 
       if (existing) {
@@ -342,7 +342,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/init\s+reroll(?:\s+@(\S+))?\s+(-?\d+)/i, function(msg) {
+  robot.respond(/init\s+reroll(?:\s+@(\S+))?\s+(-?\d+)/i, function (msg) {
     const score = parseInt(msg.match[2]);
 
     const initiativeMap =
@@ -373,7 +373,7 @@ module.exports = function(robot) {
     robot.brain.set("dnd:initiativeMap", initiativeMap);
   });
 
-  robot.respond(/init\s+next/i, function(msg) {
+  robot.respond(/init\s+next/i, function (msg) {
     let nextCount;
     const initiativeMap =
       robot.brain.get("dnd:initiativeMap") || INITIATIVE_MAP_DEFAULT;
@@ -401,7 +401,7 @@ module.exports = function(robot) {
     msg.send(`@${current.username} is up. _(${current.score})_`);
   });
 
-  robot.respond(/init\s+report/i, function(msg) {
+  robot.respond(/init\s+report/i, function (msg) {
     const initiativeMap =
       robot.brain.get("dnd:initiativeMap") || INITIATIVE_MAP_DEFAULT;
 
@@ -428,7 +428,7 @@ module.exports = function(robot) {
     msg.send(lines.join("\n"));
   });
 
-  robot.respond(/character sheet(?:\s+@(\S+))?/i, msg =>
+  robot.respond(/character sheet(?:\s+@(\S+))?/i, (msg) =>
     withCharacter(msg, (existing, character) => {
       if (!existing) {
         msg.reply(`No character data for ${character.username} yet.`);
@@ -453,7 +453,7 @@ module.exports = function(robot) {
     })
   );
 
-  robot.respond(/character report/i, function(msg) {
+  robot.respond(/character report/i, function (msg) {
     const characterMap = robot.brain.get("dnd:characterMap") || {};
     const lines = [];
     for (const username in characterMap) {

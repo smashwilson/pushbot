@@ -5,7 +5,7 @@
 //   hubot elcor - Helpfully: repeat lines of speech in their native Elcor.
 //   hubot hk47 - Query: why don't you try it and find out, meatbag?
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   const EMOTIONS = [
     "Aghast",
     "Airing of grievance",
@@ -60,7 +60,7 @@ module.exports = function(robot) {
     "Utter sincerity",
   ];
 
-  robot.respond(/elcor\s*([^]*)/i, function(msg) {
+  robot.respond(/elcor\s*([^]*)/i, function (msg) {
     const message =
       msg.match[1].trim().length > 0 ? msg.match[1] : robot.mostRecentText(msg);
 
@@ -75,7 +75,7 @@ module.exports = function(robot) {
     msg.send(output.join("\n"));
   });
 
-  return robot.respond(/hk47\s*([^]*)/i, function(msg) {
+  return robot.respond(/hk47\s*([^]*)/i, function (msg) {
     const message =
       msg.match[1].trim().length > 0 ? msg.match[1] : robot.mostRecentText(msg);
 

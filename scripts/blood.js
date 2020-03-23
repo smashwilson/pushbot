@@ -9,7 +9,7 @@ const fetch = require("node-fetch");
 const {Admin} = require("./roles");
 const {createDocumentSet} = require("./documentset");
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   if (!robot.postgres) {
     return;
   }
@@ -24,7 +24,7 @@ module.exports = function(robot) {
       "Blood Down the Gullet have not sung about anything that matches that query. Yet.",
   });
 
-  robot.respond(/pour blood down our gullets/i, async msg => {
+  robot.respond(/pour blood down our gullets/i, async (msg) => {
     if (!Admin.verify(robot, msg)) return;
 
     try {
@@ -65,8 +65,8 @@ module.exports = function(robot) {
       for (const track of tracks) {
         await bloodSet.add(msg.message.user.name, track, []);
         await new Promise((resolve, reject) => {
-          robot.markov.modelNamed("bloodkov", model => {
-            model.learn(track, err => {
+          robot.markov.modelNamed("bloodkov", (model) => {
+            model.learn(track, (err) => {
               if (err) return reject(err);
               resolve();
             });

@@ -31,7 +31,7 @@ class Cache {
     if (serialized === null) {
       this.lines = [];
     } else {
-      this.lines = serialized.map(each => Line.deserialize(each));
+      this.lines = serialized.map((each) => Line.deserialize(each));
     }
 
     Cache.remember(this.robot, this.channel);
@@ -40,7 +40,7 @@ class Cache {
   append(msg, ts = undefined) {
     const now = ts || moment.tz("America/New_York");
     const isAction = msg.message.subtype === "me_message";
-    const toAdd = msg.message.text.split(/\n/).map(sourceLine => {
+    const toAdd = msg.message.text.split(/\n/).map((sourceLine) => {
       return new Line(
         now,
         msg.message.user.name,
@@ -52,7 +52,7 @@ class Cache {
     this.lines.unshift(...toAdd);
     this.lines = this.lines.slice(0, MAX_CACHE_SIZE);
 
-    const serialized = this.lines.map(line => line.serialize());
+    const serialized = this.lines.map((line) => line.serialize());
     this.robot.brain.set(`buffer-cache:${this.channel}`, serialized);
     return this;
   }
@@ -66,7 +66,7 @@ class Cache {
   }
 
   mostRecentMatch(pattern) {
-    return this.lines.find(line => pattern.matches(line));
+    return this.lines.find((line) => pattern.matches(line));
   }
 
   between(startPattern, endPattern) {

@@ -21,7 +21,7 @@ const columnSet = new pg.helpers.ColumnSet(["type", "key", "value:json"], {
   table: "brain",
 });
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   if (!databaseUrl) {
     robot.logger.info("Transient brain: no DATABASE_URL specified.");
     return;
@@ -32,13 +32,13 @@ module.exports = function(robot) {
   robot.logger.debug("Brain connected to database at DATABASE_URL.");
 
   // For hubot-markov
-  robot.getDatabase = function() {
+  robot.getDatabase = function () {
     return robot.postgres;
   };
 
   robot.emit("database-up");
 
-  const loadAll = function() {
+  const loadAll = function () {
     const data = {};
 
     let create = "CREATE TABLE IF NOT EXISTS brain (";
@@ -50,8 +50,8 @@ module.exports = function(robot) {
     return db
       .none(create)
       .then(() => db.any("SELECT type, key, value FROM brain"))
-      .then(results => {
-        results.forEach(row => {
+      .then((results) => {
+        results.forEach((row) => {
           if (data[row.type] === undefined) data[row.type] = {};
 
           data[row.type][row.key] = row.value;
@@ -67,14 +67,14 @@ module.exports = function(robot) {
       });
   };
 
-  const upsertBatch = Promise.coroutine(function*(batch) {
+  const upsertBatch = Promise.coroutine(function* (batch) {
     const statement =
       pg.helpers.insert(batch, columnSet) +
       " ON CONFLICT (type, key) DO UPDATE SET value = excluded.value";
     yield db.none(statement);
   });
 
-  const upsertAll = Promise.coroutine(function*(data) {
+  const upsertAll = Promise.coroutine(function* (data) {
     let batch = [];
 
     for (let type in data) {

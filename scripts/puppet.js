@@ -9,8 +9,8 @@
 //
 // Commands:
 
-module.exports = function(robot) {
-  robot.respond(/puppet(?:\s+#(\S+))?\s+([^]+)/i, function(msg) {
+module.exports = function (robot) {
+  robot.respond(/puppet(?:\s+#(\S+))?\s+([^]+)/i, function (msg) {
     if (!robot.auth.hasRole(msg.message.user, "knober whisperer")) {
       return;
     }

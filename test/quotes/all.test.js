@@ -1,13 +1,13 @@
 const {createDocumentSet} = require("../../scripts/documentset");
 
-describe("DocumentSet all", function() {
+describe("DocumentSet all", function () {
   let bot, documentSet;
 
-  beforeEach(function() {
+  beforeEach(function () {
     bot = new BotContext();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     bot.destroy();
     if (documentSet) {
       return documentSet.destroy();
@@ -19,7 +19,7 @@ describe("DocumentSet all", function() {
       all: commandOpts,
     });
 
-    const args = docs.map(doc => {
+    const args = docs.map((doc) => {
       let body = "";
       const attributes = [];
       if (doc.body && doc.subject) {
@@ -32,7 +32,7 @@ describe("DocumentSet all", function() {
     });
 
     if (parallel) {
-      await Promise.all(args.map(arg => documentSet.add(...arg)));
+      await Promise.all(args.map((arg) => documentSet.add(...arg)));
     } else {
       for (const arg of args) {
         await documentSet.add(...arg);
@@ -40,14 +40,14 @@ describe("DocumentSet all", function() {
     }
   }
 
-  it("returns all known documents", async function() {
+  it("returns all known documents", async function () {
     await populate(true, ["one", "two", "three"], false);
 
     await bot.say("me", "@hubot allblarfs");
     await bot.waitForResponse("one, two, three");
   });
 
-  it("returns all documents associated with a user", async function() {
+  it("returns all documents associated with a user", async function () {
     await populate(
       {userOriented: true},
       [

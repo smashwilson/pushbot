@@ -1,5 +1,5 @@
 // Convert a raw query string to a PostgreSQL-compatible regular expression.
-module.exports = function(query) {
+module.exports = function (query) {
   const terms = [];
 
   let i = 0;

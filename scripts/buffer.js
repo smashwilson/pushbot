@@ -19,7 +19,7 @@ function isDirectMessage(msg) {
   return msg.envelope.room[0] === "D";
 }
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   function showIfDirect(msg, buffer) {
     if (isDirectMessage(msg)) {
       msg.send(buffer.show());
@@ -31,18 +31,18 @@ module.exports = function(robot) {
     return `${array.length} ${name}${s}`;
   }
 
-  robot.cacheForChannel = channel => Cache.forChannel(robot, channel);
-  robot.bufferForUserId = userId => Buffer.forUser(robot, userId);
-  robot.mostRecent = msg => {
+  robot.cacheForChannel = (channel) => Cache.forChannel(robot, channel);
+  robot.bufferForUserId = (userId) => Buffer.forUser(robot, userId);
+  robot.mostRecent = (msg) => {
     return robot.cacheForChannel(robot, msg.message.room).mostRecent();
   };
-  robot.mostRecentText = msg => {
+  robot.mostRecentText = (msg) => {
     const payload = robot.mostRecent(msg);
     return !payload ? null : payload.text;
   };
 
   // Accumulate messages into the appropriate cache for each channel.
-  robot.catchAll(msg => {
+  robot.catchAll((msg) => {
     if (!msg.message.text || !msg.envelope.room) {
       return;
     }
@@ -50,7 +50,7 @@ module.exports = function(robot) {
     robot.cacheForChannel(msg.envelope.room).append(msg);
   });
 
-  robot.respond(/buffer\s+help/i, msg => {
+  robot.respond(/buffer\s+help/i, (msg) => {
     if (!isDirectMessage(msg)) {
       msg.reply("It's a lot of text. Ask me in a DM!");
       return;
@@ -81,7 +81,7 @@ module.exports = function(robot) {
     );
   });
 
-  robot.respond(/buffer\s+add (#\S+)?([^]*)/i, msg => {
+  robot.respond(/buffer\s+add (#\S+)?([^]*)/i, (msg) => {
     const channelName = msg.match[1] || msg.message.room;
     try {
       const patterns = Pattern.parse(msg.match[2]);
@@ -118,13 +118,13 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/buffer\s+remove\s*([\d\s\r\n,]+)/i, msg => {
+  robot.respond(/buffer\s+remove\s*([\d\s\r\n,]+)/i, (msg) => {
     const buffer = robot.bufferForUserId(msg.message.user.id);
     const indices = msg.match[1]
       .match(/\d+/g)
-      .map(digits => parseInt(digits, 10));
+      .map((digits) => parseInt(digits, 10));
 
-    const invalid = indices.filter(index => !buffer.isValidIndex(index));
+    const invalid = indices.filter((index) => !buffer.isValidIndex(index));
     if (invalid.length === 1) {
       msg.reply(`:no_entry_sign: ${invalid[0]} is not a valid buffer index.`);
       return;
@@ -148,12 +148,12 @@ module.exports = function(robot) {
     showIfDirect(msg, buffer);
   });
 
-  robot.respond(/buffer\s+show/i, msg => {
+  robot.respond(/buffer\s+show/i, (msg) => {
     const buffer = robot.bufferForUserId(msg.message.user.id);
     msg.send(buffer.show());
   });
 
-  robot.respond(/buffer\s+clear/i, msg => {
+  robot.respond(/buffer\s+clear/i, (msg) => {
     const buffer = robot.bufferForUserId(msg.message.user.id);
     buffer.clear();
     msg.reply("Buffer forgotten.");

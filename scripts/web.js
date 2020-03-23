@@ -74,7 +74,7 @@ class Status {
   }
 }
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   const useSlackAuth = Boolean(SLACK_CLIENT_ID) && Boolean(SLACK_CLIENT_SECRET);
   const useHttpAuth = !useSlackAuth && Boolean(DEV_USERNAME);
 
@@ -134,9 +134,7 @@ module.exports = function(robot) {
           return done(null, existing);
         }
 
-        const uid = require("crypto")
-          .randomBytes(32)
-          .toString("hex");
+        const uid = require("crypto").randomBytes(32).toString("hex");
         const created = robot.brain.userForId(uid, {
           name: username,
           room: username,
@@ -264,7 +262,7 @@ module.exports = function(robot) {
       schema,
       rootValue: root,
       graphiql: true,
-      formatError: err => {
+      formatError: (err) => {
         robot.logger.error(`GraphQL exception:\n${err.stack}`);
         return {
           message: err.message,
@@ -282,7 +280,7 @@ module.exports = function(robot) {
       accepting = true;
       robot.logger.debug("All system operational.");
     },
-    err => {
+    (err) => {
       robot.logger.error(`Oh no unable to launch properly:\n${err}`);
       process.exit(1);
     }
@@ -294,7 +292,7 @@ module.exports = function(robot) {
         status.databaseReady();
         robot.logger.debug("Connected to database.");
       },
-      err => {
+      (err) => {
         status.databaseFailed();
         robot.logger.error(`Unable to connect to database:\n${err}`);
       }

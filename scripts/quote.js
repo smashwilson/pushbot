@@ -5,7 +5,7 @@ const {createDocumentSet} = require("./documentset");
 const {Admin, QuotePontiff, PoetLaureate} = require("./roles");
 const formatter = require("./documentset/formatter");
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   if (!robot.postgres) {
     return;
   }

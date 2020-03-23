@@ -1,7 +1,7 @@
-describe("mappings", function() {
+describe("mappings", function () {
   let bot;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     bot = new BotContext("../scripts/mapping.js");
     await bot.loadAuth("1");
 
@@ -10,13 +10,13 @@ describe("mappings", function() {
     bot.createUser("3", "dandy", {roles: ["dandy lad"]});
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     await bot.say("admin", "@hubot destroymapping foo");
     await bot.waitForResponse(/mapping foo/).catch(() => {});
     bot.destroy();
   });
 
-  it("creates a new mapping with !createmapping", async function() {
+  it("creates a new mapping with !createmapping", async function () {
     usesDatabase(this);
 
     await bot.say("admin", "@hubot createmapping foo");
@@ -31,7 +31,7 @@ describe("mappings", function() {
     await bot.waitForResponse("words words words");
   });
 
-  it("specifies the null message with --null", async function() {
+  it("specifies the null message with --null", async function () {
     usesDatabase(this);
 
     await bot.say("admin", '@hubot createmapping foo --null="Nothing here."');
@@ -42,7 +42,7 @@ describe("mappings", function() {
     await bot.waitForResponse("Nothing here.");
   });
 
-  it("configures the role required to set your own with --role-own", async function() {
+  it("configures the role required to set your own with --role-own", async function () {
     usesDatabase(this);
 
     await bot.say("admin", '@hubot createmapping foo --role-own "fancy lad"');
@@ -66,7 +66,7 @@ describe("mappings", function() {
     await bot.waitForResponse("yep");
   });
 
-  it("configures the role required to set others with --role-other", async function() {
+  it("configures the role required to set others with --role-other", async function () {
     usesDatabase(this);
 
     await bot.say("admin", '@hubot createmapping foo --role-other "fancy lad"');
@@ -90,7 +90,7 @@ describe("mappings", function() {
     await bot.waitForResponse("I don't know any foos that contain that!");
   });
 
-  it("fails if the mapping already exists", async function() {
+  it("fails if the mapping already exists", async function () {
     usesDatabase(this);
 
     await bot.say("admin", "@hubot createmapping foo");
@@ -101,7 +101,7 @@ describe("mappings", function() {
     await bot.waitForResponse("There's already a mapping called foo, silly!");
   });
 
-  it("changes an existing mapping with !changemapping", async function() {
+  it("changes an existing mapping with !changemapping", async function () {
     await bot.say("admin", "@hubot createmapping foo");
     await bot.waitForResponse(
       "@admin mapping foo has been created. :sparkles:"
@@ -117,7 +117,7 @@ describe("mappings", function() {
     await bot.waitForResponse("stuff");
   });
 
-  it("destroys a mapping with !destroymapping", async function() {
+  it("destroys a mapping with !destroymapping", async function () {
     usesDatabase(this);
 
     await bot.say("admin", "@hubot createmapping foo");
@@ -129,7 +129,7 @@ describe("mappings", function() {
     await bot.waitForResponse("@admin mapping foo has been destroyed. :fire:");
   });
 
-  it("is okay to destroy a nonexistent mapping", async function() {
+  it("is okay to destroy a nonexistent mapping", async function () {
     usesDatabase(this);
 
     await bot.say("admin", "@hubot destroymapping blerp");

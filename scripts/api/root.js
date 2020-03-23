@@ -75,7 +75,7 @@ module.exports = {
 
     const ids = new Set(lines);
     if (ids.size === 0) throw new Error("You must provide at least one line");
-    const chosen = existing.lines.filter(line => ids.delete(line.id));
+    const chosen = existing.lines.filter((line) => ids.delete(line.id));
     if (ids.size > 0)
       throw new Error(
         `Unable to find lines with IDs: ${Array.from(ids).join(", ")}`

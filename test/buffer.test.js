@@ -4,14 +4,14 @@ const helper = new Helper("../scripts/buffer.js");
 const Cache = require("../scripts/models/cache");
 const Buffer = require("../scripts/models/buffer");
 
-describe("!buffer", function() {
+describe("!buffer", function () {
   let room, dm;
 
-  beforeEach(function() {
+  beforeEach(function () {
     room = helper.createRoom({httpd: false});
   });
 
-  afterEach(function() {
+  afterEach(function () {
     room.destroy();
     dm && dm.destroy();
 
@@ -19,31 +19,31 @@ describe("!buffer", function() {
     Buffer.clear();
   });
 
-  it("accumulates spoken text into the channel cache", async function() {
+  it("accumulates spoken text into the channel cache", async function () {
     await room.user.say("me", "one");
     await room.user.say("me", "two");
     await room.user.say("me", "three");
 
     const cache = room.robot.cacheForChannel(room.name);
-    expect(cache.lines.map(each => each.text)).to.deep.equal([
+    expect(cache.lines.map((each) => each.text)).to.deep.equal([
       "three",
       "two",
       "one",
     ]);
   });
 
-  it("persists each cache in the brain", async function() {
+  it("persists each cache in the brain", async function () {
     await room.user.say("me", "aaa");
     await room.user.say("you", "bbb");
     await delay();
 
     Cache.clear();
     const cache = room.robot.cacheForChannel(room.name);
-    expect(cache.lines.map(each => each.text)).to.deep.equal(["bbb", "aaa"]);
+    expect(cache.lines.map((each) => each.text)).to.deep.equal(["bbb", "aaa"]);
   });
 
-  describe("help", function() {
-    it("shows a brief message in public channels", async function() {
+  describe("help", function () {
+    it("shows a brief message in public channels", async function () {
       await room.user.say("me", "@hubot buffer help");
       await delay();
 
@@ -53,7 +53,7 @@ describe("!buffer", function() {
       ]);
     });
 
-    it("dumps a bunch of text in DM", async function() {
+    it("dumps a bunch of text in DM", async function () {
       dm = helper.createRoom({name: "D100", httpd: false});
       await dm.user.say("me", "@hubot buffer help");
       await delay();
@@ -62,10 +62,10 @@ describe("!buffer", function() {
     });
   });
 
-  describe("add", function() {
+  describe("add", function () {
     let buffer;
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       await room.user.say("me", "aaa");
       await room.user.say("me", "bbb");
       await room.user.say("me", "ccc");
@@ -76,21 +76,21 @@ describe("!buffer", function() {
       buffer = Buffer.forUser(room.robot, "me");
     });
 
-    it("appends matching lines from the cache to the buffer", async function() {
+    it("appends matching lines from the cache to the buffer", async function () {
       await room.user.say("me", '@hubot buffer add "bb" ... "dd"');
       await delay();
 
       expect(room.messages[room.messages.length - 1][1]).to.equal(
         "@me Added 3 lines to your buffer."
       );
-      expect(buffer.contents.map(each => each.text)).to.deep.equal([
+      expect(buffer.contents.map((each) => each.text)).to.deep.equal([
         "bbb",
         "ccc",
         "ddd",
       ]);
     });
 
-    it("reports if any pattern matches no lines", async function() {
+    it("reports if any pattern matches no lines", async function () {
       await room.user.say("me", '@hubot buffer add "dd" "zzz" "a" .. "b"');
       await delay();
 
@@ -101,7 +101,7 @@ describe("!buffer", function() {
       expect(buffer.contents).to.have.length(0);
     });
 
-    it("reports problems parsing the patterns", async function() {
+    it("reports problems parsing the patterns", async function () {
       await room.user.say("me", "@hubot buffer add oops");
       await delay();
 
@@ -113,10 +113,10 @@ describe("!buffer", function() {
     });
   });
 
-  describe("remove", function() {
+  describe("remove", function () {
     let buffer;
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       await room.user.say("me", "aaa 000");
       await room.user.say("me", "bbb 000"); // 0
       await room.user.say("me", "ccc 000"); // 1
@@ -133,14 +133,14 @@ describe("!buffer", function() {
       buffer = Buffer.forUser(room.robot, "me");
     });
 
-    it("removes buffer entries by index", async function() {
+    it("removes buffer entries by index", async function () {
       await room.user.say("me", "@hubot buffer remove 6 2 4 1");
       await delay();
 
       expect(room.messages[room.messages.length - 1][1]).to.equal(
         "@me Removed 4 buffer entries."
       );
-      expect(buffer.contents.map(each => each.text)).to.deep.equal([
+      expect(buffer.contents.map((each) => each.text)).to.deep.equal([
         "bbb 000",
         "eee 000",
         "bbb 111",
@@ -148,14 +148,14 @@ describe("!buffer", function() {
       ]);
     });
 
-    it("reports an error for invalid indices", async function() {
+    it("reports an error for invalid indices", async function () {
       await room.user.say("me", "@hubot buffer remove 10 2 12 3");
       await delay();
 
       expect(room.messages[room.messages.length - 1][1]).to.equal(
         "@me :no_entry_sign: 10, 12 are not valid buffer indices."
       );
-      expect(buffer.contents.map(each => each.text)).to.deep.equal([
+      expect(buffer.contents.map((each) => each.text)).to.deep.equal([
         "bbb 000",
         "ccc 000",
         "ddd 000",
@@ -168,8 +168,8 @@ describe("!buffer", function() {
     });
   });
 
-  describe("show", function() {
-    beforeEach(async function() {
+  describe("show", function () {
+    beforeEach(async function () {
       await room.user.say("me", "aaa");
       await room.user.say("me", "bbb");
       await room.user.say("me", "ccc");
@@ -177,7 +177,7 @@ describe("!buffer", function() {
       await room.user.say("me", "eee");
     });
 
-    it("reports an empty buffer", async function() {
+    it("reports an empty buffer", async function () {
       await room.user.say("me", "@hubot buffer show");
       await delay();
 
@@ -186,7 +186,7 @@ describe("!buffer", function() {
       );
     });
 
-    it("reports buffer contents and indices", async function() {
+    it("reports buffer contents and indices", async function () {
       await room.user.say("me", '@hubot buffer add "bbb" ... "ddd"');
       await delay();
       await room.user.say("me", "@hubot buffer show");
@@ -198,8 +198,8 @@ describe("!buffer", function() {
     });
   });
 
-  describe("clear", function() {
-    it("removes all buffer entries", async function() {
+  describe("clear", function () {
+    it("removes all buffer entries", async function () {
       await room.user.say("me", "aaa");
       await room.user.say("me", "bbb");
       await room.user.say("me", '@hubot buffer add "aa" "bb"');

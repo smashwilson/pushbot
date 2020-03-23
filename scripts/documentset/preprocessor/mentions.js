@@ -7,7 +7,7 @@ const never = {
 class Detector {
   constructor(robot) {
     const userMap = robot.brain.users();
-    const usernames = Object.keys(userMap).map(uid => userMap[uid].name);
+    const usernames = Object.keys(userMap).map((uid) => userMap[uid].name);
 
     if (usernames.length > 0) {
       const rxBody = `\\b@?(${usernames.join("|")}):?\\b`;
@@ -31,6 +31,6 @@ class Detector {
   }
 }
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   return new Detector(robot);
 };

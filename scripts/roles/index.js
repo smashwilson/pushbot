@@ -14,9 +14,7 @@ class Role {
       msg.reply(
         [
           `You can't do that! You're not a *${this.name}*.`,
-          `Ask an admin to run \`${robot.name} grant ${
-            msg.message.user.name
-          } the ${this.name} role\`.`,
+          `Ask an admin to run \`${robot.name} grant ${msg.message.user.name} the ${this.name} role\`.`,
         ].join("\n")
       );
       return false;
@@ -51,7 +49,7 @@ exports.PoetLaureate = new Role("poet laureate");
 
 exports.MapMaker = new Role("mapmaker");
 
-exports.withName = function(name, def = exports.Anyone) {
+exports.withName = function (name, def = exports.Anyone) {
   if (!name) return def;
   if (/^anyone$/i.test(name)) return exports.Anyone;
   return new Role(name);

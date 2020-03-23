@@ -1,9 +1,9 @@
 const {UserSetResolver} = require("../../scripts/api/user-set");
 
-describe("UserSetResolver", function() {
+describe("UserSetResolver", function () {
   let bot, admin, nonAdmin, adminReq, nonAdminReq, resolver;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     bot = new BotContext();
     await bot.loadAuth("1");
 
@@ -16,33 +16,33 @@ describe("UserSetResolver", function() {
     resolver = new UserSetResolver();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     bot.destroy();
   });
 
-  describe("me", function() {
-    it("returns a resolver for a user from the request", function() {
+  describe("me", function () {
+    it("returns a resolver for a user from the request", function () {
       const result = resolver.me({}, nonAdminReq);
       expect(result.user).to.eql(nonAdmin);
     });
 
-    it("includes the coordinator auth token if the user is an admin", function() {
+    it("includes the coordinator auth token if the user is an admin", function () {
       process.env.AZ_COORDINATOR_TOKEN = "shhh";
       const userResolver = resolver.me({}, adminReq);
       expect(userResolver.coordinatorToken({}, adminReq)).to.eql("shhh");
     });
 
-    it("omits the coordinator auth token for non-admins", function() {
+    it("omits the coordinator auth token for non-admins", function () {
       process.env.AZ_COORDINATOR_TOKEN = "shhh";
       const userResolver = resolver.me({}, nonAdminReq);
       expect(userResolver.coordinatorToken({}, nonAdminReq)).to.be.null;
     });
   });
 
-  describe("all", function() {
-    it("returns resolvers for all users", function() {
+  describe("all", function () {
+    it("returns resolvers for all users", function () {
       const results = resolver.all({}, nonAdminReq);
-      expect(results.map(each => each.user.name)).to.have.members([
+      expect(results.map((each) => each.user.name)).to.have.members([
         "self",
         "two",
         "three",
@@ -50,20 +50,20 @@ describe("UserSetResolver", function() {
     });
   });
 
-  describe("withName", function() {
-    it("returns a resolver for a user by name", function() {
+  describe("withName", function () {
+    it("returns a resolver for a user by name", function () {
       const result = resolver.withName({name: "two"}, nonAdminReq);
       expect(result.user.id).to.eql("2");
     });
 
-    it("return null if no such user exists", function() {
+    it("return null if no such user exists", function () {
       const result = resolver.withName({name: "snorgle"}, nonAdminReq);
       expect(result).to.eql(null);
     });
   });
 
-  describe("UserResolver", function() {
-    it("reports static properties directly from the User model", function() {
+  describe("UserResolver", function () {
+    it("reports static properties directly from the User model", function () {
       admin.real_name = "Real Name";
       admin.slack = {tz: "America/New_York", presence: "active"};
 
@@ -76,7 +76,7 @@ describe("UserSetResolver", function() {
       expect(userResolver.presence).to.eql("ACTIVE");
     });
 
-    it("defaults missing attributes", function() {
+    it("defaults missing attributes", function () {
       const userResolver = resolver.me({}, adminReq);
 
       expect(userResolver.id).to.eql("1");
@@ -86,7 +86,7 @@ describe("UserSetResolver", function() {
       expect(userResolver.presence).to.eql("UNKNOWN");
     });
 
-    it("returns a resolver for the user's status", function() {
+    it("returns a resolver for the user's status", function () {
       admin.slack = {
         profile: {
           status_text: "here",
@@ -101,7 +101,7 @@ describe("UserSetResolver", function() {
       expect(statusResolver.emoji).to.eql(":coffee:");
     });
 
-    it("returns an empty resolver if no status exists", function() {
+    it("returns an empty resolver if no status exists", function () {
       const userResolver = resolver.me({}, adminReq);
       const statusResolver = userResolver.status();
 
@@ -109,7 +109,7 @@ describe("UserSetResolver", function() {
       expect(statusResolver.emoji).to.eql(undefined);
     });
 
-    it("returns a resolver for the user's avatar", function() {
+    it("returns a resolver for the user's avatar", function () {
       admin.slack = {
         profile: {
           image_24: "https://localhost/avatar24.jpg",
@@ -136,7 +136,7 @@ describe("UserSetResolver", function() {
       );
     });
 
-    it("returns an empty resolver if no avatar exists", function() {
+    it("returns an empty resolver if no avatar exists", function () {
       const userResolver = resolver.me({}, adminReq);
       const avatarResolver = userResolver.avatar();
 
@@ -149,7 +149,7 @@ describe("UserSetResolver", function() {
       expect(avatarResolver.image1024).to.eql(undefined);
     });
 
-    it("accesses currently assigned roles", function() {
+    it("accesses currently assigned roles", function () {
       const userResolver = resolver.me({}, adminReq);
       const roles = userResolver.roles({}, adminReq);
       expect(roles).to.eql([
@@ -159,7 +159,7 @@ describe("UserSetResolver", function() {
       ]);
     });
 
-    it("accesses counts of reactions given", async function() {
+    it("accesses counts of reactions given", async function () {
       bot.store("reactionsGiven", {
         "1": {
           yellow_heart: 10,
@@ -177,7 +177,7 @@ describe("UserSetResolver", function() {
       ]);
     });
 
-    it("accesses counts of reactions received", async function() {
+    it("accesses counts of reactions received", async function () {
       bot.store("reactionsReceived", {
         "1": {
           boom: 50,

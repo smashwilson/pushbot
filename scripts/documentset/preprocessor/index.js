@@ -2,7 +2,7 @@
 
 // Standard preprocessing.
 function processThen(parser) {
-  return function(robot, msg) {
+  return function (robot, msg) {
     const preprocessed = msg.match[1].replace(/\u200B/g, "");
     return parser(robot, preprocessed);
   };

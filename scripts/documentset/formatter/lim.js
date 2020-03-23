@@ -1,7 +1,7 @@
-module.exports = function(lines, speakers, mentions) {
-  let body = lines.map(line => `> ${line.text}`).join("\n");
+module.exports = function (lines, speakers, mentions) {
+  let body = lines.map((line) => `> ${line.text}`).join("\n");
 
-  const atSpeakers = Array.from(speakers, speaker => "@" + speaker);
+  const atSpeakers = Array.from(speakers, (speaker) => "@" + speaker);
 
   switch (atSpeakers.length) {
     case 0:

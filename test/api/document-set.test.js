@@ -1,10 +1,10 @@
 const {createDocumentSet} = require("../../scripts/documentset");
 const {DocumentSetResolver} = require("../../scripts/api/document-set");
 
-describe("DocumentSetResolver", function() {
+describe("DocumentSetResolver", function () {
   let set, resolver;
 
-  beforeEach(function() {
+  beforeEach(function () {
     usesDatabase(this);
 
     const robot = {
@@ -15,7 +15,7 @@ describe("DocumentSetResolver", function() {
     resolver = new DocumentSetResolver("blork", set);
   });
 
-  afterEach(async function() {
+  afterEach(async function () {
     await set.destroy();
   });
 
@@ -30,14 +30,14 @@ describe("DocumentSetResolver", function() {
       }
       if (spec.speakers) {
         attrs.push(
-          ...spec.speakers.map(speaker => {
+          ...spec.speakers.map((speaker) => {
             return {kind: "speaker", value: speaker};
           })
         );
       }
       if (spec.mentions) {
         attrs.push(
-          ...spec.mentions.map(mention => {
+          ...spec.mentions.map((mention) => {
             return {kind: "mention", value: mention};
           })
         );
@@ -48,20 +48,20 @@ describe("DocumentSetResolver", function() {
     await Promise.all(promises);
   }
 
-  describe("random", function() {
-    it("with no documents", async function() {
+  describe("random", function () {
+    it("with no documents", async function () {
       const result = await resolver.random({criteria: {}});
       expect(result.found).to.equal(false);
     });
 
-    it("with empty criteria", async function() {
+    it("with empty criteria", async function () {
       await populate({body: "one"});
 
       const result = await resolver.random({criteria: {}});
       expect(result.found).to.equal(true);
     });
 
-    it("matching a query", async function() {
+    it("matching a query", async function () {
       await populate(
         {},
         {},
@@ -81,7 +81,7 @@ describe("DocumentSetResolver", function() {
       expect(result.text).to.equal("one aaa one");
     });
 
-    it("with a matching subject", async function() {
+    it("with a matching subject", async function () {
       await populate(
         {},
         {},
@@ -103,7 +103,7 @@ describe("DocumentSetResolver", function() {
       expect(result.text).to.equal("this one");
     });
 
-    it("with all speakers", async function() {
+    it("with all speakers", async function () {
       await populate(
         {},
         {},
@@ -127,7 +127,7 @@ describe("DocumentSetResolver", function() {
       expect(result.text).to.equal("this one");
     });
 
-    it("with all mentions", async function() {
+    it("with all mentions", async function () {
       await populate(
         {},
         {},
@@ -152,8 +152,8 @@ describe("DocumentSetResolver", function() {
     });
   });
 
-  describe("all", function() {
-    it("with no documents", async function() {
+  describe("all", function () {
+    it("with no documents", async function () {
       const result = await resolver.all({criteria: {}});
 
       expect(result.edges).to.have.lengthOf(0);
@@ -161,7 +161,7 @@ describe("DocumentSetResolver", function() {
       expect(result.pageInfo.hasNextPage).to.equal(false);
     });
 
-    it('with "first" less than the document count', async function() {
+    it('with "first" less than the document count', async function () {
       await populate({}, {}, {}, {}, {});
 
       const result = await resolver.all({criteria: {}, first: 4});
@@ -170,7 +170,7 @@ describe("DocumentSetResolver", function() {
       expect(result.pageInfo.hasNextPage).to.equal(true);
     });
 
-    it('with "first" equal to the document count', async function() {
+    it('with "first" equal to the document count', async function () {
       await populate({}, {}, {}, {}, {});
 
       const result = await resolver.all({criteria: {}, first: 5});
@@ -179,7 +179,7 @@ describe("DocumentSetResolver", function() {
       expect(result.pageInfo.hasNextPage).to.equal(false);
     });
 
-    it('with "first" greater than the document count', async function() {
+    it('with "first" greater than the document count', async function () {
       await populate({}, {}, {}, {}, {});
 
       const result = await resolver.all({criteria: {}, first: 10});
@@ -188,7 +188,7 @@ describe("DocumentSetResolver", function() {
       expect(result.pageInfo.hasNextPage).to.equal(false);
     });
 
-    it('with "after" less than the first document ID', async function() {
+    it('with "after" less than the first document ID', async function () {
       await populate({}, {}, {}, {}, {});
 
       const result = await resolver.all({criteria: {}, after: "0"});
@@ -197,7 +197,7 @@ describe("DocumentSetResolver", function() {
       expect(result.pageInfo.hasNextPage).to.equal(false);
     });
 
-    it('with "after" as an intermediate document ID', async function() {
+    it('with "after" as an intermediate document ID', async function () {
       await populate({}, {}, {}, {}, {});
 
       const result = await resolver.all({criteria: {}, after: "3"});
@@ -206,7 +206,7 @@ describe("DocumentSetResolver", function() {
       expect(result.pageInfo.hasNextPage).to.equal(false);
     });
 
-    it('with "after" greater than the last document ID', async function() {
+    it('with "after" greater than the last document ID', async function () {
       await populate({}, {}, {}, {}, {});
 
       const result = await resolver.all({criteria: {}, after: "10"});
@@ -215,7 +215,7 @@ describe("DocumentSetResolver", function() {
       expect(result.pageInfo.hasNextPage).to.equal(false);
     });
 
-    it("matching a query", async function() {
+    it("matching a query", async function () {
       await populate(
         {},
         {},
@@ -228,7 +228,7 @@ describe("DocumentSetResolver", function() {
 
       const result = await resolver.all({criteria: {query: "aaa"}});
       expect(result.edges).to.have.lengthOf(3);
-      expect(result.edges.map(edge => edge.node.text)).to.have.members([
+      expect(result.edges.map((edge) => edge.node.text)).to.have.members([
         "aaa 0",
         "aaa 1",
         "2 aaa",
@@ -237,7 +237,7 @@ describe("DocumentSetResolver", function() {
       expect(result.pageInfo.hasNextPage).to.equal(false);
     });
 
-    it("with a matching subject", async function() {
+    it("with a matching subject", async function () {
       await populate(
         {},
         {},
@@ -250,7 +250,7 @@ describe("DocumentSetResolver", function() {
 
       const result = await resolver.all({criteria: {subject: "me"}});
       expect(result.edges).to.have.lengthOf(2);
-      expect(result.edges.map(edge => edge.node.text)).to.have.members([
+      expect(result.edges.map((edge) => edge.node.text)).to.have.members([
         "yes 0",
         "yes 1",
       ]);
@@ -258,7 +258,7 @@ describe("DocumentSetResolver", function() {
       expect(result.pageInfo.hasNextPage).to.equal(false);
     });
 
-    it("with all speakers", async function() {
+    it("with all speakers", async function () {
       await populate(
         {},
         {},
@@ -273,7 +273,7 @@ describe("DocumentSetResolver", function() {
 
       const result = await resolver.all({criteria: {speakers: ["me0", "me1"]}});
       expect(result.edges).to.have.lengthOf(2);
-      expect(result.edges.map(edge => edge.node.text)).to.have.members([
+      expect(result.edges.map((edge) => edge.node.text)).to.have.members([
         "yes 0",
         "yes 1",
       ]);
@@ -281,7 +281,7 @@ describe("DocumentSetResolver", function() {
       expect(result.pageInfo.hasNextPage).to.equal(false);
     });
 
-    it("with all mentions", async function() {
+    it("with all mentions", async function () {
       await populate(
         {},
         {},
@@ -296,7 +296,7 @@ describe("DocumentSetResolver", function() {
 
       const result = await resolver.all({criteria: {mentions: ["me0", "me1"]}});
       expect(result.edges).to.have.lengthOf(2);
-      expect(result.edges.map(edge => edge.node.text)).to.have.members([
+      expect(result.edges.map((edge) => edge.node.text)).to.have.members([
         "yes 0",
         "yes 1",
       ]);
@@ -305,15 +305,15 @@ describe("DocumentSetResolver", function() {
     });
   });
 
-  describe("mine", function() {
-    it("with no documents", async function() {
+  describe("mine", function () {
+    it("with no documents", async function () {
       const req = {user: {name: "me"}};
       const result = await resolver.mine({}, req);
 
       expect(result.found).to.equal(false);
     });
 
-    it("with no documents matching the subject of the current user", async function() {
+    it("with no documents matching the subject of the current user", async function () {
       await populate({}, {}, {}, {}, {subject: "other"});
 
       const req = {user: {name: "me"}};
@@ -322,7 +322,7 @@ describe("DocumentSetResolver", function() {
       expect(result.found).to.equal(false);
     });
 
-    it("with a document matching the subject of the current user", async function() {
+    it("with a document matching the subject of the current user", async function () {
       await populate(
         {},
         {},
@@ -340,20 +340,20 @@ describe("DocumentSetResolver", function() {
     });
   });
 
-  describe("rank", function() {
-    it("with no documents", async function() {
+  describe("rank", function () {
+    it("with no documents", async function () {
       const result = await resolver.rank({speaker: "me"});
       expect(result).to.equal(0);
     });
 
-    it("with no documents matching with a matching speaker", async function() {
+    it("with no documents matching with a matching speaker", async function () {
       await populate({}, {}, {speakers: ["other"]}, {speakers: ["no"]});
 
       const result = await resolver.rank({speaker: "me"});
       expect(result).to.equal(0);
     });
 
-    it("with documents matching the requested speaker", async function() {
+    it("with documents matching the requested speaker", async function () {
       await populate(
         {speakers: ["me"]},
         {speakers: ["me"]},
@@ -371,20 +371,20 @@ describe("DocumentSetResolver", function() {
     });
   });
 
-  describe("count", function() {
-    it("with no documents", async function() {
+  describe("count", function () {
+    it("with no documents", async function () {
       const result = await resolver.count({criteria: {}});
       expect(result).to.equal(0);
     });
 
-    it("with an empty query", async function() {
+    it("with an empty query", async function () {
       await populate({}, {}, {});
 
       const result = await resolver.count({criteria: {}});
       expect(result).to.equal(3);
     });
 
-    it("matching a query", async function() {
+    it("matching a query", async function () {
       await populate(
         {},
         {},
@@ -399,7 +399,7 @@ describe("DocumentSetResolver", function() {
       expect(result).to.equal(2);
     });
 
-    it("with a matching subject", async function() {
+    it("with a matching subject", async function () {
       await populate(
         {},
         {},
@@ -415,7 +415,7 @@ describe("DocumentSetResolver", function() {
       expect(result).to.equal(2);
     });
 
-    it("with all speakers", async function() {
+    it("with all speakers", async function () {
       await populate(
         {speakers: ["yes0"]},
         {speakers: ["yes0", "yes1"]},
@@ -430,7 +430,7 @@ describe("DocumentSetResolver", function() {
       expect(result).to.equal(2);
     });
 
-    it("with all mentions", async function() {
+    it("with all mentions", async function () {
       await populate(
         {mentions: ["yes0"]},
         {mentions: ["yes0", "yes1"]},

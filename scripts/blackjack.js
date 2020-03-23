@@ -107,7 +107,7 @@ class Hand {
 
   toString() {
     if (this.cards.length > 0) {
-      return this.cards.map(c => c.toString()).join(", ");
+      return this.cards.map((c) => c.toString()).join(", ");
     } else {
       return "[Empty hand]";
     }
@@ -207,7 +207,7 @@ class Blackjack {
 
 function classifyCards(cards) {
   if (cards && cards.length > 0 && !cards[0].isObject) {
-    return Array.from(cards, obj => Card.fromObject(obj));
+    return Array.from(cards, (obj) => Card.fromObject(obj));
   } else {
     return cards;
   }
@@ -235,7 +235,7 @@ function randomDeck() {
   return _.shuffle(fullDeck());
 }
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   function ensureGame(gameName) {
     const {data} = robot.brain;
     let newGame = false;
@@ -293,12 +293,12 @@ module.exports = function(robot) {
     robot.brain.data.decks[deckName] = randomDeck();
   }
 
-  robot.respond(/shuffle/i, function(msg) {
+  robot.respond(/shuffle/i, function (msg) {
     shuffle();
     msg.send("You are now playing with a full deck");
   });
 
-  robot.respond(/card/i, function(msg) {
+  robot.respond(/card/i, function (msg) {
     if (ensureDeck("common", true)) {
       msg.send("Shuffling a new deck");
     }
@@ -307,7 +307,7 @@ module.exports = function(robot) {
     msg.send(common.pop());
   });
 
-  robot.respond(/hitme/i, function(msg) {
+  robot.respond(/hitme/i, function (msg) {
     const gid = `blackjack-${msg.message.user.id}`;
     const who = msg.message.user.name || "You";
 
@@ -326,7 +326,7 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/stay/i, function(msg) {
+  robot.respond(/stay/i, function (msg) {
     const gid = `blackjack-${msg.message.user.id}`;
 
     const newGame = ensureGame(gid);
@@ -339,7 +339,7 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/bjstatus/i, function(msg) {
+  robot.respond(/bjstatus/i, function (msg) {
     const gid = `blackjack-${msg.message.user.id}`;
     const who = msg.message.user.name || "You";
     const newGame = ensureGame(gid);

@@ -38,7 +38,7 @@ class EmojiCache {
       return;
     }
 
-    this.refreshPromise = new Promise(resolve => {
+    this.refreshPromise = new Promise((resolve) => {
       this.resolveRefreshPromise = resolve;
     });
 

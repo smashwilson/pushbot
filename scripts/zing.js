@@ -43,8 +43,8 @@ const zings = {
     "https://user-images.githubusercontent.com/17565/48202235-517fcc80-e332-11e8-80ea-53804ab9c1d8.jpg",
 };
 
-module.exports = function(robot) {
-  robot.respond(/zing(?:\s+@?(\S+))?/i, msg => {
+module.exports = function (robot) {
+  robot.respond(/zing(?:\s+@?(\S+))?/i, (msg) => {
     let zingReq = msg.match[1];
     if (zingReq === "me") {
       zingReq = msg.message.user.name;

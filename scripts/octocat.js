@@ -6,8 +6,8 @@
 const {URL} = require("url");
 const fetch = require("node-fetch");
 
-module.exports = function(robot) {
-  robot.respond(/octosay( me)?\s*([^]*)/i, async msg => {
+module.exports = function (robot) {
+  robot.respond(/octosay( me)?\s*([^]*)/i, async (msg) => {
     const message =
       msg.match[2].trim().length > 0
         ? msg.match[2]

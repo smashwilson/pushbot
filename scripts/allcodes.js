@@ -5,7 +5,7 @@
 //   hubot allswitchcodes - Dump everyone's Switch friend code.
 //   hubot allpsn - Dump everyone's PSN username.
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   async function allCodes(msg, dsName, {missing, header}) {
     const ds = robot.documentSets[dsName];
     if (!ds) {
@@ -19,7 +19,7 @@ module.exports = function(robot) {
     for (const document of documents) {
       const subject = document
         .getAttributes()
-        .find(attr => attr.kind === "subject");
+        .find((attr) => attr.kind === "subject");
       if (!subject) continue;
 
       longestUsername = Math.max(longestUsername, subject.value.length);
@@ -32,7 +32,7 @@ module.exports = function(robot) {
     for (const document of documents) {
       const subject = document
         .getAttributes()
-        .find(attr => attr.kind === "subject");
+        .find((attr) => attr.kind === "subject");
       if (!subject) continue;
 
       response += subject.value;
@@ -47,21 +47,21 @@ module.exports = function(robot) {
     msg.send(response);
   }
 
-  robot.respond(/allswitchcodes\b/i, async msg => {
+  robot.respond(/allswitchcodes\b/i, async (msg) => {
     await allCodes(msg, "switchcode", {
       missing: "No switchcode mappings present.",
       header: ":switch_left: Nintendo Switch Friend Codes :switch_right:",
     });
   });
 
-  robot.respond(/allpsns\b/i, async msg => {
+  robot.respond(/allpsns\b/i, async (msg) => {
     await allCodes(msg, "psn", {
       missing: "No PSN mappings present.",
       header: ":psn: PlayStation Network usernames :psn:",
     });
   });
 
-  robot.respond(/allxboxes\b/i, async msg => {
+  robot.respond(/allxboxes\b/i, async (msg) => {
     await allCodes(msg, "xbox", {
       missing: "No XBox mappings present.",
       header: ":xbox: XBox gamertags :xbox:",

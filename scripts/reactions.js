@@ -8,9 +8,9 @@
 
 const {TallyMap} = require("./models/tally-map");
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   if (robot.hearReaction) {
-    robot.hearReaction(msg => {
+    robot.hearReaction((msg) => {
       let delta = 0;
       if (msg.message.type === "added") {
         delta = 1;
@@ -32,7 +32,7 @@ module.exports = function(robot) {
     });
   }
 
-  robot.respond(/reactions\s*(?:@?(\S+))?/i, msg => {
+  robot.respond(/reactions\s*(?:@?(\S+))?/i, (msg) => {
     let uid;
     if (msg.match[1]) {
       const user = robot.brain.userForName(msg.match[1]);
@@ -60,7 +60,7 @@ module.exports = function(robot) {
     msg.send(lines.join("\n"));
   });
 
-  robot.respond(/toppun(?:\s*@?(\S+))?/i, msg => {
+  robot.respond(/toppun(?:\s*@?(\S+))?/i, (msg) => {
     if (msg.match[1]) {
       const uname = msg.match[1];
       const user = robot.brain.userForName(uname);

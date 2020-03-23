@@ -10,8 +10,8 @@ require("moment-precise-range-plugin");
 
 moment.tz.setDefault("America/New_York");
 
-module.exports = function(robot) {
-  robot.respond(/gtfo(?: (\S*))?/i, msg => {
+module.exports = function (robot) {
+  robot.respond(/gtfo(?: (\S*))?/i, (msg) => {
     let time;
     let timeStr = msg.match[1];
     if (!robot.brain.data.gtfo) {

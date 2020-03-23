@@ -3,20 +3,20 @@ const helper = new Helper([]);
 
 const Cache = require("../../scripts/models/cache");
 
-describe("Cache", function() {
+describe("Cache", function () {
   let room;
 
-  beforeEach(function() {
+  beforeEach(function () {
     room = helper.createRoom({httpd: false});
   });
 
-  afterEach(function() {
+  afterEach(function () {
     room.destroy();
     Cache.clear();
   });
 
-  describe("append", function() {
-    it("stores a new line", function() {
+  describe("append", function () {
+    it("stores a new line", function () {
       const cache = Cache.forChannel(room.robot, "C12345678");
 
       cache.append({
@@ -34,7 +34,7 @@ describe("Cache", function() {
       expect(line.timestamp).to.exist;
     });
 
-    it("splits multi-line messages", function() {
+    it("splits multi-line messages", function () {
       const cache = Cache.forChannel(room.robot, "C12345678");
 
       cache.append({
@@ -57,7 +57,7 @@ describe("Cache", function() {
       expect(line1.timestamp).to.exist;
     });
 
-    it("only stores the most recent lines", function() {
+    it("only stores the most recent lines", function () {
       const cache = Cache.forChannel(room.robot, "C12345678");
 
       for (let i = 0; i < Cache.MAX_SIZE + 100; i++) {
@@ -74,8 +74,8 @@ describe("Cache", function() {
     });
   });
 
-  describe("serialization", function() {
-    it("serializes and restores state from the brain", function() {
+  describe("serialization", function () {
+    it("serializes and restores state from the brain", function () {
       const cache0a = Cache.forChannel(room.robot, "C0");
       const cache1a = Cache.forChannel(room.robot, "C1");
 

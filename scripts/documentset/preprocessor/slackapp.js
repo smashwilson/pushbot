@@ -21,7 +21,7 @@ function parseTs(ts) {
   return parsed;
 }
 
-module.exports = function(robot, text) {
+module.exports = function (robot, text) {
   let nick, ts, ampm;
   const mentionDetector = createMentionDetector(robot);
 

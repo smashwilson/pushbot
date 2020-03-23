@@ -1,19 +1,19 @@
-describe("reactions", function() {
+describe("reactions", function () {
   let bot;
 
-  beforeEach(function() {
+  beforeEach(function () {
     bot = new BotContext("../scripts/reactions.js");
     for (let i = 0; i < 20; i++) {
       bot.createUser(i.toString(), `user-${i}`);
     }
   });
 
-  afterEach(function() {
+  afterEach(function () {
     bot.destroy();
   });
 
-  describe("recording", function() {
-    it("tallies reactions given and received", async function() {
+  describe("recording", function () {
+    it("tallies reactions given and received", async function () {
       await bot.addReaction("1", "thumbsup", "2");
       await bot.addReaction("1", "beachball", "2");
       await bot.addReaction("2", "smile", "1");
@@ -33,7 +33,7 @@ describe("reactions", function() {
       });
     });
 
-    it("ignores reactions you give yourself", async function() {
+    it("ignores reactions you give yourself", async function () {
       await bot.addReaction("1", "thumbsup", "2");
       await bot.addReaction("1", "thumbsup", "1");
 
@@ -47,8 +47,8 @@ describe("reactions", function() {
     });
   });
 
-  describe("!reactions", function() {
-    it("returns your top ten reactions, in descending order", async function() {
+  describe("!reactions", function () {
+    it("returns your top ten reactions, in descending order", async function () {
       bot.store("reactionsReceived", {
         "1": {
           "emoji-00": 100,
@@ -85,7 +85,7 @@ describe("reactions", function() {
       );
     });
 
-    it("returns reactions of a named other user", async function() {
+    it("returns reactions of a named other user", async function () {
       bot.store("reactionsReceived", {
         "2": {
           "emoji-00": 100,
@@ -138,8 +138,8 @@ describe("reactions", function() {
     });
   });
 
-  describe("!toppun", function() {
-    beforeEach(function() {
+  describe("!toppun", function () {
+    beforeEach(function () {
       bot.store("reactionsReceived", {
         "0": {beachball: 100},
         "1": {beachball: 90, thumbsup: 76},
@@ -160,7 +160,7 @@ describe("reactions", function() {
       });
     });
 
-    it("returns the top ten most :beachball:ed users", async function() {
+    it("returns the top ten most :beachball:ed users", async function () {
       await bot.say("user-1", "hubot: toppun");
       expect(bot.response()).to.equal(
         [
@@ -179,7 +179,7 @@ describe("reactions", function() {
       );
     });
 
-    it("returns the :beachball: count for a named user", async function() {
+    it("returns the :beachball: count for a named user", async function () {
       await bot.say("user-3", "hubot: toppun @user-1");
       expect(bot.response()).to.equal(
         "<@1> has been struck by *90* :beachball:."

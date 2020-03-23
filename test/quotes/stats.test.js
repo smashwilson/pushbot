@@ -1,13 +1,13 @@
 const {createDocumentSet} = require("../../scripts/documentset");
 
-describe("DocumentSet stats", function() {
+describe("DocumentSet stats", function () {
   let bot, documentSet;
 
-  beforeEach(function() {
+  beforeEach(function () {
     bot = new BotContext();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     bot.destroy();
     if (documentSet) {
       return documentSet.destroy();
@@ -20,7 +20,7 @@ describe("DocumentSet stats", function() {
     });
 
     return Promise.all(
-      docs.map(doc => {
+      docs.map((doc) => {
         const attributes = [];
         for (const kind in doc.attrs) {
           for (const value of doc.attrs[kind]) {
@@ -33,7 +33,7 @@ describe("DocumentSet stats", function() {
     );
   }
 
-  it("summarizes all known speaker and mention credits", async function() {
+  it("summarizes all known speaker and mention credits", async function () {
     usesDatabase(this);
     await populate(true, [
       {
@@ -60,7 +60,7 @@ describe("DocumentSet stats", function() {
     await bot.waitForResponse(expected);
   });
 
-  it("summarizes a user's speaker and mention counts", async function() {
+  it("summarizes a user's speaker and mention counts", async function () {
     usesDatabase(this);
     await populate(true, [
       {body: "0", attrs: {speaker: ["person-one"], mention: ["person-two"]}},
@@ -78,7 +78,7 @@ describe("DocumentSet stats", function() {
     );
   });
 
-  it("generates default help text", async function() {
+  it("generates default help text", async function () {
     usesDatabase(this);
 
     await bot.loadHelp();
@@ -96,7 +96,7 @@ describe("DocumentSet stats", function() {
     );
   });
 
-  it("accepts custom help text", async function() {
+  it("accepts custom help text", async function () {
     usesDatabase(this);
 
     await bot.loadHelp();
