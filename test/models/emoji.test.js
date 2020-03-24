@@ -1,13 +1,13 @@
 const {emojiCacheFor} = require("../../scripts/models/emoji");
 
-describe("EmojiCache", function() {
+describe("EmojiCache", function () {
   let bot;
 
-  beforeEach(function() {
+  beforeEach(function () {
     bot = new BotContext();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     bot.destroy();
   });
 
@@ -19,8 +19,8 @@ describe("EmojiCache", function() {
     return list;
   }
 
-  describe("when empty", function() {
-    it("sends a request to the Slack API", async function() {
+  describe("when empty", function () {
+    it("sends a request to the Slack API", async function () {
       const api = stubEndpoint().returns(
         Promise.resolve({
           ok: true,
@@ -34,7 +34,7 @@ describe("EmojiCache", function() {
       expect(api.called).to.be.true;
     });
 
-    it("retrieves a custom emoji URL", async function() {
+    it("retrieves a custom emoji URL", async function () {
       stubEndpoint().returns(
         Promise.resolve({
           ok: true,
@@ -50,14 +50,14 @@ describe("EmojiCache", function() {
       );
     });
 
-    it("is a no-op when the Slack adapter is not present", async function() {
+    it("is a no-op when the Slack adapter is not present", async function () {
       const result = await emojiCacheFor(bot.getRobot()).get("something");
       expect(result).to.be.null;
     });
   });
 
-  describe("when populated", function() {
-    beforeEach(function() {
+  describe("when populated", function () {
+    beforeEach(function () {
       bot.store("slack:emoji", {
         emoji: {
           sausage: "https://media0.giphy.com/media/SztNh2RqJmXVC/giphy.gif",
@@ -67,23 +67,23 @@ describe("EmojiCache", function() {
       });
     });
 
-    it("retrieves a custom emoji URL", async function() {
+    it("retrieves a custom emoji URL", async function () {
       const result = await emojiCacheFor(bot.getRobot()).get("sausage");
       expect(result).to.equal(
         "https://media0.giphy.com/media/SztNh2RqJmXVC/giphy.gif"
       );
     });
 
-    it("returns null for unknown or non-custom emoji", async function() {
+    it("returns null for unknown or non-custom emoji", async function () {
       const result = await emojiCacheFor(bot.getRobot()).get("no");
       expect(result).to.be.null;
     });
   });
 
-  describe("when expired", function() {
+  describe("when expired", function () {
     let api;
 
-    beforeEach(function() {
+    beforeEach(function () {
       bot.store("slack:emoji", {
         emoji: {
           sausage: "https://media0.giphy.com/media/SztNh2RqJmXVC/giphy.gif",
@@ -102,12 +102,12 @@ describe("EmojiCache", function() {
       );
     });
 
-    it("triggers a new request to the Slack API", async function() {
+    it("triggers a new request to the Slack API", async function () {
       await emojiCacheFor(bot.getRobot()).get("sausage");
       expect(api.called).to.be.true;
     });
 
-    it("does not return new data yet", async function() {
+    it("does not return new data yet", async function () {
       const url = await emojiCacheFor(bot.getRobot()).get("sausage");
       expect(url).to.equal(
         "https://media0.giphy.com/media/SztNh2RqJmXVC/giphy.gif"

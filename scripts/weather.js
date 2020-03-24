@@ -84,8 +84,8 @@ function iconToEmoji(icon) {
   }
 }
 
-module.exports = function(robot) {
-  robot.respond(/weather *(.+)/i, async function(msg) {
+module.exports = function (robot) {
+  robot.respond(/weather *(.+)/i, async function (msg) {
     try {
       const location = encodeURIComponent(msg.match[1]);
       const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${location}&key=${MAPS_APIKEY}`;

@@ -1,7 +1,7 @@
-module.exports = function(lines, speakers, mentions, userTz) {
+module.exports = function (lines, speakers, mentions, userTz) {
   return {
     body: lines
-      .map(line => {
+      .map((line) => {
         if (line.isRaw()) {
           return line.text;
         } else {

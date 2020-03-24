@@ -2,15 +2,15 @@ const {OnlyMe, Nobody} = require("./roles");
 
 const {createDocumentSet} = require("../../scripts/documentset");
 
-describe("DocumentSet set", function() {
+describe("DocumentSet set", function () {
   let bot, time, documentSet;
 
-  beforeEach(function() {
+  beforeEach(function () {
     bot = new BotContext();
     time = new TimeContext();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     bot.destroy();
     time.destroy();
     if (documentSet) {
@@ -18,7 +18,7 @@ describe("DocumentSet set", function() {
     }
   });
 
-  it('adds a new document with "setblarf:"', async function() {
+  it('adds a new document with "setblarf:"', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {set: true});
 
@@ -32,7 +32,7 @@ describe("DocumentSet set", function() {
     expect(doc.getBody()).to.equal("something embarassing");
   });
 
-  it('adds a new document for a different user with "setblarf @<username>:"', async function() {
+  it('adds a new document for a different user with "setblarf @<username>:"', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {set: true});
 
@@ -46,7 +46,7 @@ describe("DocumentSet set", function() {
     expect(doc.getBody()).to.equal("something embarassing");
   });
 
-  it('replaces an existing document with "setblarf:"', async function() {
+  it('replaces an existing document with "setblarf:"', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {set: true});
 
@@ -65,7 +65,7 @@ describe("DocumentSet set", function() {
     expect(doc.getBody()).to.equal("something better");
   });
 
-  it('replaces an existing document for a different user with "setblarf @<username>:"', async function() {
+  it('replaces an existing document for a different user with "setblarf @<username>:"', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {set: true});
 
@@ -84,7 +84,7 @@ describe("DocumentSet set", function() {
     expect(doc.getBody()).to.equal("something better");
   });
 
-  it("validates a required role for setting your own", async function() {
+  it("validates a required role for setting your own", async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {
       set: {roleForSelf: OnlyMe},
@@ -107,7 +107,7 @@ describe("DocumentSet set", function() {
     expect(youCount).to.equal(0);
   });
 
-  it("validates a required role for setting another", async function() {
+  it("validates a required role for setting another", async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {
       set: {roleForOther: OnlyMe},
@@ -130,7 +130,7 @@ describe("DocumentSet set", function() {
     expect(youCount).to.equal(1);
   });
 
-  it("validates the correct role for explicitly setting your own", async function() {
+  it("validates the correct role for explicitly setting your own", async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {
       set: {roleForSelf: OnlyMe, roleForOther: Nobody},
@@ -144,7 +144,7 @@ describe("DocumentSet set", function() {
     expect(count).to.equal(1);
   });
 
-  it("generates default help text", async function() {
+  it("generates default help text", async function () {
     usesDatabase(this);
     await bot.loadHelp();
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {set: true});
@@ -161,7 +161,7 @@ describe("DocumentSet set", function() {
     );
   });
 
-  it("accepts custom help text", async function() {
+  it("accepts custom help text", async function () {
     usesDatabase(this);
     await bot.loadHelp();
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {

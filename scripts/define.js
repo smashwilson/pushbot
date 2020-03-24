@@ -9,14 +9,14 @@ const {URL} = require("url");
 const cheerio = require("cheerio");
 const fetch = require("node-fetch");
 
-const scrub = function(txt) {
+const scrub = function (txt) {
   txt = txt.replace(/^[ \t\n]+/, "");
   txt = txt.replace(/[ \t\n]+$/, "");
   return txt;
 };
 
-module.exports = function(robot) {
-  robot.respond(/define +([^]+)/i, async function(res) {
+module.exports = function (robot) {
+  robot.respond(/define +([^]+)/i, async function (res) {
     const term = encodeURIComponent(res.match[1]);
 
     try {
@@ -40,7 +40,7 @@ module.exports = function(robot) {
           }
 
           const definitionText = [];
-          $(element)[0].children.forEach(child => {
+          $(element)[0].children.forEach((child) => {
             if (child.type === "text") {
               definitionText.push(scrub(child.data));
             } else if ($(child).is("a") || $(child).is("strong")) {
@@ -61,7 +61,7 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/urbandefine +([^]+)/i, async function(res) {
+  robot.respond(/urbandefine +([^]+)/i, async function (res) {
     const u = new URL("http://www.urbandictionary.com/define.php");
     u.searchParams.set("term", res.match[1]);
 
@@ -78,11 +78,7 @@ module.exports = function(robot) {
       } else {
         const $ = cheerio.load(body);
 
-        const definition = scrub(
-          $(".meaning")
-            .eq(0)
-            .text()
-        );
+        const definition = scrub($(".meaning").eq(0).text());
         res.send(`> ${definition}`);
       }
     } catch (err) {

@@ -3,8 +3,8 @@
 // Commands:
 //   hubot cowsay <text> - Makes a cow say <text>
 
-module.exports = function(robot) {
-  robot.respond(/cowsay( me)?\s*([^]*)/i, function(msg) {
+module.exports = function (robot) {
+  robot.respond(/cowsay( me)?\s*([^]*)/i, function (msg) {
     let message = "";
     if (msg.match[2].trim().length > 0) {
       message = msg.match[2];

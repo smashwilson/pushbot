@@ -11,8 +11,8 @@
 
 const fetch = require("node-fetch");
 
-module.exports = function(robot) {
-  robot.respond(/etload(?: (.*))?/i, async function(msg) {
+module.exports = function (robot) {
+  robot.respond(/etload(?: (.*))?/i, async function (msg) {
     const uri = msg.match[1] || "https://www.eternaljson.com/eternal.json";
     try {
       const response = await fetch(uri);
@@ -27,7 +27,7 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/eternal *(.+)/i, function(msg) {
+  robot.respond(/eternal *(.+)/i, function (msg) {
     const name = msg.match[1].toLowerCase();
     const {eternal} = robot.brain.data;
     if (!eternal) {

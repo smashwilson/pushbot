@@ -8,7 +8,7 @@
 const _ = require("underscore");
 const crypto = require("crypto");
 
-const parseOptions = function(str) {
+const parseOptions = function (str) {
   const results = [];
 
   let currentOption = "";
@@ -57,7 +57,7 @@ const parseOptions = function(str) {
   return _.without(results, "");
 };
 
-const shaify = function(str) {
+const shaify = function (str) {
   const hash = crypto.createHmac("sha512", "supersecretzomg");
   hash.update(str);
   const hexDigest = hash.digest("hex");
@@ -65,8 +65,8 @@ const shaify = function(str) {
   return parseInt(hexDigest, 16);
 };
 
-module.exports = function(robot) {
-  robot.respond(/(?:decide|choose)(.*)/, function(msg) {
+module.exports = function (robot) {
+  robot.respond(/(?:decide|choose)(.*)/, function (msg) {
     const options = parseOptions(msg.match[1]);
     const choice = msg.random(options);
 
@@ -85,12 +85,14 @@ module.exports = function(robot) {
     );
   });
 
-  return robot.respond(/shawin(.*)/, function(msg) {
+  return robot.respond(/shawin(.*)/, function (msg) {
     const options = parseOptions(msg.match[1]);
     const concat = options.join("");
     const concatSha = shaify(concat);
-    const optionsSha = Array.from(options).map(opt => shaify(opt));
-    const diffs = Array.from(optionsSha).map(sha => Math.abs(sha - concatSha));
+    const optionsSha = Array.from(options).map((opt) => shaify(opt));
+    const diffs = Array.from(optionsSha).map((sha) =>
+      Math.abs(sha - concatSha)
+    );
     // Courtesy http://stackoverflow.com/a/11301464
     const choiceInd = diffs.indexOf(Math.min.apply(Math, diffs));
     msg.send(`The winner is ${options[choiceInd]}`);

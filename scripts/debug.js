@@ -8,8 +8,8 @@ const {inspect} = require("util");
 
 const OPTS = {depth: 3, maxArrayLength: 10, breakLength: 120};
 
-module.exports = function(robot) {
-  robot.respond(/debug_user(?: (.+))?/i, function(msg) {
+module.exports = function (robot) {
+  robot.respond(/debug_user(?: (.+))?/i, function (msg) {
     let header, u;
     if (msg.match[1]) {
       u = robot.brain.userForName(msg.match[1]);
@@ -27,11 +27,11 @@ module.exports = function(robot) {
     msg.reply(`${header}\n\`\`\`\n${inspect(u, OPTS)}\n\`\`\`\n`);
   });
 
-  robot.respond(/debug_message/i, function(msg) {
+  robot.respond(/debug_message/i, function (msg) {
     msg.reply(`msg.message\n\`\`\`\n${inspect(msg.message, OPTS)}\n\`\`\`\n`);
   });
 
-  return robot.respond(/debug_role/i, function(msg) {
+  return robot.respond(/debug_role/i, function (msg) {
     const u = msg.message.user;
 
     const brainUser = robot.brain.data.users[u.id];

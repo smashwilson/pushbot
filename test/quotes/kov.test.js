@@ -1,9 +1,9 @@
 const {createDocumentSet} = require("../../scripts/documentset");
 
-describe("DocumentSet markov models", function() {
+describe("DocumentSet markov models", function () {
   let bot, time, documentSet;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     bot = new BotContext();
     time = new TimeContext();
 
@@ -12,12 +12,12 @@ describe("DocumentSet markov models", function() {
     await bot.loadMarkov();
   });
 
-  afterEach(async function() {
-    await new Promise(resolve => {
+  afterEach(async function () {
+    await new Promise((resolve) => {
       try {
         bot
           .getRobot()
-          .markov.modelNamed("blarfkov", model => model.destroy(resolve));
+          .markov.modelNamed("blarfkov", (model) => model.destroy(resolve));
       } catch (e) {
         resolve();
       }
@@ -30,19 +30,19 @@ describe("DocumentSet markov models", function() {
     }
   });
 
-  it("creates a markov model", async function() {
+  it("creates a markov model", async function () {
     expect(() =>
       bot.getRobot().markov.modelNamed("blarfkov", () => {})
     ).to.throw(/Unrecognized model/);
 
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {kov: true});
 
-    bot.getRobot().markov.modelNamed("blarfkov", model => {
+    bot.getRobot().markov.modelNamed("blarfkov", (model) => {
       expect(model).to.not.be.undefined;
     });
   });
 
-  it("adds new documents to the model", async function() {
+  it("adds new documents to the model", async function () {
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {
       add: true,
       kov: true,
@@ -55,7 +55,7 @@ describe("DocumentSet markov models", function() {
     await bot.waitForResponse("1 blarf loaded.");
 
     const output = await new Promise((resolve, reject) => {
-      bot.getRobot().markov.modelNamed("blarfkov", model => {
+      bot.getRobot().markov.modelNamed("blarfkov", (model) => {
         model.generate("", 10, (err, text) => {
           if (err) return reject(err);
           resolve(text);
@@ -65,13 +65,13 @@ describe("DocumentSet markov models", function() {
     expect(output).to.equal("person-one: foo bar baz");
   });
 
-  it("generates text from the model", async function() {
+  it("generates text from the model", async function () {
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {kov: true});
 
     await documentSet.whenConnected();
-    await new Promise(resolve => {
-      bot.getRobot().markov.modelNamed("blarfkov", model => {
-        model.learn("aaa bbb ccc", err => {
+    await new Promise((resolve) => {
+      bot.getRobot().markov.modelNamed("blarfkov", (model) => {
+        model.learn("aaa bbb ccc", (err) => {
           expect(err).to.not.be.ok;
           resolve();
         });
@@ -82,7 +82,7 @@ describe("DocumentSet markov models", function() {
     await bot.waitForResponse("aaa bbb ccc");
   });
 
-  it("re-indexes the model from all documents", async function() {
+  it("re-indexes the model from all documents", async function () {
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {});
     await documentSet.add("me", "aaa bbb ccc", []);
     await documentSet.add("me", "aaa ddd eee", []);

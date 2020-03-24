@@ -1,14 +1,14 @@
 const {createDocumentSet} = require("../../scripts/documentset");
 const {OnlyMe} = require("./roles");
 
-describe("DocumentSet count", function() {
+describe("DocumentSet count", function () {
   let bot, documentSet;
 
-  beforeEach(function() {
+  beforeEach(function () {
     bot = new BotContext();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     bot.destroy();
     if (documentSet) {
       return documentSet.destroy();
@@ -20,10 +20,10 @@ describe("DocumentSet count", function() {
       count: commandOpts,
     });
 
-    return Promise.all(docs.map(doc => documentSet.add("me", doc, [])));
+    return Promise.all(docs.map((doc) => documentSet.add("me", doc, [])));
   }
 
-  it("counts all documents", async function() {
+  it("counts all documents", async function () {
     usesDatabase(this);
 
     await populate(true, ["111", "222", "333", "444", "555"]);
@@ -31,13 +31,13 @@ describe("DocumentSet count", function() {
     await bot.waitForResponse("@me there are 5 blarfs.");
   });
 
-  it("uses a singular noun for single results", async function() {
+  it("uses a singular noun for single results", async function () {
     await populate(true, ["111"]);
     await bot.say("me", "@hubot blarfcount");
     await bot.waitForResponse("@me there is 1 blarf.");
   });
 
-  it("counts documents matching all query terms", async function() {
+  it("counts documents matching all query terms", async function () {
     usesDatabase(this);
 
     await populate(true, [
@@ -51,7 +51,7 @@ describe("DocumentSet count", function() {
     await bot.waitForResponse("@me there are 2 blarfs matching `zzz aaa`.");
   });
 
-  it("counts documents matching quoted query terms", async function() {
+  it("counts documents matching quoted query terms", async function () {
     usesDatabase(this);
 
     await populate(true, [
@@ -66,13 +66,13 @@ describe("DocumentSet count", function() {
     await bot.waitForResponse('@me there are 2 blarfs matching `"aaa zzz"`.');
   });
 
-  it("uses a singular noun for single results matching a query", async function() {
+  it("uses a singular noun for single results matching a query", async function () {
     await populate(true, ["111", "222"]);
     await bot.say("me", "@hubot blarfcount 11");
     await bot.waitForResponse("@me there is 1 blarf matching `11`.");
   });
 
-  it("permits access based on the caller's role", async function() {
+  it("permits access based on the caller's role", async function () {
     usesDatabase(this);
 
     await populate({role: OnlyMe}, [
@@ -86,7 +86,7 @@ describe("DocumentSet count", function() {
     await bot.waitForResponse("@me there are 3 blarfs matching `aaa zzz`.");
   });
 
-  it("prohibits access based on the caller's role", async function() {
+  it("prohibits access based on the caller's role", async function () {
     usesDatabase(this);
 
     await populate({role: OnlyMe}, ["aaa zzz 1", "aaa zzz 2"]);
@@ -94,7 +94,7 @@ describe("DocumentSet count", function() {
     await bot.waitForResponse("@you NOPE");
   });
 
-  it("generates default help text", async function() {
+  it("generates default help text", async function () {
     await bot.loadHelp();
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {count: true});
 
@@ -108,7 +108,7 @@ describe("DocumentSet count", function() {
     );
   });
 
-  it("accepts custom help text", async function() {
+  it("accepts custom help text", async function () {
     await bot.loadHelp();
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {
       count: {

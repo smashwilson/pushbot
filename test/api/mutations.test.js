@@ -9,11 +9,11 @@ const helper = new Helper([]);
 
 const ts = moment.tz("2017-10-16 21:30:00-0400", "America/New_York");
 
-describe("GraphQL mutations", function() {
+describe("GraphQL mutations", function () {
   let room, blarfSet;
   let authorized, unauthorized;
 
-  beforeEach(function() {
+  beforeEach(function () {
     usesDatabase(this);
     cache.clear();
 
@@ -34,22 +34,22 @@ describe("GraphQL mutations", function() {
     });
   });
 
-  afterEach(function() {
+  afterEach(function () {
     room.destroy();
     return blarfSet.destroy();
   });
 
-  describe("createDocument", function() {
+  describe("createDocument", function () {
     let lineIDs;
 
-    beforeEach(function() {
+    beforeEach(function () {
       const c = cache
         .forChannel(room.robot, "C100")
         .append(message("aaa", "line one"), ts)
         .append(message("bbb", "line two\nline three"), ts)
         .append(message("ccc", "line four"), ts);
 
-      lineIDs = c.lines.map(line => line.id);
+      lineIDs = c.lines.map((line) => line.id);
       lineIDs.reverse();
 
       room.robot.adapter.client = {
@@ -64,7 +64,7 @@ describe("GraphQL mutations", function() {
       };
     });
 
-    it("rejects a request from a user without the required role", function() {
+    it("rejects a request from a user without the required role", function () {
       return resolver
         .createDocument(
           {set: "blarf", channel: "C100", lines: [lineIDs[0]]},
@@ -72,11 +72,11 @@ describe("GraphQL mutations", function() {
         )
         .then(
           () => new Error("Did not reject"),
-          err => expect(err.message).to.match(/not authorized/)
+          (err) => expect(err.message).to.match(/not authorized/)
         );
     });
 
-    it("rejects a request with an invalid line ID", function() {
+    it("rejects a request with an invalid line ID", function () {
       return resolver
         .createDocument(
           {set: "blarf", channel: "C100", lines: ["no"]},
@@ -84,11 +84,11 @@ describe("GraphQL mutations", function() {
         )
         .then(
           () => new Error("Did not reject"),
-          err => expect(err.message).to.match(/no/)
+          (err) => expect(err.message).to.match(/no/)
         );
     });
 
-    it("rejects a request with an invalid channel", function() {
+    it("rejects a request with an invalid channel", function () {
       return resolver
         .createDocument(
           {set: "blarf", channel: "nope", lines: [lineIDs[0]]},
@@ -96,11 +96,11 @@ describe("GraphQL mutations", function() {
         )
         .then(
           () => new Error("Did not reject"),
-          err => expect(err.message).to.match(/nope/)
+          (err) => expect(err.message).to.match(/nope/)
         );
     });
 
-    it("rejects requests with an empty line array", function() {
+    it("rejects requests with an empty line array", function () {
       return resolver
         .createDocument(
           {set: "blarf", channel: "C100", lines: []},
@@ -108,11 +108,11 @@ describe("GraphQL mutations", function() {
         )
         .then(
           () => new Error("Did not reject"),
-          err => expect(err.message).to.match(/at least one line/)
+          (err) => expect(err.message).to.match(/at least one line/)
         );
     });
 
-    it("adds a document from the cache", async function() {
+    it("adds a document from the cache", async function () {
       const docResolver = await resolver.createDocument(
         {set: "blarf", channel: "C100", lines: [lineIDs[1], lineIDs[2]]},
         {robot: room.robot, user: authorized}
@@ -132,7 +132,7 @@ describe("GraphQL mutations", function() {
       expect(doc.getBody()).to.equal(docResolver.text);
     });
 
-    it("announces the quoting user to the channel", async function() {
+    it("announces the quoting user to the channel", async function () {
       await resolver.createDocument(
         {set: "blarf", channel: "C100", lines: [lineIDs[1], lineIDs[3]]},
         {robot: room.robot, user: authorized}
@@ -143,7 +143,7 @@ describe("GraphQL mutations", function() {
       ]);
     });
 
-    it("preserves the channel order cache of the chosen lines", async function() {
+    it("preserves the channel order cache of the chosen lines", async function () {
       const docResolver = await resolver.createDocument(
         {
           set: "blarf",
@@ -168,7 +168,7 @@ describe("GraphQL mutations", function() {
       expect(doc.getBody()).to.equal(docResolver.text);
     });
 
-    it("chooses a channel by ID or name", async function() {
+    it("chooses a channel by ID or name", async function () {
       const docResolver = await resolver.createDocument(
         {set: "blarf", channel: "general", lines: [lineIDs[0]]},
         {robot: room.robot, user: authorized}

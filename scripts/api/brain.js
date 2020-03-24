@@ -31,7 +31,9 @@ class EntryResolver {
   children({limit, prefix}, req) {
     adminOnly(req);
 
-    const ks = Object.keys(this.target).filter(each => each.startsWith(prefix));
+    const ks = Object.keys(this.target).filter((each) =>
+      each.startsWith(prefix)
+    );
     ks.sort();
     return ks.slice(0, limit);
   }
@@ -60,7 +62,7 @@ class BrainResolver {
     adminOnly(req);
 
     const kvs = req.robot.brain.data._private;
-    const ks = Object.keys(kvs).filter(each => each.startsWith(prefix));
+    const ks = Object.keys(kvs).filter((each) => each.startsWith(prefix));
     ks.sort();
     return ks.slice(0, limit);
   }

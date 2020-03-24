@@ -8,7 +8,7 @@ class CacheResolver {
 
     return cache
       .known(req.robot)
-      .map(id => {
+      .map((id) => {
         const channel = dataStore.getChannelGroupOrDMById(id);
         return channel ? channel.name : id;
       })
@@ -35,7 +35,7 @@ class CacheResolver {
     lines.reverse();
 
     return lines
-      .map(line => {
+      .map((line) => {
         return {
           id: line.id,
           speaker: line.speaker
@@ -45,7 +45,7 @@ class CacheResolver {
           text: line.text,
         };
       })
-      .filter(result => Boolean(result.speaker));
+      .filter((result) => Boolean(result.speaker));
   }
 }
 

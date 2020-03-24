@@ -7,7 +7,7 @@
 //   hubot remsearch key - List all known keys containing a case-insensitive substring.
 //   hubot forget key - Forget a previously stored key.
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   robot.rem = {
     get(key) {
       return robot.brain.get(`rem:${key}`);
@@ -35,7 +35,7 @@ module.exports = function(robot) {
     },
   };
 
-  robot.respond(/rem(?:ember)?\s+([^=]+)(?:=([^]+))?/, function(msg) {
+  robot.respond(/rem(?:ember)?\s+([^=]+)(?:=([^]+))?/, function (msg) {
     const key = msg.match[1].trim();
     if (msg.match[2]) {
       const value = msg.match[2].trim();
@@ -52,7 +52,7 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/remsearch(?:\s+([^]*))?/, function(msg) {
+  robot.respond(/remsearch(?:\s+([^]*))?/, function (msg) {
     const pattern = (msg.match[1] || "").trim().toLowerCase();
 
     let matches = robot.rem.search(pattern);
@@ -68,10 +68,10 @@ module.exports = function(robot) {
       return;
     }
 
-    msg.send(matches.map(m => `> ${m}\n`).join(""));
+    msg.send(matches.map((m) => `> ${m}\n`).join(""));
   });
 
-  robot.respond(/forget([^]+)/, function(msg) {
+  robot.respond(/forget([^]+)/, function (msg) {
     const key = msg.match[1].trim();
     robot.rem.unset(`rem:${key}`);
     msg.reply(`:dusty_stick: "${key}" has been forgotten.`);

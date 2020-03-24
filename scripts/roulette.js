@@ -4,8 +4,8 @@
 // Commands:
 //   hubot roulette - take your chances
 
-module.exports = function(robot) {
-  robot.respond(/roulette/i, function(msg) {
+module.exports = function (robot) {
+  robot.respond(/roulette/i, function (msg) {
     const {data} = robot.brain;
     if (data.roulette == null) {
       data.roulette = 0;

@@ -4,8 +4,8 @@
 // Commands:
 //   hubot prompt me <n> - Generate n writing prompts.
 
-module.exports = function(robot) {
-  robot.respond(/prompt\s+me(?:\s+(\d+))?/i, function(msg) {
+module.exports = function (robot) {
+  robot.respond(/prompt\s+me(?:\s+(\d+))?/i, function (msg) {
     const count = msg.match[1] || 1;
 
     let url = "http://itcamefromwritingprompts.com/api/generate";
@@ -13,7 +13,7 @@ module.exports = function(robot) {
       url += `/${count}`;
     }
 
-    return msg.http(url).get()(function(err, _res, body) {
+    return msg.http(url).get()(function (err, _res, body) {
       if (err) {
         msg.send(err);
         return;

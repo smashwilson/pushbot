@@ -2,14 +2,14 @@ const {createDocumentSet} = require("../../scripts/documentset");
 const {OnlyMe} = require("./roles");
 
 function generateAttributeQueryTests(commandName, attributeName) {
-  return function() {
+  return function () {
     let bot, documentSet;
 
-    beforeEach(function() {
+    beforeEach(function () {
       bot = new BotContext();
     });
 
-    afterEach(function() {
+    afterEach(function () {
       bot.destroy();
       if (documentSet) {
         return documentSet.destroy();
@@ -22,8 +22,8 @@ function generateAttributeQueryTests(commandName, attributeName) {
       });
 
       return Promise.all(
-        docs.map(doc => {
-          const attributes = doc.attrs.map(value => ({
+        docs.map((doc) => {
+          const attributes = doc.attrs.map((value) => ({
             kind: attributeName,
             value,
           }));
@@ -32,7 +32,7 @@ function generateAttributeQueryTests(commandName, attributeName) {
       );
     }
 
-    it(`returns a random document ${commandName} the requested speaker`, async function() {
+    it(`returns a random document ${commandName} the requested speaker`, async function () {
       usesDatabase(this);
       await populate(true, [
         {body: "yes 1", attrs: ["aaa", "bbb"]},
@@ -46,7 +46,7 @@ function generateAttributeQueryTests(commandName, attributeName) {
       await bot.waitForResponse(/^(yes 1|yes 2)$/);
     });
 
-    it(`returns a random document with the requested ${attributeName} matching a query`, async function() {
+    it(`returns a random document with the requested ${attributeName} matching a query`, async function () {
       usesDatabase(this);
       await populate(true, [
         {body: "no 1", attrs: ["aaa", "bbb"]},
@@ -60,7 +60,7 @@ function generateAttributeQueryTests(commandName, attributeName) {
       await bot.waitForResponse("yes 1");
     });
 
-    it(`returns a random document with multiple ${attributeName}s`, async function() {
+    it(`returns a random document with multiple ${attributeName}s`, async function () {
       usesDatabase(this);
       await populate(true, [
         {body: "no 1", attrs: ["aaa", "bbb"]},
@@ -74,7 +74,7 @@ function generateAttributeQueryTests(commandName, attributeName) {
       await bot.waitForResponse("yes 1");
     });
 
-    it(`returns a random document with multiple ${attributeName}s matching a query`, async function() {
+    it(`returns a random document with multiple ${attributeName}s matching a query`, async function () {
       usesDatabase(this);
       await populate(true, [
         {body: "no 1", attrs: ["aaa", "bbb"]},
@@ -88,7 +88,7 @@ function generateAttributeQueryTests(commandName, attributeName) {
       await bot.waitForResponse("yes 1");
     });
 
-    it("permits access based on the caller's role", async function() {
+    it("permits access based on the caller's role", async function () {
       usesDatabase(this);
       await populate({role: OnlyMe}, [{body: "yes 1", attrs: ["aaa", "bbb"]}]);
 
@@ -96,7 +96,7 @@ function generateAttributeQueryTests(commandName, attributeName) {
       await bot.waitForResponse("yes 1");
     });
 
-    it("prohibits access based on the caller's role", async function() {
+    it("prohibits access based on the caller's role", async function () {
       usesDatabase(this);
       await populate({role: OnlyMe}, [{body: "yes 1", attrs: ["aaa", "bbb"]}]);
 
@@ -104,7 +104,7 @@ function generateAttributeQueryTests(commandName, attributeName) {
       await bot.waitForResponse("@you NOPE");
     });
 
-    it("generates default help text", async function() {
+    it("generates default help text", async function () {
       await bot.loadHelp();
       documentSet = createDocumentSet(bot.getRobot(), "blarf", {
         [commandName]: true,
@@ -115,11 +115,11 @@ function generateAttributeQueryTests(commandName, attributeName) {
 
       const messages = bot
         .helpLines()
-        .filter(line => line.startsWith(`hubot blarf${commandName}`));
+        .filter((line) => line.startsWith(`hubot blarf${commandName}`));
       expect(messages).to.have.length(3);
     });
 
-    it("accepts custom help text", async function() {
+    it("accepts custom help text", async function () {
       await bot.loadHelp();
       documentSet = createDocumentSet(bot.getRobot(), "blarf", {
         [commandName]: {

@@ -11,7 +11,7 @@ class Buffer {
 
     const serialized = this.robot.brain.get(`buffer:${this.ownerId}`);
     if (serialized) {
-      this.contents = serialized.map(each => Line.deserialize(each));
+      this.contents = serialized.map((each) => Line.deserialize(each));
     } else {
       this.contents = [];
     }
@@ -57,7 +57,7 @@ class Buffer {
   }
 
   save() {
-    const serialized = this.contents.map(line => line.serialize());
+    const serialized = this.contents.map((line) => line.serialize());
     this.robot.brain.set(`buffer:${this.ownerId}`, serialized);
   }
 }

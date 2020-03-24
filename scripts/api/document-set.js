@@ -15,8 +15,8 @@ function attributesFrom(criteria) {
 function attrValuesWithKind(document, kind) {
   return document
     .getAttributes()
-    .filter(attr => attr.kind === kind)
-    .map(attr => attr.value);
+    .filter((attr) => attr.kind === kind)
+    .map((attr) => attr.value);
 }
 
 class DocumentResolver {
@@ -70,7 +70,7 @@ class DocumentSetResolver {
       this.set.countMatching(attributes, query),
     ]);
 
-    const edges = documents.map(doc => {
+    const edges = documents.map((doc) => {
       return {
         cursor: doc.id,
         node: new DocumentResolver(doc),
@@ -92,7 +92,7 @@ class DocumentSetResolver {
       this.statsPromise = this.set.getUserStats(["speaker"]);
     }
     const stats = (await this.statsPromise).getStats();
-    const stat = stats.find(stat => stat.getUsername() === speaker);
+    const stat = stats.find((stat) => stat.getUsername() === speaker);
     if (stat === undefined) {
       return 0;
     } else {

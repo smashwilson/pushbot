@@ -8,7 +8,7 @@ const {MapMaker, withName} = require("./roles");
 
 const mappings = new Map();
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   function persistMappings() {
     const payload = {};
     for (const [name, {options}] of mappings) {
@@ -52,12 +52,12 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/createmapping\s+([^]+)/, async msg => {
+  robot.respond(/createmapping\s+([^]+)/, async (msg) => {
     if (!MapMaker.verify(robot, msg)) {
       return;
     }
 
-    const args = await parseArguments(msg, msg.match[1], yargs => {
+    const args = await parseArguments(msg, msg.match[1], (yargs) => {
       return yargs
         .usage("!createmapping <name> [options]")
         .option("null", {
@@ -88,12 +88,12 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/changemapping\s+([^]+)/, async msg => {
+  robot.respond(/changemapping\s+([^]+)/, async (msg) => {
     if (!MapMaker.verify(robot, msg)) {
       return;
     }
 
-    const args = await parseArguments(msg, msg.match[1], yargs => {
+    const args = await parseArguments(msg, msg.match[1], (yargs) => {
       return yargs
         .usage("!changemapping <name> [options]")
         .option("null", {
@@ -141,7 +141,7 @@ module.exports = function(robot) {
     msg.send(`Mapping ${name} changed. :party-corgi:`);
   });
 
-  robot.respond(/destroymapping\s+(\S+)/, msg => {
+  robot.respond(/destroymapping\s+(\S+)/, (msg) => {
     if (!MapMaker.verify(robot, msg)) {
       return;
     }

@@ -33,8 +33,8 @@ const ALIASES = {
   sat: 6,
 };
 
-module.exports = function(robot) {
-  robot.respond(/when(?:\s+(.+))*/i, msg => {
+module.exports = function (robot) {
+  robot.respond(/when(?:\s+(.+))*/i, (msg) => {
     const when = msg.match[1];
     const userTz = msg.message.user.tz;
 

@@ -33,7 +33,7 @@ function getDataStore(robot) {
 
 function parseArguments(msg, argline, fn) {
   const y = fn(yargs().version(false));
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     y.parse(argline, (err, argv, output) => {
       if (err) {
         msg.reply(`:boom: You broke it!\n${msg}\n${this.yargs.help()}`);

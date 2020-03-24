@@ -4,17 +4,17 @@
 const levels = require("log");
 const {Admin} = require("./roles");
 
-const ORDERED_LEVELS = Object.keys(levels).map(levelName => {
+const ORDERED_LEVELS = Object.keys(levels).map((levelName) => {
   return [levels[levelName], levelName];
 });
 ORDERED_LEVELS.sort((a, b) => b[0] - a[0]);
 
-module.exports = function(robot) {
+module.exports = function (robot) {
   robot.on("brainReady", () => {
     const level = robot.brain.get("logLevel");
     if (level !== null) {
       const levelName = Object.keys(levels).find(
-        name => levels[name] === level
+        (name) => levels[name] === level
       );
 
       if (levelName === undefined) {
@@ -36,7 +36,7 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/log level(?: (\S+))?/, msg => {
+  robot.respond(/log level(?: (\S+))?/, (msg) => {
     if (!Admin.verify(robot, msg)) {
       return;
     }

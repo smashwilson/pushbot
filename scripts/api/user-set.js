@@ -46,7 +46,7 @@ class UserResolver {
   }
 
   roles(_args, req) {
-    return req.robot.auth.userRoles(this.user).map(role => {
+    return req.robot.auth.userRoles(this.user).map((role) => {
       return {name: role};
     });
   }

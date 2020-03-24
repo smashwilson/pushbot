@@ -4,10 +4,10 @@ const helper = new Helper([]);
 const {CacheResolver} = require("../../scripts/api/cache");
 const cache = require("../../scripts/models/cache");
 
-describe("CacheResolver", function() {
+describe("CacheResolver", function () {
   let room, user, req, resolver;
 
-  beforeEach(function() {
+  beforeEach(function () {
     cache.clear();
 
     room = helper.createRoom({httpd: false});
@@ -22,16 +22,16 @@ describe("CacheResolver", function() {
     resolver = new CacheResolver();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     room.destroy();
   });
 
-  describe("knownChannels", function() {
-    it("returns an empty array if no caches are present", function() {
+  describe("knownChannels", function () {
+    it("returns an empty array if no caches are present", function () {
       expect(resolver.knownChannels({}, req)).to.eql([]);
     });
 
-    it("returns the populated caches", function() {
+    it("returns the populated caches", function () {
       cache.forChannel(req.robot, "general");
       cache.forChannel(req.robot, "pushbotdev");
 
@@ -41,7 +41,7 @@ describe("CacheResolver", function() {
       ]);
     });
 
-    it("translates channel IDs to channel names when available", function() {
+    it("translates channel IDs to channel names when available", function () {
       cache.forChannel(req.robot, "C100");
       cache.forChannel(req.robot, "C200");
 
@@ -63,8 +63,8 @@ describe("CacheResolver", function() {
     });
   });
 
-  describe("linesForChannel", function() {
-    it("returns an array of cached lines", function() {
+  describe("linesForChannel", function () {
+    it("returns an array of cached lines", function () {
       cache
         .forChannel(req.robot, "#general")
         .append(message("aaa", "line one"))
@@ -87,14 +87,14 @@ describe("CacheResolver", function() {
       expect(lines[3].text).to.equal("line four");
     });
 
-    it("returns an empty array for an empty cache", function() {
+    it("returns an empty array for an empty cache", function () {
       cache.forChannel(req.robot, "#general");
 
       const lines = resolver.linesForChannel({channel: "#general"}, req);
       expect(lines).to.eql([]);
     });
 
-    it("returns null for an unknown channel", function() {
+    it("returns null for an unknown channel", function () {
       const lines = resolver.linesForChannel({channel: "#nope"}, req);
       expect(lines).to.be.null;
     });

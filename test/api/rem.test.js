@@ -1,10 +1,10 @@
 const {RemResolver} = require("../../scripts/api/rem");
 
-describe("RemResolver", function() {
+describe("RemResolver", function () {
   let bot, resolver, req;
   let authorized;
 
-  beforeEach(async function() {
+  beforeEach(async function () {
     bot = new BotContext("../scripts/rem.js");
     await bot.loadAuth("1");
 
@@ -30,12 +30,12 @@ describe("RemResolver", function() {
     resolver = new RemResolver();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     bot.destroy();
   });
 
-  describe("get", function() {
-    it("retrieves a specific key", function() {
+  describe("get", function () {
+    it("retrieves a specific key", function () {
       expect(
         resolver.get(
           {key: "bbb 000"},
@@ -44,15 +44,15 @@ describe("RemResolver", function() {
       ).to.deep.equal({key: "bbb 000", value: "value 3"});
     });
 
-    it("returns null if the key is not known", function() {
+    it("returns null if the key is not known", function () {
       expect(
         resolver.get({key: "nope"}, {robot: bot.getRobot(), user: authorized})
       ).to.be.null;
     });
   });
 
-  describe("search", function() {
-    it("lists matching keys and values in a paginated connection", function() {
+  describe("search", function () {
+    it("lists matching keys and values in a paginated connection", function () {
       const result = resolver.search({query: "111", first: 10}, req);
       expect(result).to.deep.equal({
         pageInfo: {
@@ -69,7 +69,7 @@ describe("RemResolver", function() {
       });
     });
 
-    it("lists all keys and values in a paginated connection", function() {
+    it("lists all keys and values in a paginated connection", function () {
       const page0 = resolver.search({first: 5}, req);
       expect(page0).to.deep.equal({
         pageInfo: {
@@ -101,8 +101,8 @@ describe("RemResolver", function() {
       });
     });
 
-    describe("ordered lexicographically by key", function() {
-      it("ascending", function() {
+    describe("ordered lexicographically by key", function () {
+      it("ascending", function () {
         const page0 = resolver.search(
           {first: 2, orderField: "KEY", orderDirection: "ASCENDING"},
           req
@@ -169,7 +169,7 @@ describe("RemResolver", function() {
         });
       });
 
-      it("descending", function() {
+      it("descending", function () {
         const page0 = resolver.search(
           {first: 3, orderField: "KEY", orderDirection: "DESCENDING"},
           req
@@ -216,7 +216,7 @@ describe("RemResolver", function() {
       });
     });
 
-    it("orders results randomly", function() {
+    it("orders results randomly", function () {
       const page0 = resolver.search({first: 10, orderField: "RANDOM"}, req);
 
       expect(page0.pageInfo).to.deep.equal({
@@ -227,7 +227,7 @@ describe("RemResolver", function() {
         endCursor: "5",
       });
       expect(page0.edges).to.have.length(6);
-      const nodes = page0.edges.map(e => e.node);
+      const nodes = page0.edges.map((e) => e.node);
       expect(nodes).to.deep.include({key: "aaa 000", value: "value 0"});
       expect(nodes).to.deep.include({key: "aaa 111", value: "value 1"});
       expect(nodes).to.deep.include({key: "aaa 222", value: "value 2"});

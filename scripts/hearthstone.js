@@ -11,8 +11,8 @@
 
 const fetch = require("node-fetch");
 
-module.exports = function(robot) {
-  robot.respond(/hspopulate(?: (.*))?/i, async function(msg) {
+module.exports = function (robot) {
+  robot.respond(/hspopulate(?: (.*))?/i, async function (msg) {
     try {
       const uri =
         msg.match[1] || "http://hearthstonejson.com/json/AllSets.json";
@@ -37,7 +37,7 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/hearth *(.+)/i, function(msg) {
+  robot.respond(/hearth *(.+)/i, function (msg) {
     const name = msg.match[1].toLowerCase();
     const hs = robot.brain.data.hearthstone;
     if (!hs) {

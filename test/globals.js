@@ -33,14 +33,14 @@ global.database = process.env.PUSHBOT_DATABASE_URL
   ? pg(process.env.PUSHBOT_DATABASE_URL)
   : null;
 
-global.delay = function(timeoutMs) {
-  return function() {
+global.delay = function (timeoutMs) {
+  return function () {
     const timeout = timeoutMs || (database ? 100 : 10);
-    return new Promise(resolve => setTimeout(resolve, timeout));
+    return new Promise((resolve) => setTimeout(resolve, timeout));
   };
 };
 
-global.usesDatabase = function(context, timeoutMs) {
+global.usesDatabase = function (context, timeoutMs) {
   if (database) {
     const timeout = timeoutMs || 5000;
     context.timeout(timeout);
@@ -49,7 +49,7 @@ global.usesDatabase = function(context, timeoutMs) {
   }
 };
 
-global.message = function(username, line) {
+global.message = function (username, line) {
   return {
     message: {
       text: line,
@@ -89,7 +89,7 @@ global.BotContext = class {
 
   async loadHelp() {
     hubotHelp(this.room.robot, "*");
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 200));
   }
 
   async loadAuth(adminID = "0") {
@@ -97,22 +97,22 @@ global.BotContext = class {
     hubotAuth(this.room.robot, "*");
 
     const room = this.room;
-    this.room.receive = async function(userName, message) {
+    this.room.receive = async function (userName, message) {
       this.messages.push([userName, message]);
       const user =
         room.robot.brain.userForName(userName) ||
         room.robot.brain.userForId("0", {name: userName, room});
-      await new Promise(resolve =>
+      await new Promise((resolve) =>
         room.robot.receive(new Hubot.TextMessage(user, message), resolve)
       );
     };
 
-    return new Promise(resolve => setTimeout(resolve, 20));
+    return new Promise((resolve) => setTimeout(resolve, 20));
   }
 
   async loadMarkov() {
     hubotMarkov(this.room.robot, "*");
-    await new Promise(resolve => setTimeout(resolve, 20));
+    await new Promise((resolve) => setTimeout(resolve, 20));
   }
 
   store(key, value) {
@@ -146,7 +146,7 @@ global.BotContext = class {
       {},
       new Date()
     );
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.room.robot.receive(m, resolve);
     });
   }
@@ -163,28 +163,30 @@ global.BotContext = class {
       {},
       new Date()
     );
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.room.robot.receive(m, resolve);
     });
   }
 
   helpLines() {
     return this.room.messages
-      .filter(pair => pair[0] === "hubot")
-      .map(pair => pair[1].replace(/^@me\s+/, ""))
+      .filter((pair) => pair[0] === "hubot")
+      .map((pair) => pair[1].replace(/^@me\s+/, ""))
       .reduce((acc, line) => acc.concat(line.split(/\n/)), []);
   }
 
   async waitForResponse(pattern = /./) {
     const matches =
-      typeof pattern === "string" ? r => r === pattern : r => pattern.test(r);
+      typeof pattern === "string"
+        ? (r) => r === pattern
+        : (r) => pattern.test(r);
 
     for (let i = 0; i < 100; i++) {
       if (matches(this.response())) {
         return;
       }
 
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
     }
 
     console.error(this.room.messages);
@@ -207,7 +209,7 @@ global.TimeContext = class {
 };
 
 // eslint-disable-next-line no-extend-native
-Promise.prototype.tap = function(chunk) {
+Promise.prototype.tap = function (chunk) {
   return this.then((...values) => {
     chunk();
 

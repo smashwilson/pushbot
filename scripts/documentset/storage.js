@@ -85,7 +85,7 @@ class Storage {
       return Promise.resolve([]);
     }
 
-    const linkedAttributes = attributes.map(attribute =>
+    const linkedAttributes = attributes.map((attribute) =>
       Object.assign({document_id: row.id}, attribute)
     );
 
@@ -263,7 +263,7 @@ class Storage {
       ) AS exists
     `;
 
-    return this.db.one(sql, parameters, row => row.exists);
+    return this.db.one(sql, parameters, (row) => row.exists);
   }
 
   countDocumentsMatching(documentSet, attributes, query) {
@@ -331,7 +331,7 @@ class Storage {
 
   loadDocumentAttributes(documentSet, documents) {
     const attributeTableName = documentSet.attributeTableName();
-    const ids = documents.map(doc => doc.id);
+    const ids = documents.map((doc) => doc.id);
     const parameters = {attributeTableName, ids};
 
     if (documents.length === 0) {

@@ -4,15 +4,15 @@ const {createDocumentSet} = require("../../scripts/documentset");
 const {OnlyMe} = require("./roles");
 const Line = require("../../scripts/models/line");
 
-describe("DocumentSet add", function() {
+describe("DocumentSet add", function () {
   let bot, time, documentSet;
 
-  beforeEach(function() {
+  beforeEach(function () {
     bot = new BotContext();
     time = new TimeContext();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     bot.destroy();
     time.destroy();
     if (documentSet) {
@@ -20,7 +20,7 @@ describe("DocumentSet add", function() {
     }
   });
 
-  it('creates "slackapp blarf:"', async function() {
+  it('creates "slackapp blarf:"', async function () {
     usesDatabase(this);
 
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
@@ -44,7 +44,7 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(expectedBlarf);
   });
 
-  it('extracts "speaker" attributes from slackapp input', async function() {
+  it('extracts "speaker" attributes from slackapp input', async function () {
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
 
     const blarfToAdd =
@@ -73,7 +73,7 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(expectedBlarf);
   });
 
-  it('extracts "mention" attributes from slackapp input', async function() {
+  it('extracts "mention" attributes from slackapp input', async function () {
     usesDatabase(this);
 
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
@@ -109,7 +109,7 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(expectedBlarf);
   });
 
-  it('removes "new messages" from "slackapp blarf:"', async function() {
+  it('removes "new messages" from "slackapp blarf:"', async function () {
     usesDatabase(this);
 
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
@@ -139,7 +139,7 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(expectedBlarf);
   });
 
-  it('removes "edited" from "slackapp blarf:"', async function() {
+  it('removes "edited" from "slackapp blarf:"', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
 
@@ -167,7 +167,7 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(expectedBlarf);
   });
 
-  it('removes APP from integration output in "slackapp blarf:"', async function() {
+  it('removes APP from integration output in "slackapp blarf:"', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
 
@@ -195,7 +195,7 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(expectedBlarf);
   });
 
-  it('rejects malformed "slackapp blarf:" input', async function() {
+  it('rejects malformed "slackapp blarf:" input', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
 
@@ -207,7 +207,7 @@ describe("DocumentSet add", function() {
     await bot.waitForResponse(/sadtrombone\.com/);
   });
 
-  it('creates "verbatim blarf:"', async function() {
+  it('creates "verbatim blarf:"', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
 
@@ -221,7 +221,7 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(verbatimBlarf);
   });
 
-  it('extracts "mention" attributes from verbatim input', async function() {
+  it('extracts "mention" attributes from verbatim input', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
 
@@ -246,13 +246,13 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(verbatimBlarf);
   });
 
-  it('creates "buffer blarf"', async function() {
+  it('creates "buffer blarf"', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
 
     bot.load("buffer.js");
 
-    const ts = hhmm =>
+    const ts = (hhmm) =>
       moment.tz(`2017-04-01 ${hhmm}`, "YYYY-MM-DD HH:mm", "America/New_York");
     const buffer = bot.getRobot().bufferForUserId("me");
     buffer.append([
@@ -274,13 +274,13 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(expectedBlarf);
   });
 
-  it('extracts "speaker" attributes from buffer input', async function() {
+  it('extracts "speaker" attributes from buffer input', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
 
     bot.load("buffer.js");
 
-    const ts = hhmm =>
+    const ts = (hhmm) =>
       moment.tz(`2017-04-01 ${hhmm}`, "YYYY-MM-DD HH:mm", "America/New_York");
     const buffer = bot.getRobot().bufferForUserId("me");
     buffer.append([
@@ -305,13 +305,13 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(expectedBlarf);
   });
 
-  it('extracts "mention" attributes from buffer input', async function() {
+  it('extracts "mention" attributes from buffer input', async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {add: true});
 
     bot.load("buffer.js");
 
-    const ts = hhmm =>
+    const ts = (hhmm) =>
       moment.tz(`2017-04-01 ${hhmm}`, "YYYY-MM-DD HH:mm", "America/New_York");
     const buffer = bot.getRobot().bufferForUserId("me");
     buffer.append([
@@ -341,14 +341,14 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(expectedBlarf);
   });
 
-  it("can be configured with a document formatter", async function() {
+  it("can be configured with a document formatter", async function () {
     usesDatabase(this);
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {
       add: {
         formatter: (lines, speakers, mentions) => {
           return {
             body: lines
-              .map(line => `[${line.speaker}] ${line.text}`)
+              .map((line) => `[${line.speaker}] ${line.text}`)
               .join(", "),
             speakers,
             mentions,
@@ -380,7 +380,7 @@ describe("DocumentSet add", function() {
     expect(doc.getBody()).to.equal(expected);
   });
 
-  it("validates a required role", async function() {
+  it("validates a required role", async function () {
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {
       add: {role: OnlyMe},
     });
@@ -392,7 +392,7 @@ describe("DocumentSet add", function() {
     expect(await documentSet.countMatching({}, "")).to.equal(0);
   });
 
-  it("generates default help text", async function() {
+  it("generates default help text", async function () {
     usesDatabase(this);
     await bot.loadHelp();
 
@@ -413,7 +413,7 @@ describe("DocumentSet add", function() {
     );
   });
 
-  it("accepts custom help text", async function() {
+  it("accepts custom help text", async function () {
     usesDatabase(this);
     await bot.loadHelp();
 

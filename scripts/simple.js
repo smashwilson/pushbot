@@ -29,10 +29,10 @@ const {atRandom} = require("./helpers");
 
 const betrayImmune = _.map(
   (process.env.HUBOT_BETRAY_IMMUNE || "").split(/,/),
-  line => line.trim()
+  (line) => line.trim()
 );
 
-const targetFrom = function(msg, matchNo) {
+const targetFrom = function (msg, matchNo) {
   if (matchNo == null) {
     matchNo = 1;
   }
@@ -43,19 +43,19 @@ const targetFrom = function(msg, matchNo) {
   }
 };
 
-module.exports = function(robot) {
-  const allUsers = function() {
+module.exports = function (robot) {
+  const allUsers = function () {
     const userMap = robot.brain.users();
     const ids = Object.keys(userMap);
-    return Array.from(ids, id => userMap[id]);
+    return Array.from(ids, (id) => userMap[id]);
   };
 
-  robot.respond(/hug(?: (.*))?/i, function(msg) {
+  robot.respond(/hug(?: (.*))?/i, function (msg) {
     const target = targetFrom(msg);
     msg.emote(`compresses ${target} in a cold, metallic embrace`);
   });
 
-  robot.respond(/hi5(?: (.*))?/i, function(msg) {
+  robot.respond(/hi5(?: (.*))?/i, function (msg) {
     const target = targetFrom(msg);
     return msg.emote(
       atRandom([
@@ -85,7 +85,7 @@ module.exports = function(robot) {
     );
   });
 
-  robot.respond(/magic8/i, function(msg) {
+  robot.respond(/magic8/i, function (msg) {
     const positive = [
       "Definitely.",
       "Absolutely.",
@@ -133,17 +133,17 @@ module.exports = function(robot) {
     msg.reply(atRandom(all));
   });
 
-  robot.respond(/judge/i, function(msg) {
+  robot.respond(/judge/i, function (msg) {
     const chance = _.random(100);
     msg.reply(chance < 80 ? "HARSH" : "Lenient.");
   });
 
-  robot.respond(/win/i, msg => msg.reply("You win!"));
+  robot.respond(/win/i, (msg) => msg.reply("You win!"));
 
-  robot.respond(/barf\s*([^]*)/i, function(msg) {
+  robot.respond(/barf\s*([^]*)/i, function (msg) {
     const text = (!msg.match[1] ? "barf" : msg.match[1]).toUpperCase();
 
-    const barfify = function(letter) {
+    const barfify = function (letter) {
       if ("AEFHIJKLMNORSUVWYZ".includes(letter)) {
         let expanded = "";
         for (let i = 0; i < 5; i++) {
@@ -167,7 +167,7 @@ module.exports = function(robot) {
     msg.send(lines.join("\n"));
   });
 
-  robot.respond(/sde\s*([^]*)/i, async function(msg) {
+  robot.respond(/sde\s*([^]*)/i, async function (msg) {
     const text = msg.match[1] || "shut down everything";
     const lines = text.split(/\s+/);
     if (lines.length > 10) {
@@ -178,11 +178,11 @@ module.exports = function(robot) {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       msg.send(i === lines.length - 1 ? `${line.toUpperCase()}!` : `${line}.`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   });
 
-  robot.respond(/(?:harm|betray)(?: (\S+))?/i, function(msg) {
+  robot.respond(/(?:harm|betray)(?: (\S+))?/i, function (msg) {
     const backfire =
       betrayImmune.includes(msg.message.user.id) || _.random(100) < 10;
 
@@ -198,8 +198,8 @@ module.exports = function(robot) {
       }
     } else {
       const potential = allUsers()
-        .filter(u => !betrayImmune.includes(u.id))
-        .map(u => u.name);
+        .filter((u) => !betrayImmune.includes(u.id))
+        .map((u) => u.name);
       if (potential.length > 0) {
         target = atRandom(potential);
       } else {
@@ -220,7 +220,7 @@ module.exports = function(robot) {
     );
   });
 
-  robot.respond(/\S+hose(?: (@?\w+))?/i, function(msg) {
+  robot.respond(/\S+hose(?: (@?\w+))?/i, function (msg) {
     msg.send("_doof doof doof_");
     const prefix = msg.match[1] ? `${msg.match[1]}: ` : "";
 
@@ -228,7 +228,7 @@ module.exports = function(robot) {
     setTimeout(fn, _.random(3000, 5000));
   });
 
-  robot.respond(/welcome(?: +(@?\w+))?/i, function(msg) {
+  robot.respond(/welcome(?: +(@?\w+))?/i, function (msg) {
     const target = msg.match[1] ? `, ${msg.match[1]}` : "";
     msg.send(`\
 Welcome to #~s${target}! Here's a quick intro to Slack and me:
@@ -236,9 +236,9 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
 `);
   });
 
-  robot.respond(/poker.*/i, msg => msg.send("I barely know her!"));
+  robot.respond(/poker.*/i, (msg) => msg.send("I barely know her!"));
 
-  robot.respond(/sin/i, msg =>
+  robot.respond(/sin/i, (msg) =>
     msg.send(
       atRandom([
         "Murder",
@@ -269,8 +269,8 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
     )
   );
 
-  robot.respond(/pokemonsay ([^]*)/i, function(msg) {
-    const unownify = function(c) {
+  robot.respond(/pokemonsay ([^]*)/i, function (msg) {
+    const unownify = function (c) {
       if ("abcdefghijklmnopqrstuvwxyz".includes(c)) {
         return `:unown-${c}:`;
       } else if (c === "!") {
@@ -282,18 +282,15 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
       }
     };
     const lowerString = msg.match[1].toLowerCase();
-    const unownString = lowerString
-      .split("")
-      .map(unownify)
-      .join("");
+    const unownString = lowerString.split("").map(unownify).join("");
     return msg.send(unownString);
   });
 
-  robot.hear(/(^|[^0-9])69([^0-9]|$)/, msg =>
+  robot.hear(/(^|[^0-9])69([^0-9]|$)/, (msg) =>
     msg.send("https://thats.thesexnumber.fyi/")
   );
 
-  robot.respond(/femshep/i, msg =>
+  robot.respond(/femshep/i, (msg) =>
     msg.send(
       atRandom([
         "http://media.tumblr.com/tumblr_lsxdm7yONC1qbplir.gif",
@@ -302,15 +299,17 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
     )
   );
 
-  robot.respond(/fenris/i, msg => msg.send("https://i.imgur.com/oNICSik.gif"));
+  robot.respond(/fenris/i, (msg) =>
+    msg.send("https://i.imgur.com/oNICSik.gif")
+  );
 
-  robot.respond(/nope\s*$/i, msg =>
+  robot.respond(/nope\s*$/i, (msg) =>
     msg.send("http://www.reactiongifs.com/wp-content/uploads/2013/06/nope.gif")
   );
 
-  robot.respond(/fine/i, msg => msg.send(":fire::thisisfine::fire:"));
+  robot.respond(/fine/i, (msg) => msg.send(":fire::thisisfine::fire:"));
 
-  robot.hear(/robot\s+body/i, msg =>
+  robot.hear(/robot\s+body/i, (msg) =>
     msg.send(
       atRandom([
         "http://img.sharetv.com/shows/episodes/standard/345637.jpg",
@@ -319,7 +318,7 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
     )
   );
 
-  robot.hear(/\bbee+[s]?\b/i, msg =>
+  robot.hear(/\bbee+[s]?\b/i, (msg) =>
     msg.send(
       atRandom([
         "https://media.giphy.com/media/dcubXtnbck0RG/giphy.gif",
@@ -329,22 +328,22 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
     )
   );
 
-  robot.hear(/\b(?:tit downwards|breasted boobily)\b/i, msg =>
+  robot.hear(/\b(?:tit downwards|breasted boobily)\b/i, (msg) =>
     msg.send("http://imgur.com/TRAPYBX")
   );
 
-  robot.respond(/embiggen\s+([^]+)/i, msg =>
+  robot.respond(/embiggen\s+([^]+)/i, (msg) =>
     msg.send(`:muscle-left: ${msg.match[1]} :muscle-right:`)
   );
 
-  robot.respond(/quite/i, msg => msg.reply("Indeed."));
+  robot.respond(/quite/i, (msg) => msg.reply("Indeed."));
 
-  robot.respond(/clap\s*([^]+)/i, function(msg) {
-    const words = msg.match[1].split(/\s+/).filter(word => word.length > 0);
+  robot.respond(/clap\s*([^]+)/i, function (msg) {
+    const words = msg.match[1].split(/\s+/).filter((word) => word.length > 0);
     return msg.send(words.join(" :clap: "));
   });
 
-  robot.respond(/honk/i, msg => {
+  robot.respond(/honk/i, (msg) => {
     msg.send("Honk. Honk. HOOOOOOOOONK");
   });
 };

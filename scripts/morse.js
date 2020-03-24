@@ -7,8 +7,8 @@
 
 const morse = require("morse");
 
-module.exports = function(robot) {
-  robot.respond(/morse\s*([^]*)/i, function(msg) {
+module.exports = function (robot) {
+  robot.respond(/morse\s*([^]*)/i, function (msg) {
     const message = robot.mostRecentText(msg);
     if (!message) {
       msg.reply("No text to encode.");
@@ -18,7 +18,7 @@ module.exports = function(robot) {
     msg.send(morse.encode(message));
   });
 
-  return robot.respond(/demorse\s*([^]*)/i, function(msg) {
+  return robot.respond(/demorse\s*([^]*)/i, function (msg) {
     const message = robot.mostRecentText(msg);
     if (!message) {
       msg.reply("No text to decode.");

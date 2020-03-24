@@ -2,14 +2,14 @@ const {OnlyMe} = require("./roles");
 
 const {createDocumentSet} = require("../../scripts/documentset");
 
-describe("DocumentSet query", function() {
+describe("DocumentSet query", function () {
   let bot, documentSet;
 
-  beforeEach(function() {
+  beforeEach(function () {
     bot = new BotContext();
   });
 
-  afterEach(function() {
+  afterEach(function () {
     bot.destroy();
     if (documentSet) {
       return documentSet.destroy();
@@ -22,7 +22,7 @@ describe("DocumentSet query", function() {
     });
 
     return Promise.all(
-      docs.map(doc => {
+      docs.map((doc) => {
         let body = "";
         const attributes = [];
         if (doc.body && doc.subject) {
@@ -36,7 +36,7 @@ describe("DocumentSet query", function() {
     );
   }
 
-  it("returns a random result", async function() {
+  it("returns a random result", async function () {
     usesDatabase(this);
 
     await populate(true, ["one", "two", "three"]);
@@ -44,7 +44,7 @@ describe("DocumentSet query", function() {
     await bot.waitForResponse(/^(one|two|three)$/);
   });
 
-  it("returns a random document containing all terms within a query", async function() {
+  it("returns a random document containing all terms within a query", async function () {
     usesDatabase(this);
 
     await populate(true, [
@@ -64,7 +64,7 @@ describe("DocumentSet query", function() {
     await bot.waitForResponse("aaa 222 yyy");
   });
 
-  it("escapes regular expression metacharacters within query terms", async function() {
+  it("escapes regular expression metacharacters within query terms", async function () {
     usesDatabase(this);
 
     await populate(true, [
@@ -84,7 +84,7 @@ describe("DocumentSet query", function() {
     await bot.waitForResponse("aaa+bbb");
   });
 
-  it("collects words within double quotes as a single term", async function() {
+  it("collects words within double quotes as a single term", async function () {
     usesDatabase(this);
 
     await populate(true, [
@@ -99,7 +99,7 @@ describe("DocumentSet query", function() {
     await bot.waitForResponse("correct aaa bbb");
   });
 
-  it("collects words within single quotes as a single term", async function() {
+  it("collects words within single quotes as a single term", async function () {
     usesDatabase(this);
 
     await populate(true, [
@@ -114,7 +114,7 @@ describe("DocumentSet query", function() {
     await bot.waitForResponse("correct aaa bbb");
   });
 
-  it("allows terms to contain single and double quotes escaped with a backslash", async function() {
+  it("allows terms to contain single and double quotes escaped with a backslash", async function () {
     usesDatabase(this);
 
     await populate(true, [
@@ -128,7 +128,7 @@ describe("DocumentSet query", function() {
     await bot.waitForResponse(`correct aaa"bbb'ccc`);
   });
 
-  it("permits access based on the caller's role", async function() {
+  it("permits access based on the caller's role", async function () {
     usesDatabase(this);
 
     await populate({role: OnlyMe}, ["aaa"]);
@@ -136,7 +136,7 @@ describe("DocumentSet query", function() {
     await bot.waitForResponse("aaa");
   });
 
-  it("prohibits access based on the caller's role", async function() {
+  it("prohibits access based on the caller's role", async function () {
     usesDatabase(this);
 
     await populate({role: OnlyMe}, ["aaa"]);
@@ -144,7 +144,7 @@ describe("DocumentSet query", function() {
     await bot.waitForResponse("@you NOPE");
   });
 
-  it("can be configured to query with a subject user", async function() {
+  it("can be configured to query with a subject user", async function () {
     usesDatabase(this);
 
     await populate({userOriented: true}, [
@@ -156,7 +156,7 @@ describe("DocumentSet query", function() {
     await bot.waitForResponse("correct");
   });
 
-  it("can be configured to default to self with no query", async function() {
+  it("can be configured to default to self with no query", async function () {
     usesDatabase(this);
 
     await populate({userOriented: true}, [
@@ -170,7 +170,7 @@ describe("DocumentSet query", function() {
     await bot.waitForResponse("correct");
   });
 
-  it("can be configured to return the latest rather than a random result", async function() {
+  it("can be configured to return the latest rather than a random result", async function () {
     usesDatabase(this);
 
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {
@@ -188,7 +188,7 @@ describe("DocumentSet query", function() {
     await bot.waitForResponse("latest");
   });
 
-  it("generates default help text", async function() {
+  it("generates default help text", async function () {
     await bot.loadHelp();
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {query: true});
     await bot.say("me", "@hubot help blarf");
@@ -201,7 +201,7 @@ describe("DocumentSet query", function() {
     );
   });
 
-  it("accepts custom help text", async function() {
+  it("accepts custom help text", async function () {
     await bot.loadHelp();
     documentSet = createDocumentSet(bot.getRobot(), "blarf", {
       query: {

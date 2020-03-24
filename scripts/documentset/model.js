@@ -71,11 +71,11 @@ class DocumentSet {
         : false,
     ]);
 
-    const documents = rows.map(row => new Document(this, row));
+    const documents = rows.map((row) => new Document(this, row));
     const firstId = documents.length > 0 ? documents[0].id : cursor;
     const lastId =
       documents.length > 0 ? documents[documents.length - 1].id : cursor;
-    const byId = new Map(documents.map(doc => [doc.id, doc]));
+    const byId = new Map(documents.map((doc) => [doc.id, doc]));
 
     const [attrRows, hasNextPage] = await Promise.all([
       this.storage.loadDocumentAttributes(this, documents),
@@ -185,7 +185,9 @@ class Document {
     this.body = result.body;
 
     if (result.attributes) {
-      this.attributes = result.attributes.map(row => new Attribute(this, row));
+      this.attributes = result.attributes.map(
+        (row) => new Attribute(this, row)
+      );
     } else {
       this.attributes = null;
     }
@@ -211,7 +213,7 @@ class Document {
     const rows = await this.set.storage.loadDocumentAttributes(this.set, [
       this,
     ]);
-    this.attributes = rows.map(row => new Attribute(this, row));
+    this.attributes = rows.map((row) => new Attribute(this, row));
   }
 }
 

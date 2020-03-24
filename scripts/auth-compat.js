@@ -3,8 +3,8 @@
 
 const _ = require("underscore");
 
-module.exports = function(robot) {
-  const userChange = function(user) {
+module.exports = function (robot) {
+  const userChange = function (user) {
     let key, value;
     if (!user) {
       return;
@@ -39,7 +39,7 @@ module.exports = function(robot) {
     robot.brain.userForId(user.id, newUser);
   };
 
-  const reloadUsers = function() {
+  const reloadUsers = function () {
     if (!robot.adapter.client) {
       return;
     }
@@ -61,7 +61,7 @@ module.exports = function(robot) {
 
   robot.brain.on("loaded", reloadUsers);
 
-  robot.receiveMiddleware(function(context, next, done) {
+  robot.receiveMiddleware(function (context, next, done) {
     const messageUser = context.response.message.user;
     const storedUser = robot.brain.data.users[messageUser.id];
     if (storedUser != null) {
@@ -71,7 +71,7 @@ module.exports = function(robot) {
     return next(done);
   });
 
-  return robot.respond(/reload users/i, function(msg) {
+  return robot.respond(/reload users/i, function (msg) {
     const count = reloadUsers();
     msg.reply(`${count} users reloaded.`);
   });
