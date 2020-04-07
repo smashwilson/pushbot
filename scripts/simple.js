@@ -324,6 +324,7 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
         "https://media.giphy.com/media/dcubXtnbck0RG/giphy.gif",
         "http://i.imgur.com/hnGNH.gif",
         "http://i.imgur.com/tZ3yQMb.gif",
+        "https://user-images.githubusercontent.com/17565/78700559-8c918100-78d3-11ea-8ea0-31368c62e33c.png",
       ])
     )
   );
