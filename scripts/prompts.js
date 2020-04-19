@@ -4,7 +4,7 @@
 // Commands:
 //   hubot prompt me <n> - Generate n writing prompts.
 
-const fetch = require('node-fetch');
+const fetch = require("node-fetch");
 
 module.exports = function (robot) {
   robot.respond(/prompt\s+me(?:\s+(\d+))?/i, async function (msg) {
