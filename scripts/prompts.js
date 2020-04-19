@@ -4,8 +4,10 @@
 // Commands:
 //   hubot prompt me <n> - Generate n writing prompts.
 
+const fetch = require('node-fetch');
+
 module.exports = function (robot) {
-  robot.respond(/prompt\s+me(?:\s+(\d+))?/i, function (msg) {
+  robot.respond(/prompt\s+me(?:\s+(\d+))?/i, async function (msg) {
     const count = msg.match[1] || 1;
 
     let url = "http://itcamefromwritingprompts.com/api/generate";
@@ -13,20 +15,12 @@ module.exports = function (robot) {
       url += `/${count}`;
     }
 
-    return msg.http(url).get()(function (err, _res, body) {
-      if (err) {
-        msg.send(err);
-        return;
-      }
-
-      try {
-        const json = JSON.parse(body);
-        return Array.from(json.generated).map(msg.send);
-      } catch (error) {
-        err = error;
-        msg.send(`Document:\n\`\`\`\n${body}\n\`\`\``);
-        msg.send(`Error: *${err}*`);
-      }
-    });
+    try {
+      const res = await fetch(url);
+      const body = await res.json();
+      msg.send(body.generated.join("\n"));
+    } catch (err) {
+      msg.send(`Error: **${err}**\n${err.stack}`);
+    }
   });
 };
