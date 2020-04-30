@@ -1,4 +1,4 @@
-const uuid = require("uuid/v1");
+const {v1: uuidv1} = require("uuid");
 
 class CalendarMap {
   static inRobot(robot) {
@@ -16,7 +16,7 @@ class CalendarMap {
   getCalendar(userId, userTz) {
     let existing = this.calendars.get(userId);
     if (!existing) {
-      const calendarId = uuid();
+      const calendarId = uuidv1();
       this.calendars.set(userId, {calendarId, userTz});
       this.robot.brain.set("hubot-plan:ical", Array.from(this.calendars));
       return calendarId;
