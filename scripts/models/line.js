@@ -1,5 +1,5 @@
 const moment = require("moment-timezone");
-const uuid = require("uuid/v1");
+const {v1: uuidv1} = require("uuid");
 
 class Line {
   constructor(timestamp, speaker, text, id = null) {
@@ -7,7 +7,7 @@ class Line {
     this.speaker = speaker;
     this.text = text;
 
-    this.id = id || uuid();
+    this.id = id || uuidv1();
   }
 
   static deserialize(object) {
