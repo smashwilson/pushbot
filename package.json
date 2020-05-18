@@ -47,7 +47,7 @@
     "passport": "0.4.1",
     "passport-http": "0.3.0",
     "passport-slack": "0.0.7",
-    "pg-promise": "10.5.5",
+    "pg-promise": "10.5.6",
     "tinycolor2": "1.4.1",
     "twit": "2.2.11",
     "underscore": "1.10.2",
