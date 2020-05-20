@@ -349,8 +349,10 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
   robot.respond(/honk/i, (msg) => {
     msg.send("Honk. Honk. HOOOOOOOOONK");
   });
-  
+
   robot.respond(/(oh)?no/i, (msg) => {
-    msg.send("https://user-images.githubusercontent.com/17565/82504538-a5dc3e80-9ac9-11ea-8a86-28def5edb6a5.gif");
+    msg.send(
+      "https://user-images.githubusercontent.com/17565/82504538-a5dc3e80-9ac9-11ea-8a86-28def5edb6a5.gif"
+    );
   });
 };
