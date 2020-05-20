@@ -19,6 +19,8 @@
 //   hubot embiggen - Tickets... to the gun show
 //   hubot clap - Give :clap: your :clap: words :clap: some :clap: emphasis
 //   hubot honk - Honk. Honk honk. Hoooonk
+//   hubot no - When @reostra is about to make another pun
+//   hubot ohno - When @reostra is about to make another pun and you can't stop it in time
 
 // Configuration:
 //
@@ -346,5 +348,9 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
 
   robot.respond(/honk/i, (msg) => {
     msg.send("Honk. Honk. HOOOOOOOOONK");
+  });
+  
+  robot.respond(/(oh)?no/i, (msg) => {
+    msg.send("https://user-images.githubusercontent.com/17565/82504538-a5dc3e80-9ac9-11ea-8a86-28def5edb6a5.gif");
   });
 };
