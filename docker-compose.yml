@@ -27,11 +27,11 @@ services:
       HUBOT_AUTH_ADMIN:
       HUBOT_GEOCODING_APIKEY:
       HUBOT_WEATHER_APIKEY:
-      API_BASE_URL: http://localhost:8080
+      API_BASE_URL: http://localhost:9000
       WEB_BASE_URL:
       HUBOT_LOG_LEVEL:
       AZ_COORDINATOR_TOKEN:
     ports:
-      - "8080:8080"
+      - "9000:8080"
     depends_on:
       - postgres
