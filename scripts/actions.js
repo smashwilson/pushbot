@@ -9,6 +9,7 @@ module.exports = function (robot) {
 
   // Only register when we're using the Slack client
   if (client && client.onEvent) {
+    previousHandler = client.eventHandler;
     client.onEvent(function (event) {
       const {user, channel} = event;
 
@@ -38,7 +39,11 @@ module.exports = function (robot) {
             }
           }
         );
+
+        return;
       }
+
+      previousHandler(event);
     });
   }
 };
