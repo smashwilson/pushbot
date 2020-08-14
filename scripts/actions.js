@@ -18,6 +18,7 @@ module.exports = function (robot) {
           `Received /me message in channel: ${channel}, from ${user.id} (human)`
         );
 
+        user.room = channel || "";
         event.text = `_${event.text}_`;
 
         SlackTextMessage.makeSlackTextMessage(
