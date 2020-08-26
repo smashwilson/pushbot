@@ -161,7 +161,7 @@ describe("UserSetResolver", function () {
 
     it("accesses counts of reactions given", async function () {
       bot.store("reactionsGiven", {
-        "1": {
+        1: {
           yellow_heart: 10,
           sparkles: 7,
           partyparrot: 5,
@@ -179,7 +179,7 @@ describe("UserSetResolver", function () {
 
     it("accesses counts of reactions received", async function () {
       bot.store("reactionsReceived", {
-        "1": {
+        1: {
           boom: 50,
           heart: 18,
           partyparrot: 5,

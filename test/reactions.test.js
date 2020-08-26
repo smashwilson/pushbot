@@ -22,14 +22,14 @@ describe("reactions", function () {
       await bot.removeReaction("1", "beachball", "2");
 
       expect(bot.get("reactionsReceived")).to.deep.equal({
-        "1": {smile: 1},
-        "2": {thumbsup: 2, "100": 1},
+        1: {smile: 1},
+        2: {thumbsup: 2, 100: 1},
       });
 
       expect(bot.get("reactionsGiven")).to.deep.equal({
-        "1": {thumbsup: 1},
-        "2": {smile: 1},
-        "3": {thumbsup: 1, "100": 1},
+        1: {thumbsup: 1},
+        2: {smile: 1},
+        3: {thumbsup: 1, 100: 1},
       });
     });
 
@@ -38,11 +38,11 @@ describe("reactions", function () {
       await bot.addReaction("1", "thumbsup", "1");
 
       expect(bot.get("reactionsReceived")).to.deep.equal({
-        "2": {thumbsup: 1},
+        2: {thumbsup: 1},
       });
 
       expect(bot.get("reactionsGiven")).to.deep.equal({
-        "1": {thumbsup: 1},
+        1: {thumbsup: 1},
       });
     });
   });
@@ -50,7 +50,7 @@ describe("reactions", function () {
   describe("!reactions", function () {
     it("returns your top ten reactions, in descending order", async function () {
       bot.store("reactionsReceived", {
-        "1": {
+        1: {
           "emoji-00": 100,
           "emoji-01": 90,
           "emoji-02": 86,
@@ -87,7 +87,7 @@ describe("reactions", function () {
 
     it("returns reactions of a named other user", async function () {
       bot.store("reactionsReceived", {
-        "2": {
+        2: {
           "emoji-00": 100,
           "emoji-01": 88,
           "emoji-02": 86,
@@ -102,7 +102,7 @@ describe("reactions", function () {
           "emoji-11": 10,
           "emoji-12": 5,
         },
-        "5": {
+        5: {
           "emoji-00": 100,
           "emoji-01": 90,
           "emoji-02": 86,
@@ -141,22 +141,22 @@ describe("reactions", function () {
   describe("!toppun", function () {
     beforeEach(function () {
       bot.store("reactionsReceived", {
-        "0": {beachball: 100},
-        "1": {beachball: 90, thumbsup: 76},
-        "2": {beachball: 80},
-        "3": {beachball: 70},
-        "4": {beachball: 60},
-        "5": {beachball: 50},
-        "6": {beachball: 40},
-        "7": {beachball: 30},
-        "8": {beachball: 20},
-        "9": {beachball: 10},
-        "10": {beachball: 9},
-        "11": {beachball: 8},
-        "12": {beachball: 7},
-        "13": {beachball: 6},
-        "14": {beachball: 5},
-        "15": {beachball: 4},
+        0: {beachball: 100},
+        1: {beachball: 90, thumbsup: 76},
+        2: {beachball: 80},
+        3: {beachball: 70},
+        4: {beachball: 60},
+        5: {beachball: 50},
+        6: {beachball: 40},
+        7: {beachball: 30},
+        8: {beachball: 20},
+        9: {beachball: 10},
+        10: {beachball: 9},
+        11: {beachball: 8},
+        12: {beachball: 7},
+        13: {beachball: 6},
+        14: {beachball: 5},
+        15: {beachball: 4},
       });
     });
 
