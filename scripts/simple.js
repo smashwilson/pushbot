@@ -83,6 +83,7 @@ module.exports = function (robot) {
         "https://media.giphy.com/media/l4FGzzKKoxuv7AaL6/giphy.gif",
         "https://i.imgur.com/MAiIwW8.gifv",
         "https://i.imgur.com/mGXdpdp.gif",
+        "https://user-images.githubusercontent.com/17565/97096802-4b7a7780-163f-11eb-9a37-8c147f97162e.gif",
       ])
     );
   });
