@@ -54,7 +54,7 @@
     "yargs": "16.2.0"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "*"
   },
   "devDependencies": {
     "chai": "4.3.0",
