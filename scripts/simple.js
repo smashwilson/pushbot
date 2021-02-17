@@ -223,11 +223,16 @@ module.exports = function (robot) {
     );
   });
 
-  robot.respond(/\S+hose(?: (@?\w+))?/i, function (msg) {
+  robot.respond(/(\S+)hose(?: (@?\w+))?/i, function (msg) {
     msg.send("_doof doof doof_");
-    const prefix = msg.match[1] ? `${msg.match[1]}: ` : "";
+    const substance = msg.match[1];
+    const prefix = msg.match[2] ? `${msg.match[2]}: ` : "";
+    let response = "_splat splat splat_";
+    if (substance === "fish") {
+      response = "https://media.tenor.com/images/8efe1344f40fdcd4459c9e4c4d5745bd/tenor.gif";
+    }
 
-    const fn = () => msg.send(`${prefix}_splat splat splat_`);
+    const fn = () => msg.send(prefix + response);
     setTimeout(fn, _.random(3000, 5000));
   });
 
