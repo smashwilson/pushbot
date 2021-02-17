@@ -229,7 +229,8 @@ module.exports = function (robot) {
     const prefix = msg.match[2] ? `${msg.match[2]}: ` : "";
     let response = "_splat splat splat_";
     if (substance === "fish") {
-      response = "https://media.tenor.com/images/8efe1344f40fdcd4459c9e4c4d5745bd/tenor.gif";
+      response =
+        "https://media.tenor.com/images/8efe1344f40fdcd4459c9e4c4d5745bd/tenor.gif";
     }
 
     const fn = () => msg.send(prefix + response);
