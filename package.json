@@ -48,7 +48,7 @@
     "pg-promise": "10.9.5",
     "tinycolor2": "1.4.2",
     "twit": "2.2.11",
-    "underscore": "1.12.0",
+    "underscore": "1.12.1",
     "uuid": "8.3.2",
     "yargs": "16.2.0"
   },
