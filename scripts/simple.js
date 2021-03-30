@@ -604,9 +604,9 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
         "pair of sunglasses",
         "way to find a new job",
         "can of soup",
-        "ringtone"
+        "ringtone",
       ])
-      );
+    );
     proto.push(
       atRandom([
         "that is illegal",
@@ -815,9 +815,9 @@ https://gist.github.com/smashwilson/325d444e7a080906f8b9\
         "for a pregnant person",
         "that is controversial",
         "that reduces stress",
-        "that is transparent"
+        "that is transparent",
       ])
     );
     msg.send(proto.join(" "));
-  })
+  });
 };
