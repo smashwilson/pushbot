@@ -6,7 +6,7 @@
   "description": "Here to protect you from the terrible secret of space",
   "dependencies": {
     "bluebird": "3.7.2",
-    "cheerio": "1.0.0-rc.5",
+    "cheerio": "1.0.0-rc.6",
     "coffee-script": "1.12.7",
     "cookie-session": "1.4.0",
     "cors": "2.8.5",
