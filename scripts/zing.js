@@ -36,7 +36,7 @@ const zings = {
   haus:
     "https://user-images.githubusercontent.com/17565/32245445-29e0105a-be52-11e7-90bf-1b868bbab590.jpg",
   wrbritt:
-    "https://user-images.githubusercontent.com/17565/69882145-3f563080-129d-11ea-9efc-ef208396e6ef.png",
+    "https://user-images.githubusercontent.com/17565/134585679-021adc48-609c-4f6c-bdcb-f19357e39923.png",
   rachel:
     "https://user-images.githubusercontent.com/17565/48202207-390fb200-e332-11e8-9168-f7e29b4fac3a.jpg",
   shepard:
