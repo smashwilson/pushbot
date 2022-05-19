@@ -10,9 +10,8 @@ jobs:
       uses: smashwilson/az-infra/actions/azbuild@master
       env:
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        DOCKER_REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
         DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        IMAGE_NAME: quay.io/smashwilson/az-pushbot
+        IMAGE_NAME: smashwilson/az-pushbot
     - name: Synchronize
       uses: smashwilson/az-infra/actions/azsync@master
       env:
