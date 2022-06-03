@@ -60,14 +60,14 @@
     "fs-promise": "2.0.3",
     "hubot-test-helper": "1.9.0",
     "json-stable-stringify": "1.0.1",
-    "mocha": "10.0.0",
+    "mocha": "^10.0.0",
     "prettier": "2.2.1",
     "sinon": "14.0.0"
   },
   "scripts": {
     "lint": "prettier --check scripts/** test/**",
     "format": "prettier --write scripts/** test/**",
-    "mocha": "mocha --require coffee-script/register --require test/globals.js --colors test/*.test.js test/**/*.test.js",
+    "mocha": "mocha --require coffee-script/register --require test/globals.js --colors test/*.test.js test/**/*.test.js --exit",
     "test": "npm run lint && npm run mocha"
   }
 }
