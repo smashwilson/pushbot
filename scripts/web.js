@@ -202,7 +202,6 @@ module.exports = function (robot) {
       "/auth/slack/callback",
       passport.authenticate("slack"),
       (req, res) => {
-        req.session.save();
         const backTo = req.session.backTo;
         if (backTo) {
           delete req.session.backTo;
@@ -214,7 +213,6 @@ module.exports = function (robot) {
     );
   } else if (useHttpAuth) {
     app.get("/auth/http", passport.authenticate("basic"), (req, res, next) => {
-      req.session.save();
       if (req.query.backTo) {
         res.redirect(`${process.env.WEB_BASE_URL}${req.query.backTo}`);
       } else {
