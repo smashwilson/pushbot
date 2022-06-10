@@ -15,7 +15,7 @@ module.exports = function (robot) {
     const newUser = {
       name: user.name,
       real_name: user.real_name,
-      email_address: user.profile ? user.profile.email : '',
+      email_address: user.profile ? user.profile.email : "",
       slack: {},
     };
 
