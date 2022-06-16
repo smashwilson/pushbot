@@ -6,14 +6,13 @@ class CacheResolver {
   knownChannels(options, req) {
     return cache
       .known(req.robot)
-      .map((id) => getChannelNameByID(req.robot, id))
-      .filter(Boolean);
+      .map((id) => getChannelNameByID(req.robot, id) || id);
   }
 
   linesForChannel({channel}, req) {
     let existing = cache.forChannel(req.robot, channel, false);
     if (!existing) {
-      const id = getChannelIDByName(channel) || channel;
+      const id = getChannelIDByName(req.robot, channel) || channel;
       if (id) {
         existing = cache.forChannel(req.robot, id, false);
       }
