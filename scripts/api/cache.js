@@ -13,7 +13,7 @@ class CacheResolver {
   linesForChannel({channel}, req) {
     let existing = cache.forChannel(req.robot, channel, false);
     if (!existing) {
-      const id = getChannelIDByName(channel);
+      const id = getChannelIDByName(channel) || channel;
       if (id) {
         existing = cache.forChannel(req.robot, id, false);
       }

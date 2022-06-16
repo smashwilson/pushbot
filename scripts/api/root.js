@@ -66,7 +66,7 @@ module.exports = {
 
     let existing = cache.forChannel(req.robot, channel, false);
     if (!existing) {
-      const id = getChannelIDByName(req.robot, channel);
+      const id = getChannelIDByName(req.robot, channel) || channel;
       if (id) {
         existing = cache.forChannel(req.robot, id, false);
       }
