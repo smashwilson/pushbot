@@ -13,4 +13,4 @@ ALIAS="--alias !"
 
 [ -d /usr/src/app/node_modules ] || npm ci
 
-exec /usr/src/app/node_modules/.bin/hubot --name pushbot --disable-httpd ${ALIAS} ${ADAPTER}
+exec /usr/src/app/node_modules/hubot/bin/hubot --name pushbot --disable-httpd ${ALIAS} ${ADAPTER}
