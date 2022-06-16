@@ -20,7 +20,7 @@ const NullDataStore = {
 
 function getChannelNameByID(robot, id) {
   const client = robot.adapter.client;
-  if (!client) return null;
+  if (!client || !client.channelData) return null;
 
   const channelData = client.channelData[id];
   if (!channelData) return null;
@@ -30,9 +30,9 @@ function getChannelNameByID(robot, id) {
 
 function getChannelIDByName(robot, name) {
   const client = robot.adapter.client;
-  if (!client) return null;
+  if (!client || !client.channelData) return null;
 
-  for (const id of Object.keys(client.channelData || {})) {
+  for (const id of Object.keys(client.channelData)) {
     if (client.channelData[id].channel.name === name) {
       return id;
     }

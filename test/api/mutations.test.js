@@ -53,13 +53,8 @@ describe("GraphQL mutations", function () {
       lineIDs.reverse();
 
       room.robot.adapter.client = {
-        rtm: {
-          dataStore: {
-            getChannelByName(name) {
-              if (name === "general") return {id: "C100"};
-              return undefined;
-            },
-          },
+        channelData: {
+          C100: {channel: {name: "general"}},
         },
       };
     });

@@ -46,13 +46,8 @@ describe("CacheResolver", function () {
       cache.forChannel(req.robot, "C200");
 
       req.robot.adapter.client = {
-        rtm: {
-          dataStore: {
-            getChannelGroupOrDMById(id) {
-              if (id === "C100") return {name: "general"};
-              return undefined;
-            },
-          },
+        channelData: {
+          C100: {channel: {name: "general"}},
         },
       };
 
