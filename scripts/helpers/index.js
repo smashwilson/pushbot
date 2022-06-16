@@ -18,15 +18,27 @@ const NullDataStore = {
   },
 };
 
-function getDataStore(robot) {
-  const adapter = robot.adapter;
-  const client = adapter.client;
-  if (!client) return NullDataStore;
-  const rtm = client.rtm;
-  if (!rtm) return NullDataStore;
-  const dataStore = rtm.dataStore;
-  if (!dataStore) return NullDataStore;
-  return dataStore;
+function getChannelNameByID(robot, id) {
+  const client = robot.adapter.client;
+  if (!client || !client.channelData) return null;
+
+  const channelData = client.channelData[id];
+  if (!channelData) return null;
+
+  return channelData.channel.name;
+}
+
+function getChannelIDByName(robot, name) {
+  const client = robot.adapter.client;
+  if (!client || !client.channelData) return null;
+
+  for (const id of Object.keys(client.channelData)) {
+    if (client.channelData[id].channel.name === name) {
+      return id;
+    }
+  }
+
+  return null;
 }
 
 // Parse command options provided with shell-like syntax
@@ -51,6 +63,7 @@ function parseArguments(msg, argline, fn) {
 
 module.exports = {
   atRandom,
-  getDataStore,
+  getChannelIDByName,
+  getChannelNameByID,
   parseArguments,
 };

@@ -6,7 +6,7 @@ const {RemResolver} = require("./rem");
 
 const bufferPreprocessor = require("../documentset/preprocessor/buffer");
 const briefFormatter = require("../documentset/formatter").brief;
-const {getDataStore} = require("../helpers");
+const {getChannelIDByName} = require("../helpers");
 const cache = require("../models/cache");
 const {CalendarMap} = require("../models/calendar");
 
@@ -66,9 +66,9 @@ module.exports = {
 
     let existing = cache.forChannel(req.robot, channel, false);
     if (!existing) {
-      const ch = getDataStore(req.robot).getChannelByName(channel);
-      if (ch) {
-        existing = cache.forChannel(req.robot, ch.id, false);
+      const id = getChannelIDByName(req.robot, channel) || channel;
+      if (id) {
+        existing = cache.forChannel(req.robot, id, false);
       }
     }
     if (!existing) throw new Error(`No lines available in channel ${channel}`);
