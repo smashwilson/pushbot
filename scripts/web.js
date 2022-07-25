@@ -9,7 +9,7 @@ const {graphqlHTTP} = require("express-graphql");
 const {buildSchema} = require("graphql");
 const passport = require("passport");
 const cors = require("cors");
-const SlackStrategy = require("passport-slack").Strategy;
+const SlackStrategy = require("passport-slack-oauth2").Strategy;
 const BasicStrategy = require("passport-http").BasicStrategy;
 
 const root = require("./api/root");
@@ -86,7 +86,6 @@ module.exports = function (robot) {
         {
           clientID: SLACK_CLIENT_ID,
           clientSecret: SLACK_CLIENT_SECRET,
-          scope: ["identity.basic"],
           callbackURL: `${process.env.API_BASE_URL}/auth/slack/callback`,
         },
         (accessToken, refreshToken, profile, done) => {
@@ -195,12 +194,12 @@ module.exports = function (robot) {
         }
         return next();
       },
-      passport.authenticate("slack")
+      passport.authenticate("Slack")
     );
 
     app.get(
       "/auth/slack/callback",
-      passport.authenticate("slack"),
+      passport.authenticate("Slack"),
       (req, res) => {
         req.session.save();
         const backTo = req.session.backTo;
