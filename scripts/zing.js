@@ -40,7 +40,9 @@ const zings = {
   shepard:
     "https://user-images.githubusercontent.com/17565/48202235-517fcc80-e332-11e8-80ea-53804ab9c1d8.jpg",
   ebun:
-    "https://github.com/smashwilson/pushbot/assets/17565/1776ae4e-061c-4f54-9969-15f6d51ed7df",
+    "https://i.imgur.com/DdOMyZp.jpg",
+  "concentric.emily":
+    "https://i.imgur.com/DdOMyZp.jpg",
 };
 
 module.exports = function (robot) {
