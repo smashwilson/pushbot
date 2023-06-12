@@ -39,6 +39,8 @@ const zings = {
     "https://user-images.githubusercontent.com/17565/48202207-390fb200-e332-11e8-9168-f7e29b4fac3a.jpg",
   shepard:
     "https://user-images.githubusercontent.com/17565/48202235-517fcc80-e332-11e8-80ea-53804ab9c1d8.jpg",
+  ebun:
+    "https://github.com/smashwilson/pushbot/assets/17565/1776ae4e-061c-4f54-9969-15f6d51ed7df",
 };
 
 module.exports = function (robot) {
