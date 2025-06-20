@@ -3,7 +3,10 @@ LABEL maintainer "Ash Wilson <smashwilson@gmail.com>"
 
 ENV NPM_CONFIG_LOGLEVEL warn
 
-RUN apk add --no-cache bash postgresql-client
+ADD https://truststore.pki.rds.amazonaws.com/us-east-1/us-east-1-bundle.pem /usr/local/share/ca-certificates/rds-bundle.pem
+
+RUN apk add --no-cache bash postgresql-client ca-certificates \
+    && update-ca-certificates
 RUN npm install -g coffee-script
 RUN mkdir -p /usr/src/app
 RUN adduser -s /bin/false -D pushbot
